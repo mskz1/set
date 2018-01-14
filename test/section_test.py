@@ -2,10 +2,11 @@
 __author__ = 'mskz'
 
 import unittest
-from section import *
+
+from cross_section.section import *
 
 try:
-    from . import ureg, Q_
+    from cross_section import ureg, Q_
 except:
     from __init__ import ureg, Q_
 

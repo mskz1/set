@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
-from section import SectionDB, Section, H_HOSOHABA_SERIES, H_TYUUHABA_SERIES, \
-    H_HIROHABA_SERIES, CHANNEL_SERIES, KAKU_PIPE_SERIES, PIPE_SERIES, LIGHT_CHANNEL_SERIES
 
+from cross_section.section import SectionDB, H_HOSOHABA_SERIES, H_TYUUHABA_SERIES
 
 try:
-    from . import ureg, Q_
+    from cross_section import ureg, Q_
 except SystemError:
     from __init__ import ureg, Q_
 

@@ -3,7 +3,7 @@ __author__ = 'mskz'
 
 try:
     from . import ureg, Q_
-except SystemError:
+except ImportError:
     from __init__ import ureg, Q_
 
 H_HOSOHABA_SERIES = "HS-"
@@ -246,7 +246,7 @@ class SectionProperty():
 def test2():
     sec_db = SectionDB()
     sec_db.load()
-    print(sec_db.get_list())
+    #print(sec_db.get_list())
     print(sec_db.get_list(H_HOSOHABA_SERIES))
     print(sec_db.get_list(H_HIROHABA_SERIES))
     print(sec_db.get_list(H_TYUUHABA_SERIES))
