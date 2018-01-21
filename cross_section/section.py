@@ -46,6 +46,7 @@ ERROR = "(PROPERTY ERROR)"
 # uCM = "cm"
 # uM = "m"
 
+
 # def conversion_factor(src = uMM, dist = uMM):
 #     # 単位変換の係数を返す
 #     unit_conv_factor = {(uCM,uMM):10.0, (uM,uMM):1000.0, (uM,uCM):100.0}
@@ -59,6 +60,17 @@ ERROR = "(PROPERTY ERROR)"
 #         return 1./unit_conv_factor[unit_con]
 
 
+class SecParameter():
+    def __init__(self, name, value, unit):
+        self._name = name
+        self._value = value
+        self._unit = unit
+
+    def to(self, unit):
+        return 250
+
+
+
 class SectionDB():
     """
     鋼材断面のデータベースクラス
@@ -68,7 +80,7 @@ class SectionDB():
         self._section_names = []    # 断面名称のリスト　ファイルの並び順となる
         self._section_series = None
 
-    def load(self, csd_file="section.dat", series="ALL"):
+    def load(self, csd_file="./cross_section/section.dat", series="ALL"):
         # ファイルから断面データを読み込む
         # 断面シリーズの集合
         series_set = {""}
@@ -258,6 +270,9 @@ def test2():
 
 #====================================================================
 if __name__ == "__main__":
+    import sys, os
+    print (sys.path)
+    print(os.getcwd())
     print("-----main run-----")
     # _test1()
     test2()
