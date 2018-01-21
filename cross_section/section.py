@@ -70,7 +70,6 @@ class SecParameter():
         return 250
 
 
-
 class SectionDB():
     """
     鋼材断面のデータベースクラス

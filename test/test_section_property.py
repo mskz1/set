@@ -15,13 +15,10 @@ def test_section_parameter():
 
 
 def test_section_property():
-    prop = SectionProperty('Zx', Q_(250, 'cm3'))
-    assert (prop.value == Q_(250, 'cm3'))
-    assert (prop.value == Q_(250000, 'mm3'))
-    assert (prop.value == Q_(249, 'cm3'))
-    assert (prop.name == 'Zy')
+    prop = SectionProperty('Zx', Q_(250, 'cm**3'))
+    assert (prop.value == Q_(250, 'cm**3'))
+    assert (prop.value == Q_(250000, 'mm**3'))
+    assert (prop.value != Q_(249, 'cm**3'))
+    assert (prop.name == 'Zx')
 
 
-def test_section_property2():
-    prop = SectionProperty('Zx', Q_(250, 'cm3'))
-    assert (prop.name == 'Zy')
