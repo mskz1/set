@@ -16,6 +16,37 @@ CHANNEL_SERIES = "[-"
 
 ALL_SERIES = ["HS-", "HM-", "HW-", "KP-", "P-", "C-", "[-"]
 
+short_full_name = dict(HS15='H-150x75x5x7', HS17='H-175x90x5x8', HS19='H-198x99x4.5x7', HS20='H-200x100x5.5x8',
+                       HS24='H-248x124x5x8', HS25='H-250x125x6x9', HS29='H-298x149x5.5x8', HS30='H-300x150x6.5x9',
+                       HS34='H-346x174x6x9', HS35='H-350x175x7x11', HS39='H-396x199x7x11',
+                       HS40='H-400x200x8x13', HS44='H-446x199x8x12', HS45='H-450x200x9x14', HS49='H-496x199x9x14',
+                       HS50='H-500x200x10x16', HS59='H-596x199x10x15', HS60='H-600x200x11x17',
+
+                       HW100='H-100x100x6x8', HW125='H-125x125x6.5x9',
+                       HW150='H-150x150x7x10', HW175='H-175x175x7.5x11', HW200='H-200x200x8x12',
+                       HW250='H-250x250x9x14', HW300='H-300x300x10x15', HW350='H-350x350x12x19',
+                       HW400='H-400x400x13x21',
+
+                       HM148='H-148x100x6x9',
+                       HM194='H-194x150x6x9', HM244='H-244x175x7x11', HM294='H-294x200x8x12', HM340='H-340x250x9x14',
+                       HM390='H-390x300x10x16', HM440='H-440x300x11x18', HM488='H-488x300x11x18',
+                       HM582='H-582x300x12x17', HM588='H-588x300x12x20',
+
+                       MZ75='[-75x40x5x7', MZ100='[-100x50x5x7.5', MZ125='[-125x65x6x8',
+                       MZ150_1='[-150x75x6.5x10', MZ150_2='[-150x75x9x12.5',
+                       MZ180='[-180x75x7x10.5', MZ200_1='[-200x80x7.5x11', MZ200_2='[-200x90x8x13.5',
+
+                       P272_19='P-27.2x1.9', P272_23='P-27.2x2.3', P427_23='P-42.7x2.3',
+                       P486_23='P-48.6x2.3', P486_32='P-48.6x3.2', P605_23='P-60.5x2.3', P605_28='P-60.5x2.8',
+                       P605_32='P-60.5x3.2', P763_28='P-76.3x2.8', P763_32='P-76.3x3.2',
+                       P891_28='P-89.1x2.8', P891_32='P-89.1x3.2', P891_42='P-89.1x4.2',
+                       P1016_32='P-101.6x3.2', P1016_35='P-101.6x3.5', P1016_42='P-101.6x4.2',
+                       P1143_28='P-114.3x2.8', P1143_35='P-114.3x3.5', P1143_45='P-114.3x4.5', P1143_6='P-114.3x6',
+                       P1398_35='P-139.8x3.5', P1398_4='P-139.8x4', P1398_45='P-139.8x4.5', P1398_5='P-139.8x5',
+                       P1652_38='P-165.2x3.8', P1652_4='P-165.2x4', P1652_45='P-165.2x4.5', P1652_5='P-165.2x5',
+                       P1907_53='P-190.7x5.3'
+                       )
+
 # HS = "HS-"
 # HM = "HM-"
 # HW = "HW-"
@@ -60,10 +91,11 @@ uM = "m"
 #         return 1./unit_conv_factor[unit_con]
 
 
-class SecParameter():
-    '''
+class SecParameter:
+    """
     断面諸量データクラス　Pintを使わない試行
-    '''
+    """
+
     def __init__(self, name, value, unit):
         self._name = name
         self._value = value
@@ -95,7 +127,7 @@ class SecParameter():
             if c in '123456789':
                 pass
             else:
-                res+=c
+                res += c
         return res
 
     def get(self, unit=''):
@@ -111,7 +143,7 @@ class SecParameter():
         self._unit = unit
 
 
-class SectionDB():
+class SectionDB:
     """
     鋼材断面のデータベースクラス
     """
@@ -173,6 +205,7 @@ class SectionDB():
                     sec = Section(series_symbol, series_name, _prop, name_format)
                     sec.set_name(sec_name)
                     self._sections[sec_name] = sec
+                    # self._sections[short_name] = sec
                     self._section_names.append(sec_name)
         i_file.close()
 
@@ -193,7 +226,7 @@ class SectionDB():
         return res
 
 
-class Section():
+class Section:
     """
     鋼材断面クラス
     各種断面形状寸法、特性値を保持
@@ -250,7 +283,7 @@ class Section():
         return self._prop[prop_name]
 
 
-class SectionProperty():
+class SectionProperty:
     """
     断面特性データを保持するクラス
     """
