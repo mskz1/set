@@ -42,9 +42,9 @@ ERROR = "(PROPERTY ERROR)"
 # Zy = "Section modulus around y-axis"  # 断面係数Y軸まわり
 
 # 単位用定数
-# uMM = "mm"
-# uCM = "cm"
-# uM = "m"
+uMM = "mm"
+uCM = "cm"
+uM = "m"
 
 
 # def conversion_factor(src = uMM, dist = uMM):
@@ -61,22 +61,64 @@ ERROR = "(PROPERTY ERROR)"
 
 
 class SecParameter():
+    '''
+    断面諸量データクラス　Pintを使わない試行
+    '''
     def __init__(self, name, value, unit):
         self._name = name
         self._value = value
         self._unit = unit
 
-    def to(self, unit):
-        return 250
+    def _unit_convert_factor(self, unit):
+        unit_base_from = self._unit_base(self._unit)
+        unit_base_to = self._unit_base(unit)
+        if self._unit[-1] not in '123456789':
+            unit_dim = 1
+        else:
+            unit_dim = int(self._unit[-1])
+        if unit_base_from == uMM and unit_base_to == uCM:
+            return 0.1 ** unit_dim
+        if unit_base_from == uMM and unit_base_to == uM:
+            return 0.001 ** unit_dim
+        if unit_base_from == uCM and unit_base_to == uMM:
+            return 10. ** unit_dim
+        if unit_base_from == uCM and unit_base_to == uM:
+            return 0.01 ** unit_dim
+        if unit_base_from == uM and unit_base_to == uMM:
+            return 1000. ** unit_dim
+        if unit_base_from == uM and unit_base_to == uCM:
+            return 100. ** unit_dim
+
+    def _unit_base(self, unit):
+        res = ''
+        for c in unit:
+            if c in '123456789':
+                pass
+            else:
+                res+=c
+        return res
+
+    def get(self, unit=''):
+        if unit == '':
+            unit = self._unit
+        if unit == self._unit:
+            return self._value
+        else:
+            return self._value * self._unit_convert_factor(unit)
+
+    def set(self, value, unit):
+        self._value = value
+        self._unit = unit
 
 
 class SectionDB():
     """
     鋼材断面のデータベースクラス
     """
+
     def __init__(self):
-        self._sections = {}     # 断面データ
-        self._section_names = []    # 断面名称のリスト　ファイルの並び順となる
+        self._sections = {}  # 断面データ
+        self._section_names = []  # 断面名称のリスト　ファイルの並び順となる
         self._section_series = None
 
     def load(self, csd_file="./cross_section/section.dat", series="ALL"):
@@ -93,7 +135,7 @@ class SectionDB():
         else:
             target_series = series
 
-        #ファイルから読み込み
+        # ファイルから読み込み
         for line in lines:
             if line[0] != "#":
                 words = line.strip().split(",")
@@ -116,7 +158,7 @@ class SectionDB():
                 if (words[0] == series_symbol) and (words[0] in target_series):
                     prop_value = [s.strip() for s in words[1:]]
 
-                    #断面特性値のセット
+                    # 断面特性値のセット
                     _prop = {}
                     for i, _name in enumerate(prop_name):
                         _prop[_name] = prop_value[i]
@@ -148,11 +190,6 @@ class SectionDB():
         for sec_name in self._section_names:
             if self._sections[sec_name].series_symbol == series:
                 res.append(sec_name)
-        # for k, d in self._sections.items():
-        #     if d.series_symbol == series:
-        #         res.append(d.name)
-        #         # TODO:断面重量順（定義ファイルの順）に並べ替えたい->上記でOK
-        #         res.sort()
         return res
 
 
@@ -162,6 +199,7 @@ class Section():
     各種断面形状寸法、特性値を保持
     H形鋼、角形鋼管、鋼管、リップ付き軽量溝形鋼、溝形鋼など
     """
+
     def __init__(self, series_symbol, series_name, prop, name_form):
         """
         # 引数
@@ -216,6 +254,7 @@ class SectionProperty():
     """
     断面特性データを保持するクラス
     """
+
     def __init__(self, name="", value=Q_(0, "mm")):
         self._name = name
         self._value = value
@@ -233,7 +272,7 @@ class SectionProperty():
         self._value = val
 
 
-#------------------------------------------------------------------
+# ------------------------------------------------------------------
 # def _test1():
 #     sp_H = SectionProperty("H",100.0)
 #     #print(sp.value)
@@ -257,7 +296,7 @@ class SectionProperty():
 def test2():
     sec_db = SectionDB()
     sec_db.load()
-    #print(sec_db.get_list())
+    # print(sec_db.get_list())
     print(sec_db.get_list(H_HOSOHABA_SERIES))
     print(sec_db.get_list(H_HIROHABA_SERIES))
     print(sec_db.get_list(H_TYUUHABA_SERIES))
@@ -267,10 +306,11 @@ def test2():
     print(sec_db.get_list(CHANNEL_SERIES))
 
 
-#====================================================================
+# ====================================================================
 if __name__ == "__main__":
     import sys, os
-    print (sys.path)
+
+    print(sys.path)
     print(os.getcwd())
     print("-----main run-----")
     # _test1()

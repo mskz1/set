@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
-from unittest import TestCase
+# from unittest import TestCase
 
 __author__ = 'mskz'
 
+from cross_section.section import Section
 
-class TestSection(TestCase):
-    def test_set_name(self):
-        self.fail()
 
-    def test_name(self):
-        self.fail()
 
-    def test_get_prop(self):
-        self.fail()
