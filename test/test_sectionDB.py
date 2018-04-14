@@ -14,7 +14,7 @@ __author__ = 'mskz'
 
 class TestSectionDB(TestCase):
     def setUp(self):
-        print('*setup')
+        # print('*setup')
         self.sec_db = SectionDB()
         self.sec_db.load('/Users/mskz/PycharmProjects/set/cross_section/section.dat')
 
@@ -77,9 +77,15 @@ class TestSectionDB(TestCase):
                   '[-180x75x7x10.5', '[-200x80x7.5x11', '[-200x90x8x13.5']
 
         assert self.sec_db.get_list(H_HOSOHABA_SERIES) == hss
+        assert self.sec_db.get_list(H_TYUUHABA_SERIES) == hsm
 
     def test_get_section_shortname(self):
         print('*test3')
         h20 = self.sec_db.get_section(short_full_name['HS20'])
-        print(h20.name)
         assert h20.name == 'H-200x100x5.5x8'
+        assert h20.get_prop('Zx') == Q_(181, 'cm**3')
+        assert h20.get_prop('Ix').magnitude == 1810
+        assert h20.get_prop('Iy') == Q_(134, 'cm**4')
+        h244 = self.sec_db.get_section(short_full_name['HM244'])
+        assert h244.get_prop('An') == Q_(55.49, 'cm**2')
+
