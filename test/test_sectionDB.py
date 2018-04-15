@@ -6,7 +6,8 @@ from cross_section.section import short_full_name
 
 try:
     from cross_section import ureg, Q_
-except SystemError:
+# except SystemError:
+except ImportError:
     from __init__ import ureg, Q_
 
 __author__ = 'mskz'
