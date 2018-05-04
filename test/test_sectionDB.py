@@ -3,6 +3,8 @@ from unittest import TestCase
 
 from cross_section.section import SectionDB, H_HOSOHABA_SERIES, H_TYUUHABA_SERIES
 from cross_section.section import short_full_name
+import pytest
+import os
 
 try:
     from cross_section import ureg, Q_
@@ -17,10 +19,12 @@ class TestSectionDB(TestCase):
     def setUp(self):
         # print('*setup')
         self.sec_db = SectionDB()
-        self.sec_db.load('/Users/mskz/PycharmProjects/set/cross_section/section.dat')
+        # self.sec_db.load('/Users/mskz/PycharmProjects/set/cross_section/section.dat')
+        print(os.getcwd())
+        self.sec_db.load('./cross_section/section.dat')
 
     def test_get_section(self):
-        print('*test1')
+        # print('*test1')
         h20 = self.sec_db.get_section("H-200x100x5.5x8")
         self.assertEqual(h20.name, "H-200x100x5.5x8")
         self.assertEqual(h20.series_symbol, H_HOSOHABA_SERIES)
@@ -47,7 +51,7 @@ class TestSectionDB(TestCase):
         self.assertEqual(m150.get_prop("An"), Q_(23.71, "cm**2"))
 
     def test_get_list(self):
-        print('*test2')
+        # print('*test2')
         all_list = self.sec_db.get_list()
         hss = ['H-150x75x5x7', 'H-175x90x5x8', 'H-198x99x4.5x7', 'H-200x100x5.5x8', 'H-248x124x5x8', 'H-250x125x6x9',
                'H-298x149x5.5x8', 'H-300x150x6.5x9', 'H-346x174x6x9', 'H-350x175x7x11', 'H-396x199x7x11',
@@ -80,8 +84,8 @@ class TestSectionDB(TestCase):
         assert self.sec_db.get_list(H_HOSOHABA_SERIES) == hss
         assert self.sec_db.get_list(H_TYUUHABA_SERIES) == hsm
 
-    def test_get_section_shortname(self):
-        print('*test3')
+    def test_get_section_short_name(self):
+        # print('*test3')
         h20 = self.sec_db.get_section(short_full_name['HS20'])
         assert h20.name == 'H-200x100x5.5x8'
         assert h20.get_prop('Zx') == Q_(181, 'cm**3')
@@ -89,4 +93,8 @@ class TestSectionDB(TestCase):
         assert h20.get_prop('Iy') == Q_(134, 'cm**4')
         h244 = self.sec_db.get_section(short_full_name['HM244'])
         assert h244.get_prop('An') == Q_(55.49, 'cm**2')
+        h19 = self.sec_db.get_section(short_full_name['HS19'])
+        with pytest.raises(KeyError):
+            ae = h19.get_prop('Ae')
+
 
