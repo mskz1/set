@@ -18,7 +18,8 @@ ERROR_FOR_NO_SECTION_NAME = 'INVALID SECTION NAME'
 
 # 断面データベース生成
 db = SectionDB()
-db.load('./cross_section/section.dat')
+# db.load('C:/Users/user/PycharmProjects/set/cross_section/section.dat')
+db.load('C:/Users/00014149/PycharmProjects/set/cross_section/section.dat')
 
 
 def _strip_unit(src):
