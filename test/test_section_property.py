@@ -1,4 +1,5 @@
 # 断面諸量のテスト
+import pytest
 
 from cross_section.section import SecParameter
 from cross_section.section import SectionProperty
@@ -32,3 +33,4 @@ def test_section_property():
     assert (prop.value != Q_(249, 'cm**3'))
     assert (prop.name == 'Zx')
     assert prop.value.magnitude == 250.
+
