@@ -40,7 +40,8 @@ F8T = 'F8T'
 
 QA = 'QA'  # 許容せん断力
 TA = 'TA'  # 許容引張力
-
+LONG = 'LONG'
+SHORT = 'SHORT'
 LONG_TERM = 'LONG_TERM'  # 長期
 SHORT_TERM = 'SHORT_TERM'  # 短期
 
@@ -85,7 +86,7 @@ class ParameterError(Exception):
         return repr(self.value)
 
 
-def htb_spec(size=M16, prop=QA, term=LONG_TERM, strength=F10T):
+def htb_spec(size=M16, prop=QA, term=LONG, strength=F10T):
     """指定されたHTBの性能値を返す。
 
     サイズ(M16~M30)、性能名(QA,TA,DIA,HOLE_DIA)、長期・短期(LONG/SHORT)、HTB強度(F10T/F8T)を指定
@@ -98,9 +99,9 @@ def htb_spec(size=M16, prop=QA, term=LONG_TERM, strength=F10T):
             SPC = HTB_SPC_F8T
         actual_prop = ''
         if prop == QA:
-            if term == LONG_TERM:
+            if term == LONG:
                 actual_prop = 'Qal'
-            elif term == SHORT_TERM:
+            elif term == SHORT:
                 actual_prop = 'Qas'
         elif prop == TA:
             pass
