@@ -25,6 +25,7 @@ def test_bolt_spec():
     assert htb_spec(size='M27', prop='HOLE_DIA') == 30
 
     assert htb_spec(size='M16', prop='QA', term='LONG', strength='F8T') == 21.4
+    assert htb_spec(size='M27', prop='QA', term='LONG', strength='F8T') == 61.0
 
 
 def test_bolt_spec_short_long():
@@ -32,4 +33,8 @@ def test_bolt_spec_short_long():
         for size in HTB_SIZES:
             qal = htb_spec(size=size, prop='QA', term='LONG', strength=strg)
             qas = htb_spec(size=size, prop='QA', term='SHORT', strength=strg)
-            assert qas / qal == pytest.approx(1.5, abs=0.002)
+            assert qas / qal == pytest.approx(1.5, rel=0.01)
+        for size in HTB_SIZES:
+            tal = htb_spec(size=size, prop='TA', term='LONG', strength=strg)
+            tas = htb_spec(size=size, prop='TA', term='SHORT', strength=strg)
+            assert tas / tal == pytest.approx(1.5, rel=0.01)
