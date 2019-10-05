@@ -4,12 +4,11 @@ __author__ = 'mskz'
 import material
 
 from material import ureg, Q_
-
+from material import steel_spc
 from pytest import approx
 
 
 # from .. import ureg, Q_
-
 # try:
 #     from .. import ureg, Q_
 # except SystemError:
@@ -36,14 +35,9 @@ def test_material_steel():
     sm = material.Steel(F=Q_(32.5, 'kN/cm**2'))
     assert sm.F == Q_(325, 'N/mm**2')
 
+def test_material_1():
+    assert steel_spc(name='SS400',data_name='F') == 235
 
 
 
 
-
-    # if __name__ == '__main__':
-    #     from x_material import steel
-    #     print("F2 =", steel.F)
-    #     print("ftサンプル =", steel.ft(steel.F[steel.SN400]))
-    #     print("ヤング係数", steel.E)
-    #     # steel.ft()

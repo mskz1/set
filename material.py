@@ -3,6 +3,7 @@ __author__ = 'mskz'
 
 """ 材料定義など
 """
+"""材料に関するデータを返す関数"""
 
 from __init__ import ureg, Q_
 
@@ -13,6 +14,12 @@ from __init__ import ureg, Q_
 #     from __init__ import ureg, Q_
 
 import math
+
+STEEL_MATERIALS = ['SS400', 'SM490', 'SN490', 'STKR400', 'STK400', 'BCR295']
+SS400, SM490, SN490, STKR400, STK400, BCR295 = STEEL_MATERIALS
+
+PROPERTY_NAMES = ['F']
+F= PROPERTY_NAMES
 
 
 class Steel(object):
@@ -90,6 +97,11 @@ class Steel(object):
     @property
     def name(self):
         return self._name
+
+
+def steel_spc(name=SS400, data_name=F):
+    return
+
 
 
 # -------------------------test code
