@@ -2,7 +2,6 @@
 
 """ボルト／HTBに関するデータを返す関数"""
 
-
 HTB_SIZES = ['M16', 'M20', 'M22', 'M24', 'M27', 'M30']
 M16, M20, M22, M24, M27, M30 = HTB_SIZES  # アンパック代入
 
@@ -63,6 +62,8 @@ def htb_spec(size=M16, prop=QA, term=LONG, strength=F10T):
     サイズ(M16～M30)、性能名(QA/TA/DIA/HOLE_DIA)、長期・短期(LONG/SHORT)、HTB強度(F10T/F8T)を指定
     return : 許容せん断力(kN)、許容引張力(kN)、軸径(mm)、孔径(mm)"""
 
+    size, prop, term, strength = list(map(lambda w: w.upper(), [size, prop, term, strength]))
+
     if size in HTB_SIZES and prop in PROPERTY_NAMES and term in TERMS and strength in HTB_STRENGTHS:
         SPC = None
         if strength == F10T:
@@ -89,5 +90,3 @@ def htb_spec(size=M16, prop=QA, term=LONG, strength=F10T):
         return SPC[size][actual_prop]
     else:
         raise ParameterError('invalid parameter given')
-
-

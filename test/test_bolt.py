@@ -8,6 +8,7 @@ from bolt import HTB_SIZES, HTB_STRENGTHS
 
 def test_bolt_spec():
     assert htb_spec(size='M16', prop='QA', term='LONG') == 30.2
+    assert htb_spec(size='m16', prop='Qa', term='Long') == 30.2
     assert htb_spec(size='M16', prop='QA', term='SHORT') == 45.2
     assert htb_spec(size='M24', prop='TA', term='LONG') == 140.
     assert htb_spec(size='M24', prop='TA', term='SHORT') != 140.
@@ -20,12 +21,14 @@ def test_bolt_spec():
         htb_spec(size='M16', prop='Tu')
 
     assert htb_spec(size='M16', prop='DIA') == 16
+    assert htb_spec(size='m16', prop='dia') == 16
     assert htb_spec(size='M27', prop='DIA') == 27
     assert htb_spec(size='M16', prop='HOLE_DIA') == 18
     assert htb_spec(size='M27', prop='HOLE_DIA') == 30
 
     assert htb_spec(size='M16', prop='QA', term='LONG', strength='F8T') == 21.4
     assert htb_spec(size='M27', prop='QA', term='LONG', strength='F8T') == 61.0
+
 
 
 def test_bolt_spec_short_long():
