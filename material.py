@@ -18,8 +18,12 @@ import math
 STEEL_MATERIALS = ['SS400', 'SM490', 'SN490', 'STKR400', 'STK400', 'BCR295']
 SS400, SM490, SN490, STKR400, STK400, BCR295 = STEEL_MATERIALS
 
-PROPERTY_NAMES = ['F']
-F= PROPERTY_NAMES
+PROPERTY_NAMES = ['F', 'SIGMA_U']
+F, SIGUMA_U = PROPERTY_NAMES
+
+STEEL_SPC = {}
+STEEL_SPC[SS400] = {F: 235, SIGUMA_U: 400}
+
 
 
 class Steel(object):
@@ -99,9 +103,9 @@ class Steel(object):
         return self._name
 
 
-def steel_spc(name=SS400, data_name=F):
-    return
+def steel_spec(name=SS400, data_name=F, property_names=False, doc=False):
 
+    return STEEL_SPC[name][data_name]
 
 
 # -------------------------test code

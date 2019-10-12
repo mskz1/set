@@ -56,15 +56,23 @@ class ParameterError(Exception):
         return repr(self.value)
 
 
-def htb_spec(size=M16, prop=QA, term=LONG, strength=F10T):
+def htb_spec(size=M16, prop_name=QA, term=LONG, strength=F10T, property_names=False, doc=False):
     """指定されたHTBの性能値を返す。
 
     サイズ(M16～M30)、性能名(QA/TA/DIA/HOLE_DIA)、長期・短期(LONG/SHORT)、HTB強度(F10T/F8T)を指定
+    property_names=True でプロパティ名の一覧を返す
+    doc=True でdocstringを返す
     return : 許容せん断力(kN)、許容引張力(kN)、軸径(mm)、孔径(mm)"""
 
-    size, prop, term, strength = list(map(lambda w: w.upper(), [size, prop, term, strength]))
+    if doc:
+        return htb_spec.__doc__
 
-    if size in HTB_SIZES and prop in PROPERTY_NAMES and term in TERMS and strength in HTB_STRENGTHS:
+    if property_names:
+        return PROPERTY_NAMES
+
+    size, prop_name, term, strength = list(map(lambda w: w.upper(), [size, prop_name, term, strength]))
+
+    if size in HTB_SIZES and prop_name in PROPERTY_NAMES and term in TERMS and strength in HTB_STRENGTHS:
         SPC = None
         if strength == F10T:
             SPC = HTB_SPC_F10T
@@ -72,19 +80,19 @@ def htb_spec(size=M16, prop=QA, term=LONG, strength=F10T):
             SPC = HTB_SPC_F8T
 
         actual_prop = ''
-        if prop == QA:
+        if prop_name == QA:
             if term == LONG:
                 actual_prop = 'Qal'
             elif term == SHORT:
                 actual_prop = 'Qas'
-        elif prop == TA:
+        elif prop_name == TA:
             if term == LONG:
                 actual_prop = 'Tal'
             elif term == SHORT:
                 actual_prop = 'Tas'
-        elif prop == DIA:
+        elif prop_name == DIA:
             actual_prop = DIA
-        elif prop == HOLE_DIA:
+        elif prop_name == HOLE_DIA:
             actual_prop = HOLE_DIA
 
         return SPC[size][actual_prop]

@@ -4,7 +4,7 @@ __author__ = 'mskz'
 import material
 
 from material import ureg, Q_
-from material import steel_spc
+from material import steel_spec
 from pytest import approx
 
 
@@ -15,8 +15,9 @@ from pytest import approx
 #     from ..__init__ import ureg, Q_
 
 def test_pint():
-    l = Q_(1,'m')
+    l = Q_(1, 'm')
     assert l == Q_(100., 'cm')
+
 
 def test_material_steel():
     ss400 = material.Steel(F=Q_(235, 'N/mm**2'))
@@ -35,9 +36,7 @@ def test_material_steel():
     sm = material.Steel(F=Q_(32.5, 'kN/cm**2'))
     assert sm.F == Q_(325, 'N/mm**2')
 
+
 def test_material_1():
-    assert steel_spc(name='SS400',data_name='F') == 235
-
-
-
-
+    assert steel_spec(name='SS400', data_name='F') == 235
+    assert steel_spec(name='SS400', data_name='SIGMA_U') == 400
