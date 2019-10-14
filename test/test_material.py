@@ -40,3 +40,5 @@ def test_material_steel():
 def test_material_1():
     assert steel_spec(name='SS400', data_name='F') == 235
     assert steel_spec(name='SS400', data_name='SIGMA_U') == 400
+    assert steel_spec(name='SN490', data_name='F') == 325
+    assert steel_spec(name='SN490', data_name='SIGMA_U') == 490
