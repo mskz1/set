@@ -21,7 +21,7 @@ class TestSectionDB(TestCase):
         self.sec_db = SectionDB()
         # self.sec_db.load('/Users/mskz/PycharmProjects/set/cross_section/section.dat')
         print(os.getcwd())
-        self.sec_db.load('./cross_section/section.dat')
+        self.sec_db.load('../cross_section/section.dat')
 
     def test_get_section(self):
         # print('*test1')
