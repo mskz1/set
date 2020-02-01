@@ -51,7 +51,7 @@ short_full_name = dict(HS15='H-150x75x5x7', HS17='H-175x90x5x8', HS19='H-198x99x
                        C100_32='C-100x50x20x3.2', C120_23='C-120x60x20x2.3', C120_32='C-120x60x20x3.2',
                        C125_32='C-125x50x20x3.2',
 
-                        KP50_16='□P-50x50x1.6', KP50_23='□P-50x50x2.3', KP50_32='□P-50x50x3.2',
+                       KP50_16='□P-50x50x1.6', KP50_23='□P-50x50x2.3', KP50_32='□P-50x50x3.2',
                        KP60_16='□P-60x60x1.6', KP60_23='□P-60x60x2.3', KP60_32='□P-60x60x3.2',
                        KP75_16='□P-75x75x1.6', KP75_23='□P-75x75x2.3', KP75_32='□P-75x75x3.2', KP75_45='□P-75x75x4.5',
                        KP100_23='□P-100x100x2.3', KP100_32='□P-100x100x3.2', KP100_45='□P-100x100x4.5',
@@ -305,8 +305,12 @@ class Section:
     def series_symbol(self):
         return self._series_symbol
 
-    def get_prop(self, prop_name):
-        return self._prop[prop_name]
+    def get_prop(self, prop_name='ALL'):
+        if prop_name.upper()=='ALL':
+            return list(self._prop.keys())
+        else:
+            return self._prop[prop_name]
+
 
 
 class SectionProperty:

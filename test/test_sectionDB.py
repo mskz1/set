@@ -21,7 +21,7 @@ class TestSectionDB(TestCase):
         self.sec_db = SectionDB()
         # self.sec_db.load('/Users/mskz/PycharmProjects/set/cross_section/section.dat')
         print(os.getcwd())
-        self.sec_db.load('../cross_section/section.dat')
+        self.sec_db.load('./cross_section/section.dat')
 
     def test_get_section(self):
         # print('*test1')
@@ -97,4 +97,14 @@ class TestSectionDB(TestCase):
         with pytest.raises(KeyError):
             ae = h19.get_prop('Ae')
 
+    def test_get_all_prop(self):
+        h20 = self.sec_db.get_section(short_full_name['HS20'])
+        assert h20.get_prop('all') == ['H', 'B', 't1', 't2', 'r', 'An', 'W', 'Ix', 'Iy', 'ix', 'iy', 'Zx', 'Zy', 'ib',
+                                       'η', 'Zpx', 'Zpy']
+        # print(h20.get_prop('all'))
 
+        mz1 = self.sec_db.get_section(short_full_name['MZ100'])
+        assert mz1.get_prop('all') == ['H', 'B', 't1', 't2', 'r1', 'r2', 'An', 'W', 'Ix', 'Iy', 'ix', 'iy', 'Zx', 'Zy',
+                                       'Cy']
+
+        # print(mz1.get_prop('all'))

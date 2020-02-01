@@ -14,7 +14,7 @@ def test_section_parameter():
     # Pintを使わない場合を試作中
     Zx = SecParameter('Zx', 250, 'cm3')
     Ix = SecParameter('Ix', 3400., 'cm4')
-    assert (Zx.get('cm3') == 250)
+    assert Zx.get('cm3') == 250
     assert Zx.get() == 250
     assert Zx.get('mm3') == 250000
     Zx.set(100., 'cm3')
@@ -25,6 +25,7 @@ def test_section_parameter():
     assert H.get('m') == 0.4
 
 
+@pytest.mark.skip()
 def test_section_property():
     # Pintを使う場合
     prop = SectionProperty('Zx', Q_(250, 'cm**3'))
