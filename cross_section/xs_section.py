@@ -14,7 +14,47 @@ short_full_name = dict(HS15='H-150x75x5x7', HS17='H-175x90x5x8', HS19='H-198x99x
                        HM148='H-148x100x6x9',
                        HM194='H-194x150x6x9', HM244='H-244x175x7x11', HM294='H-294x200x8x12', HM340='H-340x250x9x14',
                        HM390='H-390x300x10x16', HM440='H-440x300x11x18', HM488='H-488x300x11x18',
-                       HM582='H-582x300x12x17', HM588='H-588x300x12x20')
+                       HM582='H-582x300x12x17', HM588='H-588x300x12x20',
+                       MZ75='[-75x40x5x7', MZ100='[-100x50x5x7.5', MZ125='[-125x65x6x8',
+                       MZ150_1='[-150x75x6.5x10', MZ150_2='[-150x75x9x12.5',
+                       MZ180='[-180x75x7x10.5', MZ200_1='[-200x80x7.5x11', MZ200_2='[-200x90x8x13.5',
+
+                       P272_19='P-27.2x1.9', P272_23='P-27.2x2.3', P427_23='P-42.7x2.3',
+                       P486_23='P-48.6x2.3', P486_32='P-48.6x3.2', P605_23='P-60.5x2.3', P605_28='P-60.5x2.8',
+                       P605_32='P-60.5x3.2', P763_28='P-76.3x2.8', P763_32='P-76.3x3.2',
+                       P891_28='P-89.1x2.8', P891_32='P-89.1x3.2', P891_42='P-89.1x4.2',
+                       P1016_32='P-101.6x3.2', P1016_35='P-101.6x3.5', P1016_42='P-101.6x4.2',
+                       P1143_28='P-114.3x2.8', P1143_35='P-114.3x3.5', P1143_45='P-114.3x4.5', P1143_6='P-114.3x6',
+                       P1398_35='P-139.8x3.5', P1398_4='P-139.8x4', P1398_45='P-139.8x4.5', P1398_5='P-139.8x5',
+                       P1652_38='P-165.2x3.8', P1652_4='P-165.2x4', P1652_45='P-165.2x4.5', P1652_5='P-165.2x5',
+                       P1907_53='P-190.7x5.3',
+
+                       C60_16='C-60x30x10x1.6', C60_23='C-60x30x10x2.3', C75_16='C-75x45x15x1.6',
+                       C75_23='C-75x45x15x2.3', C100_16='C-100x50x20x1.6', C100_23='C-100x50x20x2.3',
+                       C100_32='C-100x50x20x3.2', C120_23='C-120x60x20x2.3', C120_32='C-120x60x20x3.2',
+                       C125_32='C-125x50x20x3.2',
+
+                       KP50_16='□P-50x50x1.6', KP50_23='□P-50x50x2.3', KP50_32='□P-50x50x3.2',
+                       KP60_16='□P-60x60x1.6', KP60_23='□P-60x60x2.3', KP60_32='□P-60x60x3.2',
+                       KP75_16='□P-75x75x1.6', KP75_23='□P-75x75x2.3', KP75_32='□P-75x75x3.2', KP75_45='□P-75x75x4.5',
+                       KP100_23='□P-100x100x2.3', KP100_32='□P-100x100x3.2', KP100_45='□P-100x100x4.5',
+                       KP100_6='□P-100x100x6.0', KP125_32='□P-125x125x3.2', KP125_45='□P-125x125x4.5',
+                       KP125_6='□P-125x125x6.0', KP125_9='□P-125x125x9.0', KP150_45='□P-150x150x4.5',
+                       KP150_6='□P-150x150x6.0', KP150_9='□P-150x150x9.0', KP175_45='□P-175x175x4.5',
+                       KP175_6='□P-175x175x6.0', KP175_9='□P-175x175x9.0',
+                       KP200_45='□P-200x200x4.5', KP200_6='□P-200x200x6.0', KP200_8='□P-200x200x8.0',
+                       KP200_9='□P-200x200x9.0',
+                       KP60_30_16='□P-60x30x1.6', KP60_30_23='□P-60x30x2.3', KP60_30_32='□P-60x30x3.2',
+                       KP75_45_16='□P-75x45x1.6', KP75_45_23='□P-75x45x2.3', KP75_45_32='□P-75x45x3.2',
+                       KP100_50_16='□P-100x50x1.6', KP100_50_23='□P-100x50x2.3', KP100_50_32='□P-100x50x3.2',
+                       KP100_50_45='□P-100x50x4.5',
+                       KP125_75_23='□P-125x75x2.3', KP_125_75_32='□P-125x75x3.2', KP_125_75_45='□P-125x75x4.5',
+                       KP_125_75_6='□P-125x75x6.0', KP_150_75_32='□P-150x75x3.2', KP_150_75_45='□P-150x75x4.5',
+                       KP_150_100_32='□P-150x100x3.2', KP_150_100_45='□P-150x100x4.5', KP_150_100_6='□P-150x100x6.0',
+                       KP200_100_45='□P-200x100x4.5', KP200_100_6='□P-200x100x6.0',
+                       KP200_150_45='□P-200x150x4.5', KP200_150_6='□P-200x150x6.0', KP200_150_9='□P-200x150x9.0',
+                       KP250_150_45='□P-250x150x4.5', KP250_150_6='□P-250x150x6.0', KP250_150_9='□P-250x150x9.0'
+                       )
 
 section_property = {}
 section_property[short_full_name['HS20']] = dict(H=200, An=26.67, Ix=1810, Iy=134, ix=8.23, iy=2.24, Zx=181, Zy=26.7)
@@ -200,12 +240,16 @@ UNIT,mm,mm,mm,mm,mm,mm,cm**2,kgf/m,cm**4,cm**4,cm,cm,cm**3,cm**3,cm
 """
 
 
-
-
-# PROPERTY,   H,  B,  t1, t2, r,   An ,   W ,    Ix,  Iy , ix,   iy,  Zx,  Zy,  ib,  η,   Zpx, Zpy
-# HS-,      200,100, 5.5,  8, 8, 26.67,  20.9, 1810,  134, 8.23, 2.24, 181,26.7, 2.63, 6.57, 205,41.6
-
 def xs_section_name(short_name):
+    """
+    短縮名から、フル名称を返す。
+    'x'が含まれている場合は、フル名称としてそのまま返す。
+    :param short_name:
+    :return:
+    """
+    # 文字列
+    if 'x' in short_name:
+        return short_name
     try:
         return short_full_name[short_name.upper()]
     except KeyError:
@@ -213,6 +257,33 @@ def xs_section_name(short_name):
 
 
 def xs_section_property(name, property_name=None):
+    """
+    断面名称と断面特性名から、断面特性値を返す
+    :param name:
+    :param property_name:
+    :return:
+    """
+    try:
+        full_name = short_full_name[name]
+    except KeyError:
+        full_name = name
+    db = make_all_section_db()
+    try:
+        if property_name is not None:
+            return db[full_name][0][property_name]
+        else:
+            return db[full_name][1]
+    except KeyError:
+        return 'Section_Not_Defined'
+
+
+def tmp_xs_section_property(name, property_name=None):
+    """
+    仮実装　:不要？？
+    :param name:
+    :param property_name:
+    :return:
+    """
     try:
         full_name = short_full_name[name]
     except KeyError:
@@ -225,6 +296,11 @@ def xs_section_property(name, property_name=None):
 
 
 def make_section_db(csv_data):
+    """
+    CSV文字列を受け取り、断面名称をキー、断面特性データ（辞書）と断面特性名（リスト）のリストを値とする辞書を返す。
+    :param csv_data:
+    :return:
+    """
     db = {}
     series_data, format_data, property_name_data, unit_data = [], [], [], []
     series_sym = ""
@@ -258,5 +334,15 @@ def make_section_db(csv_data):
             for n, u, v in zip(property_name_data, unit_data, prop_data):
                 sec_d[n] = float(v)
             db[section_name] = [sec_d, property_name_unit]
+    return db
 
+
+def make_all_section_db():
+    db = make_section_db(HS_SEC_DATA)
+    db.update(make_section_db(HM_SEC_DATA))
+    db.update(make_section_db(HW_SEC_DATA))
+    db.update(make_section_db(KP_SEC_DATA))
+    db.update(make_section_db(P_SEC_DATA))
+    db.update(make_section_db(C_SEC_DATA))
+    db.update(make_section_db(MZ_SEC_DATA))
     return db
