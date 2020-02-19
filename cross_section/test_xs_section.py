@@ -17,11 +17,12 @@ def test_xs_H_sec_name():
 def test_xs_section_property():
     # assert set(xs_section_property('HS20')) == {'H', 'An', 'Ix', 'Iy', 'ix', 'iy', 'Zx', 'Zy'}
     assert xs_section_property('HS20') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
-                                        'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
-                                        'ib(cm)', 'η(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
+                                           'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
+                                           'ib(cm)', 'η(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
     assert xs_section_property('HS20', 'An') == 26.67  # unit:cm2
     assert xs_section_property('H-200x100x5.5x8', 'An') == 26.67  # unit:cm2
-    assert xs_section_property('H-199x199x5x5','An') == 'Section_Not_Defined'
+    assert xs_section_property('H-199x199x5x5', 'An') == 'Section_Not_Defined'
+
 
 def test_csv_parse():
     hs = make_section_db(HS_SEC_DATA)
@@ -50,4 +51,10 @@ def test_xs_all_section_db():
     assert db[xs_section_name('KP100_32')][0]['An'] == 12.13
 
 
-
+def test_convert_dict_to_CSharp_dict():
+    for k, v in short_full_name.items():
+        kw = '"{}"'.format(k)
+        vw = '"{}"'.format(v)
+        # print('"{}","{}"'.format(k, v), end='')
+        print("{", kw, ",", vw, "}", end='')
+        print(',', end='')
