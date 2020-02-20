@@ -19,9 +19,20 @@ def test_xs_section_property():
     assert xs_section_property('HS20') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
                                            'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
                                            'ib(cm)', 'η(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
+    assert xs_section_property('HS20', 'ALL') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)',
+                                 'W(kgf/m)', 'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
+                                           'ib(cm)', 'η(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
+
     assert xs_section_property('HS20', 'An') == 26.67  # unit:cm2
     assert xs_section_property('H-200x100x5.5x8', 'An') == 26.67  # unit:cm2
     assert xs_section_property('H-199x199x5x5', 'An') == 'Section_Not_Defined'
+
+    db = make_all_section_db()
+    assert xs_section_property('HS20', 'An',db) == 26.67  # unit:cm2
+
+
+
+
 
 
 def test_csv_parse():

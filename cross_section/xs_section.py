@@ -256,7 +256,7 @@ def xs_section_name(short_name):
         return 'Section_Not_Defined'
 
 
-def xs_section_property(name, property_name=None):
+def xs_section_property(name, property_name=None, db=None):
     """
     断面名称と断面特性名から、断面特性値を返す
     :param name:
@@ -267,8 +267,12 @@ def xs_section_property(name, property_name=None):
         full_name = short_full_name[name]
     except KeyError:
         full_name = name
-    db = make_all_section_db()
+    if db is None:
+        db = make_all_section_db()
     try:
+        if property_name == 'ALL':
+            return db[full_name][1]
+
         if property_name is not None:
             return db[full_name][0][property_name]
         else:
