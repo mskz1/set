@@ -271,14 +271,14 @@ def xs_section_property(name, property_name=None, db=None):
         db = make_all_section_db()
     try:
         if property_name == 'ALL':
-            return db[full_name][1]
+            return str(db[full_name][1])
 
         if property_name is not None:
             return db[full_name][0][property_name]
         else:
             return db[full_name][1]
     except KeyError:
-        return 'Section_Not_Defined'
+        return 'NO_DATA'
 
 
 def tmp_xs_section_property(name, property_name=None):
