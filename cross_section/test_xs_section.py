@@ -11,6 +11,9 @@ def test_xs_H_sec_name():
     # with pytest.raises(KeyError):
     #     xs_section_name('hs100')
     assert xs_section_name('hs100') == 'Section_Not_Defined'
+    assert xs_section_name('C100_23') == 'C-100x50x20x2.3'
+    assert xs_section_name('C100*23') == 'C-100x50x20x2.3'
+    assert xs_section_name('KP100*32') == '□P-100x100x3.2'
 
 
 # @pytest.mark.skip()
@@ -18,19 +21,17 @@ def test_xs_section_property():
     # assert set(xs_section_property('HS20')) == {'H', 'An', 'Ix', 'Iy', 'ix', 'iy', 'Zx', 'Zy'}
     assert xs_section_property('HS20') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
                                            'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
-                                           'ib(cm)', 'η(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
-    assert xs_section_property('HS20', 'ALL') == "['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)', 'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)', 'ib(cm)', 'η(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']"
+                                           'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
+    assert xs_section_property('HS20',
+                               'ALL') == "['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)', 'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)', 'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']"
 
     assert xs_section_property('HS20', 'An') == 26.67  # unit:cm2
     assert xs_section_property('H-200x100x5.5x8', 'An') == 26.67  # unit:cm2
-    assert xs_section_property('H-199x199x5x5', 'An') == 'Section_Not_Defined'
+    # assert xs_section_property('H-199x199x5x5', 'An') == 'Section_Not_Defined'
+    assert xs_section_property('H-199x199x5x5', 'An') == 'NO_DATA'
 
     db = make_all_section_db()
-    assert xs_section_property('HS20', 'An',db) == 26.67  # unit:cm2
-
-
-
-
+    assert xs_section_property('HS20', 'An', db) == 26.67  # unit:cm2
 
 
 def test_csv_parse():
@@ -38,7 +39,7 @@ def test_csv_parse():
     assert hs['H-200x100x5.5x8'][0]['An'] == 26.67
     assert hs['H-600x200x11x17'][1] == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
                                         'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
-                                        'ib(cm)', 'η(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
+                                        'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
     # pprint.pprint(hs)
     ps = make_section_db(P_SEC_DATA)
     # pprint.pprint(ps)
@@ -60,6 +61,7 @@ def test_xs_all_section_db():
     assert db[xs_section_name('KP100_32')][0]['An'] == 12.13
 
 
+@pytest.mark.skip('ディクショナリのコンバート時のみ実行用')
 def test_convert_dict_to_CSharp_dict():
     for k, v in short_full_name.items():
         kw = '"{}"'.format(k)
@@ -67,3 +69,14 @@ def test_convert_dict_to_CSharp_dict():
         # print('"{}","{}"'.format(k, v), end='')
         print("{", kw, ",", vw, "}", end='')
         print(',', end='')
+
+
+@pytest.mark.skip('ディクショナリのキー追加の試作用')
+def test_short_full_name_dict_modify():
+    items = list(short_full_name.items())
+    for item in items:
+        k, v = item[0], item[1]
+        if '_' in k:
+            new_k = k.replace('_', '*')
+            short_full_name[new_k] = v
+    pprint.pprint(short_full_name)

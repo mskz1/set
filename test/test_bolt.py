@@ -52,3 +52,8 @@ def test_get_all_property_names():
     # print(htb_spec(property_names=True))
     assert htb_spec(property_names=True) == ['QA', 'TA', 'DIA', 'HOLE_DIA']
 
+def test_xs_bolt():
+    # xl_set udf 検討
+    assert xs_bolt_spec('F10T','M16','QAS') == 45.2
+
+    pass

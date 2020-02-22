@@ -15,6 +15,7 @@ short_full_name = dict(HS15='H-150x75x5x7', HS17='H-175x90x5x8', HS19='H-198x99x
                        HM194='H-194x150x6x9', HM244='H-244x175x7x11', HM294='H-294x200x8x12', HM340='H-340x250x9x14',
                        HM390='H-390x300x10x16', HM440='H-440x300x11x18', HM488='H-488x300x11x18',
                        HM582='H-582x300x12x17', HM588='H-588x300x12x20',
+
                        MZ75='[-75x40x5x7', MZ100='[-100x50x5x7.5', MZ125='[-125x65x6x8',
                        MZ150_1='[-150x75x6.5x10', MZ150_2='[-150x75x9x12.5',
                        MZ180='[-180x75x7x10.5', MZ200_1='[-200x80x7.5x11', MZ200_2='[-200x90x8x13.5',
@@ -44,6 +45,7 @@ short_full_name = dict(HS15='H-150x75x5x7', HS17='H-175x90x5x8', HS19='H-198x99x
                        KP175_6='□P-175x175x6.0', KP175_9='□P-175x175x9.0',
                        KP200_45='□P-200x200x4.5', KP200_6='□P-200x200x6.0', KP200_8='□P-200x200x8.0',
                        KP200_9='□P-200x200x9.0',
+
                        KP60_30_16='□P-60x30x1.6', KP60_30_23='□P-60x30x2.3', KP60_30_32='□P-60x30x3.2',
                        KP75_45_16='□P-75x45x1.6', KP75_45_23='□P-75x45x2.3', KP75_45_32='□P-75x45x3.2',
                        KP100_50_16='□P-100x50x1.6', KP100_50_23='□P-100x50x2.3', KP100_50_32='□P-100x50x3.2',
@@ -55,13 +57,17 @@ short_full_name = dict(HS15='H-150x75x5x7', HS17='H-175x90x5x8', HS19='H-198x99x
                        KP200_150_45='□P-200x150x4.5', KP200_150_6='□P-200x150x6.0', KP200_150_9='□P-200x150x9.0',
                        KP250_150_45='□P-250x150x4.5', KP250_150_6='□P-250x150x6.0', KP250_150_9='□P-250x150x9.0'
                        )
-
-section_property = {}
-section_property[short_full_name['HS20']] = dict(H=200, An=26.67, Ix=1810, Iy=134, ix=8.23, iy=2.24, Zx=181, Zy=26.7)
+# dict生成でキーワード引数に*が使えないため、ここで追加。
+items = list(short_full_name.items())
+for item in items:
+    k, v = item[0], item[1]
+    if '_' in k:
+        new_k = k.replace('_', '*')
+        short_full_name[new_k] = v
 
 HS_SEC_DATA = """SERIES,HS-,H形鋼細幅,H-HxBxt1xt2
 FORMAT,H-,H,B,t1,t2
-PROPERTY, H,  B, t1, t2,  r,    An,     W,    Ix,    Iy, ix, iy,    Zx,    Zy, ib,    η,   Zpx, Zpy 
+PROPERTY, H,  B, t1, t2,  r,    An,     W,    Ix,    Iy, ix, iy,    Zx,    Zy, ib,   eta,   Zpx, Zpy 
 UNIT,    mm, mm, mm, mm, mm, cm**2, kgf/m, cm**4, cm**4, cm, cm, cm**3, cm**3, cm,   -, cm**3, cm**3
 HS-,150,75,5,7,8,17.85,14,666,49.5,6.11,1.66,88.8,13.2,1.96,5.6,102,20.7
 HS-,175,90,5,8,8,22.9,18,1210,97.5,7.26,2.06,138,21.7,2.39,5.81,156,33.6
@@ -84,7 +90,7 @@ HS-,600,200,11,17,13,131.7,103,75600,2270,24,4.16,2520,227,5.09,8.98,2900,358"""
 
 HM_SEC_DATA = """SERIES,HM-,H形鋼中幅,H-HxBxt1xt2
 FORMAT,H-,H,B,t1,t2
-PROPERTY, H,  B, t1, t2, r , An ,   W ,  Ix, Iy , ix, iy,  Zx,  Zy, ib, η, Zpx, Zpy 
+PROPERTY, H,  B, t1, t2, r , An ,   W ,  Ix, Iy , ix, iy,  Zx,  Zy, ib, eta, Zpx, Zpy 
 UNIT,    mm, mm, mm, mm, mm, cm**2, kgf/m, cm**4, cm**4, cm, cm, cm**3, cm**3, cm,   -, cm**3, cm**3
 HM-,148,100,6,9,8,26.35,20.7,1000,150,6.17,2.39,135,30.1,2.71,4.46,154,46.4
 HM-,194,150,6,9,8,38.11,29.9,2630,507,8.3,3.65,271,67.6,4.09,5.87,301,103
@@ -100,7 +106,7 @@ HM-,588,300,12,20,13,187.2,147,114000,9010,24.7,6.94,3890,601,8.01,7.85,4350,921
 
 HW_SEC_DATA = """SERIES,HW-,H形鋼広幅,H-HxBxt1xt2
 FORMAT,H-,H,B,t1,t2
-PROPERTY, H,  B, t1, t2, r , An ,   W ,  Ix, Iy , ix, iy,  Zx,  Zy, ib, η, Zpx, Zpy 
+PROPERTY, H,  B, t1, t2, r , An ,   W ,  Ix, Iy , ix, iy,  Zx,  Zy, ib, eta, Zpx, Zpy 
 UNIT,    mm, mm, mm, mm, mm, cm**2, kgf/m, cm**4, cm**4, cm, cm, cm**3, cm**3, cm,   m/m, cm**3, cm**3
 HW-,100,100,6,8,8,21.59,16.9,378,134,4.2,2.49,75.6,26.7,2.75,3.44,86.4,41
 HW-,125,125,6.5,9,8,30,23.6,839,293,5.29,3.13,134,46.9,3.45,3.84,152,71.7
@@ -242,7 +248,7 @@ UNIT,mm,mm,mm,mm,mm,mm,cm**2,kgf/m,cm**4,cm**4,cm,cm,cm**3,cm**3,cm
 
 def xs_section_name(short_name):
     """
-    短縮名から、フル名称を返す。
+    短縮名（略名）から、フル名称を返す。
     'x'が含まれている場合は、フル名称としてそのまま返す。
     :param short_name:
     :return:
@@ -259,9 +265,14 @@ def xs_section_name(short_name):
 def xs_section_property(name, property_name=None, db=None):
     """
     断面名称と断面特性名から、断面特性値を返す
+    断面名称が略名の時は内部でフル名称に変換する。
+    断面特性のディクショナリデータが渡されたらそれを用い、渡されなければ生成する。
+    property_name = 'ALL'の時は、登録されている断面特性名全てを文字列で返す。
     :param name:
     :param property_name:
-    :return:
+    :param db:
+    :return:数値あるいは文字列
+    UDF用公開関数
     """
     try:
         full_name = short_full_name[name]
@@ -279,24 +290,6 @@ def xs_section_property(name, property_name=None, db=None):
             return db[full_name][1]
     except KeyError:
         return 'NO_DATA'
-
-
-def tmp_xs_section_property(name, property_name=None):
-    """
-    仮実装　:不要？？
-    :param name:
-    :param property_name:
-    :return:
-    """
-    try:
-        full_name = short_full_name[name]
-    except KeyError:
-        full_name = name
-
-    if property_name is not None:
-        return section_property[full_name][property_name]
-    else:
-        return section_property[full_name].keys()
 
 
 def make_section_db(csv_data):
@@ -342,6 +335,10 @@ def make_section_db(csv_data):
 
 
 def make_all_section_db():
+    """
+    複数の鋼材種別のデータをまとめたデータを生成し、返す。
+    :return:
+    """
     db = make_section_db(HS_SEC_DATA)
     db.update(make_section_db(HM_SEC_DATA))
     db.update(make_section_db(HW_SEC_DATA))
