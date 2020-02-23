@@ -80,3 +80,7 @@ def test_short_full_name_dict_modify():
             new_k = k.replace('_', '*')
             short_full_name[new_k] = v
     pprint.pprint(short_full_name)
+
+# @pytest.mark.skip('helpの出力確認')
+def test_xs_section_help():
+    print(xs_section_help())

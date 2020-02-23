@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from bolt import htb_spec
+from bolt import htb_spec, bolt_spec, xs_bolt_spec
 from bolt import ParameterError
 from bolt import HTB_SIZES, HTB_STRENGTHS
 
@@ -52,6 +52,13 @@ def test_get_all_property_names():
     # print(htb_spec(property_names=True))
     assert htb_spec(property_names=True) == ['QA', 'TA', 'DIA', 'HOLE_DIA']
 
+
+def test_bolt_spec():
+    assert bolt_spec('6.8','M16','Qal') == 30.
+    # TODO:WIP
+
+
+@pytest.mark.skip('未実装のため')
 def test_xs_bolt():
     # xl_set udf 検討
     assert xs_bolt_spec('F10T','M16','QAS') == 45.2

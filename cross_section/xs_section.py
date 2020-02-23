@@ -246,6 +246,13 @@ UNIT,mm,mm,mm,mm,mm,mm,cm**2,kgf/m,cm**4,cm**4,cm,cm,cm**3,cm**3,cm
 """
 
 
+def xs_section_help():
+    return """登録されている鉄骨断面の断面性能などを返します。
+xsSectionName()
+
+xsSectionProperty()"""
+
+
 def xs_section_name(short_name):
     """
     短縮名（略名）から、フル名称を返す。

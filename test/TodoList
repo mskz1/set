@@ -67,13 +67,26 @@ xs_bolt():ボルトの仕様を返す。径・断面積・許容耐力
     xs_bolt()    ->  UDF:xsBolt(種別、サイズ、データ名)　
         　種別（F10T/F8T/6TB/4TB)、サイズ（M12/M16/M20...）、データ名（QAS/QAL/DIA/）
 
+
+
+
 xs_steel_f():鋼材の許容応力度を返す。許容引張・許容圧縮・許容曲げ・・・
-xs_steel():鋼材の仕様を返す。ヤング係数・ポアソン比・・・・
-xs_weld():溶接関係
+    -> UDF:xsSteel_ft(鋼材種別）
+            鋼材種別（400/490/...）
+    -> UDF:xsSteel_fb(鋼材種別、）
+    -> UDF:xsSteel_fc(鋼材種別、細長比）
+
+xs_steel():鋼材の仕様を返す。ヤング係数、ポアソン比、
+xs_weld():溶接関係  fillet weld 隅肉溶接
+    隅肉サイズ、溶接長さ　から溶接部の耐力を返す
+    -> UDF:xsWeldFillet_T（鋼材種別、
 xs_con():コンクリートの仕様を返す。
 
-rebarモジュール
-xs_bar():鉄筋の仕様を返す。
+rebarモジュール  鉄筋:rebar　　断面積、周長、最外径、許容応力度、
+xs_bar():鉄筋の仕様を返す。　
 -> UDF xsRebar(種別、サイズ、データ名)
+        種別（SD295A/SD345/）　サイズ（D10/D13/D16/.../R9/R12/R）データ名（An/phi/TAL）
+
 
 xs_calc_***:計算関係？
+    単純はりの公式など？
