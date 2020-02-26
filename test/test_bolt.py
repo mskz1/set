@@ -54,7 +54,7 @@ def test_get_all_property_names():
 
 
 def test_bolt_spec():
-    assert bolt_spec('6.8','M16','Qal') == 30.
+    assert bolt_spec('6.8','M16','Qal') == 25.4
     # TODO:WIP
 
 

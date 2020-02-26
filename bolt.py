@@ -25,9 +25,8 @@ Qas = 'Qas'  # 短期許容せん断力(kN) １面せん断
 Tal = 'Tal'  # 長期許容引張力(kN)
 Tas = 'Tas'  # 短期期許容引張力(kN)
 
-Qu = 'Qu'   # 最大せん断耐力（kN）
-Tu = 'Tu'   # 最大引張耐力（kN）
-
+Qu = 'Qu'  # 最大せん断耐力（kN）
+Tu = 'Tu'  # 最大引張耐力（kN）
 
 # 寸法はmm, 力はkN
 # HTB_M16 = dict(name='M16', dia=16, hole_dia=18, Qal=30.2, Qas=45.3)
@@ -51,15 +50,14 @@ HTB_SPC_F8T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 48.2, Qas: 72.3, Tal: 113., Tas:
 HTB_SPC_F8T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 61.0, Qas: 91.5, Tal: 143., Tas: 214.}
 HTB_SPC_F8T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 75.4, Qas: 113., Tal: 177., Tas: 265.}
 
-# 6.8 BOLT  データの設定
+# 6.8 BOLT  データの設定 AIJ S規準
 BOLT_SPC_6T = {}
-BOLT_SPC_6T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 0, Qas: 0, Tal: 0, Tas: 0}
+BOLT_SPC_6T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 25.4, Qas: 38.1, Tal: 44.0, Tas: 65.9}
+BOLT_SPC_6T[M20] = {DIA: 20, HOLE_DIA: 21, Qal: 39.6, Qas: 59.4, Tal: 68.6, Tas: 103.0}
 
 # 4.8 BOLT データの設定
 BOLT_SPC_4T = {}
 BOLT_SPC_6T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 0, Qas: 0, Tal: 0, Tas: 0}
-
-
 
 
 class ParameterError(Exception):
@@ -113,7 +111,8 @@ def htb_spec(size=M16, prop_name=QA, term=LONG, strength=F10T, property_names=Fa
     else:
         raise ParameterError('invalid parameter given')
 
-def bolt_spec(strength,size,prop_name):
+
+def bolt_spec(strength, size, prop_name):
     b_spc = {}
     if strength.upper() == '6.8':
         b_spc = BOLT_SPC_6T
