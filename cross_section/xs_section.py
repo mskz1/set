@@ -282,13 +282,13 @@ def xs_section_property(name, property_name=None, db=None):
     UDF用公開関数
     """
     try:
-        full_name = short_full_name[name]
+        full_name = short_full_name[name.upper()]
     except KeyError:
         full_name = name
     if db is None:
         db = make_all_section_db()
     try:
-        if property_name == 'ALL':
+        if property_name is not None and property_name.upper() == 'ALL':
             return str(db[full_name][1])
 
         if property_name is not None:

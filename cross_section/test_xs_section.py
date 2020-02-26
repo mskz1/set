@@ -32,6 +32,7 @@ def test_xs_section_property():
 
     db = make_all_section_db()
     assert xs_section_property('HS20', 'An', db) == 26.67  # unit:cm2
+    assert xs_section_property('hs20', 'An', db) == 26.67  # unit:cm2
 
 
 def test_csv_parse():
