@@ -4,6 +4,7 @@
 
 HTB_SIZES = ['M16', 'M20', 'M22', 'M24', 'M27', 'M30']
 M16, M20, M22, M24, M27, M30 = HTB_SIZES  # アンパック代入
+M12 = 'M12'
 
 HTB_STRENGTHS = ['F8T', 'F10T']
 F8T, F10T = HTB_STRENGTHS
@@ -35,29 +36,34 @@ Tu = 'Tu'  # 最大引張耐力（kN）
 # HTB F10T データの設定
 HTB_SPC_F10T = {}
 HTB_SPC_F10T[M16] = {DIA: 16, HOLE_DIA: 18, Qal: 30.2, Qas: 45.2, Tal: 62.3, Tas: 93.5}
-HTB_SPC_F10T[M20] = {DIA: 20, HOLE_DIA: 22, Qal: 47.1, Qas: 70.7, Tal: 97.4, Tas: 146.}
-HTB_SPC_F10T[M22] = {DIA: 22, HOLE_DIA: 24, Qal: 57.0, Qas: 85.5, Tal: 118., Tas: 177.}
-HTB_SPC_F10T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 67.9, Qas: 102., Tal: 140., Tas: 210.}
-HTB_SPC_F10T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 85.9, Qas: 129., Tal: 177., Tas: 266.}
-HTB_SPC_F10T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 106., Qas: 159., Tal: 219., Tas: 329.}
+HTB_SPC_F10T[M20] = {DIA: 20, HOLE_DIA: 22, Qal: 47.1, Qas: 70.7, Tal: 97.4, Tas: 146.0}
+HTB_SPC_F10T[M22] = {DIA: 22, HOLE_DIA: 24, Qal: 57.0, Qas: 85.5, Tal: 118.0, Tas: 177.0}
+HTB_SPC_F10T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 67.9, Qas: 102.0, Tal: 140.0, Tas: 210.0}
+HTB_SPC_F10T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 85.9, Qas: 129.0, Tal: 177.0, Tas: 266.0}
+HTB_SPC_F10T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 106.0, Qas: 159.0, Tal: 219.0, Tas: 329.0}
 
 # HTB F8T データの設定
 HTB_SPC_F8T = {}
 HTB_SPC_F8T[M16] = {DIA: 16, HOLE_DIA: 18, Qal: 21.4, Qas: 32.1, Tal: 50.3, Tas: 75.4}
-HTB_SPC_F8T[M20] = {DIA: 20, HOLE_DIA: 22, Qal: 33.5, Qas: 50.2, Tal: 78.5, Tas: 117.}
-HTB_SPC_F8T[M22] = {DIA: 22, HOLE_DIA: 24, Qal: 40.5, Qas: 60.8, Tal: 95.0, Tas: 142.}
-HTB_SPC_F8T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 48.2, Qas: 72.3, Tal: 113., Tas: 169.}
-HTB_SPC_F8T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 61.0, Qas: 91.5, Tal: 143., Tas: 214.}
-HTB_SPC_F8T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 75.4, Qas: 113., Tal: 177., Tas: 265.}
+HTB_SPC_F8T[M20] = {DIA: 20, HOLE_DIA: 22, Qal: 33.5, Qas: 50.2, Tal: 78.5, Tas: 117.0}
+HTB_SPC_F8T[M22] = {DIA: 22, HOLE_DIA: 24, Qal: 40.5, Qas: 60.8, Tal: 95.0, Tas: 142.0}
+HTB_SPC_F8T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 48.2, Qas: 72.3, Tal: 113.0, Tas: 169.0}
+HTB_SPC_F8T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 61.0, Qas: 91.5, Tal: 143.0, Tas: 214.0}
+HTB_SPC_F8T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 75.4, Qas: 113.0, Tal: 177.0, Tas: 265.0}
 
 # 6.8 BOLT  データの設定 AIJ S規準
 BOLT_SPC_6T = {}
+BOLT_SPC_6T[M12] = {DIA: 12, HOLE_DIA: 13, Qal: 13.6, Qas: 20.4, Tal: 23.6, Tas: 35.4}
 BOLT_SPC_6T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 25.4, Qas: 38.1, Tal: 44.0, Tas: 65.9}
-BOLT_SPC_6T[M20] = {DIA: 20, HOLE_DIA: 21, Qal: 39.6, Qas: 59.4, Tal: 68.6, Tas: 103.0}
+BOLT_SPC_6T[M20] = {DIA: 20, HOLE_DIA: 21.5, Qal: 39.6, Qas: 59.4, Tal: 68.6, Tas: 103.0}
+BOLT_SPC_6T[M22] = {DIA: 22, HOLE_DIA: 23.5, Qal: 49.0, Qas: 73.5, Tal: 84.8, Tas: 127.0}
+BOLT_SPC_6T[M24] = {DIA: 24, HOLE_DIA: 25.5, Qal: 57.1, Qas: 85.6, Tal: 98.8, Tas: 148.0}
+BOLT_SPC_6T[M27] = {DIA: 27, HOLE_DIA: 28.5, Qal: 74.2, Qas: 111.0, Tal: 129.0, Tas: 193.0}
+BOLT_SPC_6T[M30] = {DIA: 30, HOLE_DIA: 31.5, Qal: 90.7, Qas: 136.0, Tal: 157.0, Tas: 236.0}
 
 # 4.8 BOLT データの設定
 BOLT_SPC_4T = {}
-BOLT_SPC_6T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 0, Qas: 0, Tal: 0, Tas: 0}
+BOLT_SPC_4T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 0, Qas: 0, Tal: 0, Tas: 0}
 
 
 class ParameterError(Exception):

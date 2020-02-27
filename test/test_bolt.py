@@ -54,13 +54,18 @@ def test_get_all_property_names():
 
 
 def test_bolt_spec():
-    assert bolt_spec('6.8','M16','Qal') == 25.4
+    assert bolt_spec('6.8', 'M16', 'Qal') == 25.4
+    assert bolt_spec('6.8', 'M16', 'Qas') == 38.1
+    assert bolt_spec('6.8', 'M24', 'Qas') == 85.6
+    assert bolt_spec('6.8', 'M27', 'Tas') == 193.0
+    assert bolt_spec('4.8', 'M16', 'Qal') == 14.5
+
     # TODO:WIP
 
 
 @pytest.mark.skip('未実装のため')
 def test_xs_bolt():
     # xl_set udf 検討
-    assert xs_bolt_spec('F10T','M16','QAS') == 45.2
+    assert xs_bolt_spec('F10T', 'M16', 'QAS') == 45.2
 
     pass
