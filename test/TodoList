@@ -77,9 +77,11 @@ xs_steel_f():鋼材の許容応力度を返す。許容引張・許容圧縮・�
     -> UDF:xsSteel_fc(鋼材種別、細長比）
 
 xs_steel():鋼材の仕様を返す。ヤング係数、ポアソン比、
+
 xs_weld():溶接関係  fillet weld 隅肉溶接
     隅肉サイズ、溶接長さ　から溶接部の耐力を返す
     -> UDF:xsWeldFillet_T（鋼材種別、
+
 xs_con():コンクリートの仕様を返す。
 
 rebarモジュール  鉄筋:rebar　　断面積、周長、最外径、許容応力度、

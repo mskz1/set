@@ -63,7 +63,7 @@ BOLT_SPC_6T[M30] = {DIA: 30, HOLE_DIA: 31.5, Qal: 90.7, Qas: 136.0, Tal: 157.0, 
 
 # 4.8 BOLT データの設定
 BOLT_SPC_4T = {}
-BOLT_SPC_4T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 0, Qas: 0, Tal: 0, Tas: 0}
+BOLT_SPC_4T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 0., Qas: 0, Tal: 0, Tas: 0}
 
 
 class ParameterError(Exception):
