@@ -63,7 +63,13 @@ BOLT_SPC_6T[M30] = {DIA: 30, HOLE_DIA: 31.5, Qal: 90.7, Qas: 136.0, Tal: 157.0, 
 
 # 4.8 BOLT データの設定
 BOLT_SPC_4T = {}
-BOLT_SPC_4T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 0., Qas: 0, Tal: 0, Tas: 0}
+BOLT_SPC_4T[M12] = {DIA: 12, HOLE_DIA: 13, Qal: 7.79, Qas: 11.7, Tal: 13.5, Tas: 20.2}
+BOLT_SPC_4T[M16] = {DIA: 16, HOLE_DIA: 17, Qal: 14.5, Qas: 21.8, Tal: 25.1, Tas: 37.7}
+BOLT_SPC_4T[M20] = {DIA: 20, HOLE_DIA: 21.5, Qal: 22.6, Qas: 33.9, Tal: 39.2, Tas: 58.8}
+BOLT_SPC_4T[M22] = {DIA: 22, HOLE_DIA: 23.5, Qal: 28.0, Qas: 42.0, Tal: 48.5, Tas: 72.7}
+BOLT_SPC_4T[M24] = {DIA: 24, HOLE_DIA: 25.5, Qal: 32.6, Qas: 48.9, Tal: 56.5, Tas: 84.7}
+BOLT_SPC_4T[M27] = {DIA: 27, HOLE_DIA: 28.5, Qal: 42.4, Qas: 63.6, Tal: 73.4, Tas: 110.0}
+BOLT_SPC_4T[M30] = {DIA: 30, HOLE_DIA: 31.5, Qal: 51.8, Qas: 77.7, Tal: 89.8, Tas: 135.0}
 
 
 class ParameterError(Exception):
@@ -130,7 +136,7 @@ def bolt_spec(strength, size, prop_name):
 def xs_bolt_spec(strength, size, prop_name):
     """
 
-    :param strength:  F10T,F8T,6TB,4TB,
+    :param strength:  F10T, F8T, 6TB, 4TB
     :param size:
     :param prop_name:
     :return:

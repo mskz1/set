@@ -59,6 +59,10 @@ def test_bolt_spec():
     assert bolt_spec('6.8', 'M24', 'Qas') == 85.6
     assert bolt_spec('6.8', 'M27', 'Tas') == 193.0
     assert bolt_spec('4.8', 'M16', 'Qal') == 14.5
+    assert bolt_spec('4.8', 'M16', 'Tal') == 25.1
+    assert bolt_spec('4.8', 'M24', 'Qas') == 48.9
+    assert bolt_spec('4.8', 'M12', 'Qas') == 11.7
+    assert bolt_spec(strength='4.8', size='M12', prop_name='Qas') == 11.7
 
     # TODO:WIP
 

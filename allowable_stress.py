@@ -29,4 +29,3 @@ def steel_fc(F=235, lambda_=100):
     else:
         fc = 0.277 * F / ((lambda_ / c_s_ratio) ** 2)
     return fc
-
