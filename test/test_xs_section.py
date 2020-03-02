@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest, pprint
 
-from .xs_section import *
+from cross_section.xs_section import *
 
 
 def test_xs_H_sec_name():
@@ -14,6 +14,8 @@ def test_xs_H_sec_name():
     assert xs_section_name('C100_23') == 'C-100x50x20x2.3'
     assert xs_section_name('C100*23') == 'C-100x50x20x2.3'
     assert xs_section_name('KP100*32') == '□P-100x100x3.2'
+    assert xs_section_name('HM700') == 'H-700x300x13x24'
+    assert xs_section_name('HM900') == 'H-900x300x16x28'
 
 
 # @pytest.mark.skip()
@@ -33,6 +35,10 @@ def test_xs_section_property():
     db = make_all_section_db()
     assert xs_section_property('HS20', 'An', db) == 26.67  # unit:cm2
     assert xs_section_property('hs20', 'An', db) == 26.67  # unit:cm2
+    assert xs_section_property('hm900', 'An', db) == 305.8
+    assert xs_section_property('hm900', 'Ix', db) == 404000
+    assert xs_section_property('hm900', 'Zx', db) == 8990
+
 
 
 def test_csv_parse():
