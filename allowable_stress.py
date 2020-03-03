@@ -48,7 +48,7 @@ def steel_fc_bsl(F=235, lambda_=100):
     return fc
 
 
-def steel_fb_aij(self, lb, i, C, h, Af):
+def steel_fb_aij(F=235, lb=0, i=0, C=1, h=100, Af=30):
     """
     許容曲げ応力度を返す　式(5.7,5.8)
     N/mm2
@@ -58,14 +58,28 @@ def steel_fb_aij(self, lb, i, C, h, Af):
     h :はりのせい(mm)
     Af :圧縮フランジの断面積(mm2)
     """
+    fb1 = steel_fb1_aij(F, lb, i, C)
+    fb2 = steel_fb2_aij(F, lb, h, Af)
 
-    fb1 = (1.0 - 0.4 * (lb / i) ** 2 / C / self._lamuda ** 2) * self.ft
+    return min(max(fb1, fb2), steel_ft(F))
 
-    fb2 = self.fb2_aij(lb, h, Af)
 
-    fb = min(max(fb1, fb2), self.ft)
+def steel_fb_bsl(F=235, lb=0, i=0, C=1, h=100, Af=30):
+    fb1 = steel_fb1_bsl(F, lb, i, C)
+    fb2 = steel_fb2_aij(F, lb, h, Af)
 
-    return fb
+    return min(max(fb1, fb2), steel_ft(F))
+
+
+def steel_fb1_aij(F=235, lb=0, i=0, C=1):
+    c_s_ratio = (((math.pi ** 2 * E) / (0.6 * F)) ** 0.5)
+
+    return (1.0 - 0.4 * (lb / i) ** 2 / C / c_s_ratio ** 2) * steel_ft(F)
+
+
+def steel_fb1_bsl(F=235, lb=0, i=0, C=1):
+    c_s_ratio = 1500. / (F / 1.5) ** 0.5
+    return F * ((2. / 3.) - (4. / 15.) * (lb / i) ** 2 / (C * c_s_ratio ** 2))
 
 
 def steel_fb2_aij(F=235, lb=0, h=100, Af=30):
