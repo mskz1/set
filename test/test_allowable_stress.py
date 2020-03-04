@@ -2,16 +2,23 @@
 import pytest
 
 from allowable_stress import steel_ft, steel_fc_aij, steel_fc_bsl, steel_fb2_aij, steel_fb_aij, steel_fb1_aij, \
-    steel_fb_bsl
+    steel_fb_bsl, steel_fs
 
 
 def test_steel_ft():
     # print(steel_ft(235))
     # print(steel_ft(235)*1.5)
     assert steel_ft(F=235) == 235 / 1.5
+    assert steel_ft(F=235) == pytest.approx(156.6667)
     assert steel_ft(F=235) * 1.5 == 235.
     assert steel_ft(F=325) == 325 / 1.5
     assert steel_ft(F=325) * 1.5 == 325.
+
+
+def test_steel_fs():
+    assert steel_fs(F=235) == 235 / (1.5 * 3 ** 0.5)
+    assert steel_fs(F=235) == pytest.approx(90.4515)
+    assert steel_fs(F=325) == pytest.approx(125.0926)
 
 
 def test_steel_fc():
@@ -76,6 +83,7 @@ def test_steel_fb():
     assert steel_fb_aij(F=235, lb=7000, i=52, C=1, h=500, Af=200 * 16) == pytest.approx(81.3714)
 
 
+# @pytest.mark.skip('時間がかかるため')
 def test_steel_fb_compare_aij_to_bsl():
     for f in [235, 325]:
         for lb in range(0, 9000, 500):
@@ -85,3 +93,11 @@ def test_steel_fb_compare_aij_to_bsl():
                         for af in [50 * 7.5, 100 * 8, 150 * 12, 200 * 12]:
                             assert steel_fb_aij(F=f, lb=lb, i=i, C=c, h=h, Af=af) == pytest.approx(
                                 steel_fb_bsl(F=f, lb=lb, i=i, C=c, h=h, Af=af), abs=0.17)
+
+
+# @pytest.mark.skip('doc_test')
+def test_steel_f_doc():
+    print(steel_ft.__doc__)
+    print(steel_fs.__doc__)
+    print(steel_fc_bsl.__doc__)
+    print(steel_fb_bsl.__doc__)

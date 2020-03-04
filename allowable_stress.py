@@ -9,9 +9,18 @@ def steel_ft(F=235):
     """
     長期許容引張応力度(N/mm2)を返す。
     :param F: F値(N/mm2)
-    :return:
+    :return: ft(N/mm2)
     """
     return F / 1.5
+
+def steel_fs(F=235):
+    """
+    長期許容せん応力度（N/mm2）を返す。
+    :param F:
+    :return:
+    """
+    return F/(1.5*3**0.5)
+
 
 
 def steel_fc_aij(F=235, lambda_=100):
@@ -65,6 +74,15 @@ def steel_fb_aij(F=235, lb=0, i=0, C=1, h=100, Af=30):
 
 
 def steel_fb_bsl(F=235, lb=0, i=0, C=1, h=100, Af=30):
+    """
+    許容曲げ応力度を返す　式(5.7,5.8)
+    N/mm2
+    lb :圧縮フランジの支点間距離(mm)
+    i :断面二次半径(mm)
+    C : 補正係数
+    h :はりのせい(mm)
+    Af :圧縮フランジの断面積(mm2)
+    """
     fb1 = steel_fb1_bsl(F, lb, i, C)
     fb2 = steel_fb2_aij(F, lb, h, Af)
 
