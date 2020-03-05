@@ -93,7 +93,7 @@ def test_xs_section_help():
     print(xs_section_help())
 
 
-# @pytest.mark.skip('出力確認')
+@pytest.mark.skip('出力確認')
 def test_xs_section_registered_all_names():
     db = make_all_section_db()
     # print(xs_section_all_data(db))
@@ -102,3 +102,7 @@ def test_xs_section_registered_all_names():
     print(xs_section_all_data(db, ['P']))
     print(xs_section_all_data(db, ['C']))
     print(xs_section_all_data(db, ['[']))
+
+def test_make_short_name():
+    db = make_all_section_db()
+    make_short_name(db)

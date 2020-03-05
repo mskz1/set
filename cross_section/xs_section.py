@@ -273,9 +273,6 @@ def xs_section_all_data(db, sr=None):
     return ", ".join(res)
 
 
-
-
-
 def xs_section_help():
     return """登録されている鉄骨断面の断面性能などを返します。
 xsSectionName()
@@ -384,3 +381,12 @@ def make_all_section_db():
     db.update(make_section_db(C_SEC_DATA))
     db.update(make_section_db(MZ_SEC_DATA))
     return db
+
+
+def make_short_name(db):
+    names = db.keys()
+    for name in names:
+        if name[0] == 'P':
+            d, t = name[2:].split('x')
+            sh_name = 'P'+d+'*'+t
+            print(sh_name)
