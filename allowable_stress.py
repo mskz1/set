@@ -13,14 +13,14 @@ def steel_ft(F=235):
     """
     return F / 1.5
 
+
 def steel_fs(F=235):
     """
     長期許容せん応力度（N/mm2）を返す。
     :param F:
     :return:
     """
-    return F/(1.5*3**0.5)
-
+    return F / (1.5 * 3 ** 0.5)
 
 
 def steel_fc_aij(F=235, lambda_=100):
@@ -91,7 +91,6 @@ def steel_fb_bsl(F=235, lb=0, i=0, C=1, h=100, Af=30):
 
 def steel_fb1_aij(F=235, lb=0, i=0, C=1):
     c_s_ratio = (((math.pi ** 2 * E) / (0.6 * F)) ** 0.5)
-
     return (1.0 - 0.4 * (lb / i) ** 2 / C / c_s_ratio ** 2) * steel_ft(F)
 
 

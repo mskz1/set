@@ -260,6 +260,22 @@ UNIT,mm,mm,mm,mm,mm,mm,cm**2,kgf/m,cm**4,cm**4,cm,cm,cm**3,cm**3,cm
 L_SEC_DATA = """"""
 
 
+def xs_section_all_data(db, sr=None):
+    """dbに登録されている断面の名称を返す"""
+    all_sr = ['H', '□', 'P', 'C', '[']
+    if not sr:
+        sr = all_sr
+    res = []
+    names = db.keys()
+    for name in names:
+        if name[0] in sr:
+            res.append(name)
+    return ", ".join(res)
+
+
+
+
+
 def xs_section_help():
     return """登録されている鉄骨断面の断面性能などを返します。
 xsSectionName()
@@ -285,7 +301,7 @@ def xs_section_name(short_name):
 
 def xs_section_property(name, property_name=None, db=None):
     """
-    断面名称と断面特性名から、断面特性値を返す
+    断面名称と断面特性名から、断面特性値を返す。
     断面名称が略名の時は内部でフル名称に変換する。
     断面特性のディクショナリデータが渡されたらそれを用い、渡されなければ生成する。
     property_name = 'ALL'の時は、登録されている断面特性名全てを文字列で返す。

@@ -40,7 +40,6 @@ def test_xs_section_property():
     assert xs_section_property('hm900', 'Zx', db) == 8990
 
 
-
 def test_csv_parse():
     hs = make_section_db(HS_SEC_DATA)
     assert hs['H-200x100x5.5x8'][0]['An'] == 26.67
@@ -88,6 +87,18 @@ def test_short_full_name_dict_modify():
             short_full_name[new_k] = v
     pprint.pprint(short_full_name)
 
-# @pytest.mark.skip('helpの出力確認')
+
+@pytest.mark.skip('helpの出力確認')
 def test_xs_section_help():
     print(xs_section_help())
+
+
+# @pytest.mark.skip('出力確認')
+def test_xs_section_registered_all_names():
+    db = make_all_section_db()
+    # print(xs_section_all_data(db))
+    print(xs_section_all_data(db, ('H')))
+    print(xs_section_all_data(db, ['□']))
+    print(xs_section_all_data(db, ['P']))
+    print(xs_section_all_data(db, ['C']))
+    print(xs_section_all_data(db, ['[']))
