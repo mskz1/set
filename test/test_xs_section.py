@@ -105,4 +105,4 @@ def test_xs_section_registered_all_names():
 
 def test_make_short_name():
     db = make_all_section_db()
-    make_short_name(db)
+    pprint.pprint(make_short_name(db))

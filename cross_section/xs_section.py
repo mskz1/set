@@ -385,8 +385,22 @@ def make_all_section_db():
 
 def make_short_name(db):
     names = db.keys()
+    res = {}
+    hs = ['H-150x75x5x7', 'H-175x90x5x8', 'H-198x99x4.5x7', 'H-200x100x5.5x8', 'H-248x124x5x8', 'H-250x125x6x9',
+          'H-298x149x5.5x8', 'H-300x150x6.5x9', 'H-346x174x6x9', 'H-350x175x7x11', 'H-396x199x7x11', 'H-400x200x8x13',
+          'H-446x199x8x12', 'H-450x200x9x14', 'H-496x199x9x14', 'H-500x200x10x16', 'H-596x199x10x15', 'H-600x200x11x17']
     for name in names:
+        if name in hs:
+            sh_name = 'HS' + name[2:4]
+            res[sh_name] = name
         if name[0] == 'P':
-            d, t = name[2:].split('x')
-            sh_name = 'P'+d+'*'+t
-            print(sh_name)
+            # name = name.replace('-', '').replace('x', '*').replace('.', '')
+            sh_name = name.replace('-', '').replace('x', '*')
+            res[sh_name] = name
+        if name[0] == '□':
+            sh_name = name.replace('□', 'K').replace('-', '').replace('x', '*')
+            if sh_name.endswith('.0'):
+                sh_name = sh_name[:-2]
+            res[sh_name] = name
+
+    return res
