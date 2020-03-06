@@ -390,8 +390,12 @@ def make_short_name(db):
           'H-298x149x5.5x8', 'H-300x150x6.5x9', 'H-346x174x6x9', 'H-350x175x7x11', 'H-396x199x7x11', 'H-400x200x8x13',
           'H-446x199x8x12', 'H-450x200x9x14', 'H-496x199x9x14', 'H-500x200x10x16', 'H-596x199x10x15', 'H-600x200x11x17']
     for name in names:
-        if name in hs:
-            sh_name = 'HS' + name[2:4]
+        # if name in hs:
+        #     sh_name = 'HS' + name[2:4]
+        #     res[sh_name] = name
+        if name[0] == 'H':
+            h, w, t1, t2 = name[2:].split('x')
+            sh_name = 'H' + h + '*' + w
             res[sh_name] = name
         if name[0] == 'P':
             # name = name.replace('-', '').replace('x', '*').replace('.', '')
@@ -402,5 +406,15 @@ def make_short_name(db):
             if sh_name.endswith('.0'):
                 sh_name = sh_name[:-2]
             res[sh_name] = name
+        if name[0] == 'C':
+            h, w, l, t = name[2:].split('x')
+            sh_name = 'C' + h + '*' + w + '*' + t
+            res[sh_name] = name
+        if name[0] == '[':
+            h,w,t1,t2 = name[2:].split('x')
+            sh_name = 'MZ'+h+'*'+w
+            # TODO 150x75 2種類対応
+            res[sh_name]=name
+
 
     return res
