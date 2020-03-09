@@ -5,39 +5,60 @@ from cross_section.xs_section import *
 
 
 def test_xs_H_sec_name():
-    assert xs_section_name('HS20') == 'H-200x100x5.5x8'
-    assert xs_section_name('HS15') == 'H-150x75x5x7'
-    assert xs_section_name('hs15') == 'H-150x75x5x7'
+    # assert xs_section_name('HS20') == 'H-200x100x5.5x8'
+    assert xs_section_name('H200*100') == 'H-200x100x5.5x8'
+    # assert xs_section_name('HS15') == 'H-150x75x5x7'
+    assert xs_section_name('H150*75') == 'H-150x75x5x7'
+    # assert xs_section_name('hs15') == 'H-150x75x5x7'
+    assert xs_section_name('h150*75') == 'H-150x75x5x7'
     # with pytest.raises(KeyError):
     #     xs_section_name('hs100')
-    assert xs_section_name('hs100') == 'Section_Not_Defined'
-    assert xs_section_name('C100_23') == 'C-100x50x20x2.3'
-    assert xs_section_name('C100*23') == 'C-100x50x20x2.3'
-    assert xs_section_name('KP100*32') == '□P-100x100x3.2'
-    assert xs_section_name('HM700') == 'H-700x300x13x24'
-    assert xs_section_name('HM900') == 'H-900x300x16x28'
+    # assert xs_section_name('hs100') == 'Section_Not_Defined'
+    assert xs_section_name('h100*50') == 'Section_Not_Defined'
+    # assert xs_section_name('C100_23') == 'C-100x50x20x2.3'
+    assert xs_section_name('C100*50*2.3') == 'C-100x50x20x2.3'
+    # assert xs_section_name('C100*23') == 'C-100x50x20x2.3'
+    # assert xs_section_name('KP100*32') == '□P-100x100x3.2'
+    assert xs_section_name('KP100*100*3.2') == '□P-100x100x3.2'
+    # assert xs_section_name('HM700') == 'H-700x300x13x24'
+    assert xs_section_name('H700*300') == 'H-700x300x13x24'
+    # assert xs_section_name('HM900') == 'H-900x300x16x28'
+    assert xs_section_name('H900*300') == 'H-900x300x16x28'
 
 
 # @pytest.mark.skip()
 def test_xs_section_property():
     # assert set(xs_section_property('HS20')) == {'H', 'An', 'Ix', 'Iy', 'ix', 'iy', 'Zx', 'Zy'}
-    assert xs_section_property('HS20') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
+    # assert xs_section_property('HS20') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
+    #                                        'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
+    #                                        'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
+    assert xs_section_property('H200*100') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
                                            'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
                                            'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
-    assert xs_section_property('HS20',
+
+
+    # assert xs_section_property('HS20',
+    #                            'ALL') == "['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)', 'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)', 'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']"
+    assert xs_section_property('H200*100',
                                'ALL') == "['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)', 'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)', 'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']"
 
-    assert xs_section_property('HS20', 'An') == 26.67  # unit:cm2
+    # assert xs_section_property('HS20', 'An') == 26.67  # unit:cm2
+    assert xs_section_property('H200*100', 'An') == 26.67  # unit:cm2
     assert xs_section_property('H-200x100x5.5x8', 'An') == 26.67  # unit:cm2
     # assert xs_section_property('H-199x199x5x5', 'An') == 'Section_Not_Defined'
     assert xs_section_property('H-199x199x5x5', 'An') == 'NO_DATA'
 
     db = make_all_section_db()
-    assert xs_section_property('HS20', 'An', db) == 26.67  # unit:cm2
-    assert xs_section_property('hs20', 'An', db) == 26.67  # unit:cm2
-    assert xs_section_property('hm900', 'An', db) == 305.8
-    assert xs_section_property('hm900', 'Ix', db) == 404000
-    assert xs_section_property('hm900', 'Zx', db) == 8990
+    # assert xs_section_property('HS20', 'An', db) == 26.67  # unit:cm2
+    assert xs_section_property('H200*100', 'An', db) == 26.67  # unit:cm2
+    # assert xs_section_property('hs20', 'An', db) == 26.67  # unit:cm2
+    assert xs_section_property('h200*100', 'An', db) == 26.67  # unit:cm2
+    # assert xs_section_property('hm900', 'An', db) == 305.8
+    assert xs_section_property('h900*300', 'An', db) == 305.8
+    # assert xs_section_property('hm900', 'Ix', db) == 404000
+    assert xs_section_property('h900*300', 'Ix', db) == 404000
+    # assert xs_section_property('hm900', 'Zx', db) == 8990
+    assert xs_section_property('h900*300', 'Zx', db) == 8990
 
 
 def test_csv_parse():
@@ -61,10 +82,12 @@ def test_xs_all_section_db():
     assert db['H-200x100x5.5x8'][0]['An'] == 26.67
     assert db['P-89.1x2.8'][0]['An'] == 7.59
     assert db['[-100x50x5x7.5'][0]['An'] == 11.92
-    assert db[xs_section_name('hs15')][0]['An'] == 17.85
+    # assert db[xs_section_name('hs15')][0]['An'] == 17.85
+    assert db[xs_section_name('h150*75')][0]['An'] == 17.85
     assert db[xs_section_name('H-150x75x5x7')][0]['An'] == 17.85
     assert db[xs_section_name('□P-100x100x3.2')][0]['An'] == 12.13
-    assert db[xs_section_name('KP100_32')][0]['An'] == 12.13
+    # assert db[xs_section_name('KP100_32')][0]['An'] == 12.13
+    assert db[xs_section_name('KP100*100*3.2')][0]['An'] == 12.13
 
 
 @pytest.mark.skip('ディクショナリのコンバート時のみ実行用')
@@ -105,4 +128,4 @@ def test_xs_section_registered_all_names():
 
 def test_make_short_name():
     db = make_all_section_db()
-    pprint.pprint(make_short_name(db))
+    # pprint.pprint(make_short_name(db))
