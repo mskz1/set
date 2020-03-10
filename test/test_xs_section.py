@@ -34,9 +34,8 @@ def test_xs_section_property():
     #                                        'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
     #                                        'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
     assert xs_section_property('H200*100') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
-                                           'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
-                                           'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
-
+                                               'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
+                                               'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
 
     # assert xs_section_property('HS20',
     #                            'ALL') == "['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)', 'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)', 'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']"
@@ -127,6 +126,8 @@ def test_xs_section_registered_all_names():
     print(xs_section_all_data(db, ['C']))
     print(xs_section_all_data(db, ['[']))
 
+
+# @pytest.mark.skip('出力確認')
 def test_make_short_name():
     db = make_all_section_db()
-    # pprint.pprint(make_short_name(db))
+    pprint.pprint(make_short_name(db))
