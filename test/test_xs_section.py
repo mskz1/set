@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import pytest, pprint
+import pytest
+import pprint
 
 from cross_section.xs_section import *
 
