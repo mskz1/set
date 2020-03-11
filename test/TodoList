@@ -4,7 +4,7 @@ TODOリスト
 ■断面モジュール    section.py  xs_section.py(pintなし)
 xs_section.py
 ✔ H形鋼中幅　断面追加
-□ 山形　断面追加
+✔  山形　断面追加
 □ 2C形, 2[形　断面追加
 □ 略称名を全て表示？
 □ 登録断面名を全て表示？

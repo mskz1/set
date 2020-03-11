@@ -59,6 +59,9 @@ def test_xs_section_property():
     assert xs_section_property('h900*300', 'Ix', db) == 404000
     # assert xs_section_property('hm900', 'Zx', db) == 8990
     assert xs_section_property('h900*300', 'Zx', db) == 8990
+    assert xs_section_property('L65*65*6', 'An', db) == 7.527
+    assert xs_section_property('L100*10', 'An', db) == 19
+    assert xs_section_property('L130*9', 'Zx', db) == 38.7
 
 
 def test_csv_parse():
@@ -111,12 +114,12 @@ def test_short_full_name_dict_modify():
     pprint.pprint(short_full_name)
 
 
-@pytest.mark.skip('helpの出力確認')
+@pytest.mark.skip('helpの出力確認用')
 def test_xs_section_help():
     print(xs_section_help())
 
 
-@pytest.mark.skip('出力確認')
+@pytest.mark.skip('出力確認用')
 def test_xs_section_registered_all_names():
     db = make_all_section_db()
     # print(xs_section_all_data(db))
@@ -125,9 +128,17 @@ def test_xs_section_registered_all_names():
     print(xs_section_all_data(db, ['P']))
     print(xs_section_all_data(db, ['C']))
     print(xs_section_all_data(db, ['[']))
+    print(xs_section_all_data(db, ['L']))
 
 
-# @pytest.mark.skip('出力確認')
+# @pytest.mark.skip('出力確認用')
+def test_show_all_data_name():
+    # pprint.pprint(short_full_name)
+    db = make_all_section_db()
+
+    print(xs_show_all_data(db))
+
+@pytest.mark.skip('出力確認用')
 def test_make_short_name():
     db = make_all_section_db()
     pprint.pprint(make_short_name(db))
