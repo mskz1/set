@@ -4,6 +4,9 @@ import pytest
 from allowable_stress import steel_ft, steel_fc_aij, steel_fc_bsl, steel_fb2_aij, steel_fb_aij, steel_fb1_aij, \
     steel_fb_bsl, steel_fs
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 def test_steel_ft():
     # print(steel_ft(235))
@@ -101,3 +104,33 @@ def test_steel_f_doc():
     print(steel_fs.__doc__)
     print(steel_fc_bsl.__doc__)
     print(steel_fb_bsl.__doc__)
+
+
+# @pytest.mark.skip('プロットサンプル')
+def test_data_plot():
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    # x = np.linspace(10,250,100)
+    x = []
+    y = []
+    for lb in range(1, 250, 1):
+        x.append(lb)
+        y.append(steel_fb_bsl(F=235, lb=lb, i=1, C=1, h=10, Af=1))
+    ax.scatter(x, y, marker='.')
+    x = []
+    y = []
+    for lb in range(1, 250, 1):
+        x.append(lb)
+        y.append(steel_fb_bsl(F=235, lb=lb, i=1, C=2.3, h=10, Af=1))
+    ax.scatter(x, y, marker='.', c='g')
+    x = []
+    y = []
+    for lb in range(1, 250, 1):
+        x.append(lb)
+        y.append(steel_fb_bsl(F=235, lb=lb, i=1, C=2.3, h=4, Af=1))
+    ax.scatter(x, y, marker='.', c='k')
+
+    ax.grid()
+    ax.set_ylim(0, 160)
+    ax.set_xlim(0, 250)
+    plt.show()
