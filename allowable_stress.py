@@ -75,7 +75,7 @@ def steel_fb_aij(F=235, lb=0, i=0, C=1, h=100, Af=30):
 
 def steel_fb_bsl(F=235, lb=0, i=0, C=1, h=100, Af=30):
     """
-    許容曲げ応力度を返す　式(5.7,5.8)
+    許容曲げ応力度を返す　建築基準法
     N/mm2
     lb :圧縮フランジの支点間距離(mm)
     i :断面二次半径(mm)
@@ -112,3 +112,39 @@ def steel_fb2_aij(F=235, lb=0, h=100, Af=30):
     fb = min(fb2, steel_ft(F))
 
     return fb
+
+
+def steel_fb_aij2005():
+    pass
+
+
+def calc_Iw(shape_name, Iy, Cy=0, An=0, Ix=0):
+    # 曲げねじり定数を返す(cm6) H鋼、溝形鋼
+    Iw = 0
+    if shape_name[0] == 'H':
+        H, B, t1, t2 = [float(x) for x in shape_name[2:].split('x')]
+        h = H - t2
+        Iw = Iy * (0.1 * h) ** 2 / 4.
+    if shape_name[0] == '[':
+        H, B, t1, t2 = [float(x) for x in shape_name[2:].split('x')]
+        h = H - t2
+        Iw = (0.1 * h) ** 2 / 4. * (Iy + (Cy - 0.1 * t1 / 2.) ** 2 * An * (1. - (0.1 * h) ** 2 * An / (4. * Ix)))
+    return Iw
+
+
+def calc_J(shape_name):
+    # サンブナンのねじり定数を返す(cm4) H鋼、溝形鋼
+    j = 0
+    if shape_name[0] == 'H':
+        H, B, t1, t2 = [float(x) for x in shape_name[2:].split('x')]
+        # print(H, B, t1, t2)
+        h = H - t2
+        j = (1. / 3) * (2 * B * t2 ** 3 + h * t1 ** 3)
+    if shape_name[0] == '[':
+        H, B, t1, t2 = [float(x) for x in shape_name[2:].split('x')]
+        # print(H, B, t1, t2)
+        h = H - t2
+        b = B - t1 / 2
+        j = (1. / 3) * (2 * b * t2 ** 3 + h * t1 ** 3)
+
+    return j / 10000.
