@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import math
+from cross_section.xs_section import make_all_section_db
 
-E = 205000.0  # ヤング係数 N/mm2
+E = 205000.0  # ヤング係数 N/mm2  (20500 kN/cm2)
+G = 79000.0  # せん弾弾性係数 N/mm2 (7900 kN/cm2)
 
 
 def steel_ft(F=235):
@@ -114,12 +116,56 @@ def steel_fb2_aij(F=235, lb=0, h=100, Af=30):
     return fb
 
 
-def steel_fb_aij2005():
-    pass
+def steel_fb_aij2005(shape_name, db, lb=0, M1=0, M2=0, M3=0, F=235):
+    """
+
+    :param shape_name:
+    :param db:
+    :param lb: (mm)
+    :param F: (N/mm2)
+    :return:
+    """
+    Zx = db[shape_name][0]['Zx']
+
+    My = F / 10 * Zx  # [kN*cm]
+    Iy = db[shape_name][0]['Iy']
+    if shape_name[0] == 'H':
+        Iw = calc_Iw(shape_name, Iy)
+    if shape_name[0] == '[':
+        Cy = db[shape_name][0]['Cy']
+        An = db[shape_name][0]['An']
+        Ix = db[shape_name][0]['Ix']
+        Iw = calc_Iw(shape_name, Iy, Cy, An, Ix)
+
+    if lb ==0:
+        return steel_ft(F)
+    Me_fm1 = math.pi ** 4 * E / 10 * Iy * E/10 * Iw / (lb / 10) ** 4
+    Me_fm2 = math.pi ** 2 * E / 10 * Iy * G / 10 * calc_J(shape_name) / (lb / 10) ** 2
+    Me = calc_C(M1, M2, M3) * (Me_fm1 + Me_fm2) ** 0.5
+    lam_b = (My / Me) ** 0.5  # Myに対する曲げ材の基準化細長比
+    e_lam_b = 1 / 0.6 ** 0.5  # 弾性限界細長比
+    p_lam_b = calc_p_lam_b(M1, M2, M3)
+    nu = 3. / 2 + 2. / 3 * (lam_b / e_lam_b) ** 2
+
+    if lam_b <= p_lam_b:
+        return F / nu
+    elif p_lam_b < lam_b <= e_lam_b:
+        return (1. - 0.4 * ((lam_b - p_lam_b) / (e_lam_b - p_lam_b))) * F / nu
+    else:
+        return (1 / lam_b ** 2) * F / 2.17
 
 
 def calc_Iw(shape_name, Iy, Cy=0, An=0, Ix=0):
-    # 曲げねじり定数を返す(cm6) H鋼、溝形鋼
+    """
+    曲げねじり定数を返す(cm6) H鋼、溝形鋼
+
+    :param shape_name:
+    :param Iy: (cm4)
+    :param Cy: (cm)
+    :param An: (cm2)
+    :param Ix: (cm4)
+    :return:
+    """
     Iw = 0
     if shape_name[0] == 'H':
         H, B, t1, t2 = [float(x) for x in shape_name[2:].split('x')]
@@ -148,3 +194,32 @@ def calc_J(shape_name):
         j = (1. / 3) * (2 * b * t2 ** 3 + h * t1 ** 3)
 
     return j / 10000.
+
+
+def calc_C(M1=0, M2=0, M3=0):
+    """
+    許容曲げ応力度の補正係数を返す
+    :param M1: 座屈補剛区間端部の大きい方のM
+    :param M2: 座屈補剛区間端部の小さい方のM
+    :param M3: 座屈補剛区間内の最大のM
+    :return:
+    """
+    if abs(M3) > abs(M1):
+        return 1.
+    if M1 == 0:
+        return 1.
+    else:
+        return min(1.75 + 1.05 * (M2 / M1) + 0.3 * (M2 / M1) ** 2, 2.3)
+
+
+def calc_p_lam_b(M1, M2, M3):
+    """
+    塑性限界細長比を返す。
+    :param M1:
+    :param M2:
+    :param M3:
+    :return:
+    """
+    if abs(M3) > abs(M1):
+        return 0.3
+    return 0.6 + 0.3 * (M2 / M1)

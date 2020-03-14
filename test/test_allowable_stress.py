@@ -2,7 +2,7 @@
 import pytest
 
 from allowable_stress import steel_ft, steel_fc_aij, steel_fc_bsl, steel_fb2_aij, steel_fb_aij, steel_fb1_aij, \
-    steel_fb_bsl, steel_fs, calc_J, calc_Iw
+    steel_fb_bsl, steel_fs, calc_J, calc_Iw, calc_C, steel_fb_aij2005
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -105,6 +105,21 @@ def test_calc_Iw():
     assert calc_Iw('[-100x50x5x7.5', Iy=26, Cy=1.54, An=11.92, Ix=188) == pytest.approx(405, abs=0.1)
     assert calc_Iw('[-125x65x6x8', Iy=61.8, Cy=1.90, An=17.11, Ix=424) == pytest.approx(1540, abs=5)
     assert calc_Iw('[-300x90x9x13', Iy=309, Cy=2.22, An=48.57, Ix=6440) == pytest.approx(46300, abs=1)
+
+
+def test_calc_C():
+    assert calc_C(M1=0, M2=0) == 1
+    assert calc_C(M1=1, M2=1) == 2.3
+    assert calc_C(M1=1, M2=-1) == 1.0
+    assert calc_C(M1=2, M2=1) == 2.3
+
+
+# @pytest.mark.skip('Not implemented yet')
+def test_steel_fb_aij2005():
+    from cross_section.xs_section import make_all_section_db
+    db = make_all_section_db()
+    assert steel_fb_aij2005('H-200x100x5.5x8', db) == 235 / 1.5
+    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=2000, M3=1) == 235 / 1.5
 
 
 @pytest.mark.skip('時間がかかるため')
