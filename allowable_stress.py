@@ -75,6 +75,18 @@ def steel_fb_aij(F=235, lb=0, i=0, C=1, h=100, Af=30):
     return min(max(fb1, fb2), steel_ft(F))
 
 
+def steel_fb_aij2002(shape_name, db, lb=0, M1=0, M2=0, M3=0, F=235):
+    ib = db[shape_name][0]['ib']  # cm
+    C = calc_C(M1, M2, M3)  # TODO :内容check
+    h = db[shape_name][0]['H']  # mm
+    Af = db[shape_name][0]['B'] * db[shape_name][0]['t2']  # mm2
+
+    fb1 = steel_fb1_aij(F, lb, ib*10, C)
+    fb2 = steel_fb2_aij(F, lb, h, Af)
+
+    return min(max(fb1, fb2), steel_ft(F))
+
+
 def steel_fb_bsl(F=235, lb=0, i=0, C=1, h=100, Af=30):
     """
     許容曲げ応力度を返す　建築基準法
@@ -137,9 +149,9 @@ def steel_fb_aij2005(shape_name, db, lb=0, M1=0, M2=0, M3=0, F=235):
         Ix = db[shape_name][0]['Ix']
         Iw = calc_Iw(shape_name, Iy, Cy, An, Ix)
 
-    if lb ==0:
+    if lb == 0:
         return steel_ft(F)
-    Me_fm1 = math.pi ** 4 * E / 10 * Iy * E/10 * Iw / (lb / 10) ** 4
+    Me_fm1 = math.pi ** 4 * E / 10 * Iy * E / 10 * Iw / (lb / 10) ** 4
     Me_fm2 = math.pi ** 2 * E / 10 * Iy * G / 10 * calc_J(shape_name) / (lb / 10) ** 2
     Me = calc_C(M1, M2, M3) * (Me_fm1 + Me_fm2) ** 0.5
     lam_b = (My / Me) ** 0.5  # Myに対する曲げ材の基準化細長比
