@@ -302,7 +302,11 @@ L-,150,150,19,14,10,53.38,41.9,1090,1090,1730,451,4.52,4.52,5.69,2.91,103,103
 
 
 def xs_section_all_data(db, sr=None):
-    """dbに登録されている断面の名称を返す"""
+    """dbに登録されている断面(key)の名称を返す。略称も追加"""
+
+    def get_keys_from_value(d, val):
+        return [k for k, v in d.items() if v == val]
+
     all_sr = ['H', '□', 'P', 'C', '[', 'L']
     if not sr:
         sr = all_sr
@@ -310,13 +314,21 @@ def xs_section_all_data(db, sr=None):
     names = db.keys()
     for name in names:
         if name[0] in sr:
-            res.append(name)
-    return ", ".join(res)
+            sh_names = get_keys_from_value(short_full_name, name)
+            sh_names_str = ''
+            for sh_name in sh_names:
+                sh_names_str += sh_name + ', '
+            if sh_names_str.endswith(', '):
+                sh_names_str = sh_names_str[:-2]
+            res.append('[ ' + sh_names_str + ' ]' + ' : ' + name)
+    # return ", ".join(res)
+    return "\n".join(res)
+
 
 def xs_show_all_data(db):
-    # TODO 部材種類順に、すべての略称：フル名称を返す
-    srs = ['H','MZ','KP','C','P','L']
-    res =[]
+    #  部材種類順に、すべての略称：フル名称を返す。上記xs_section_all_dataで事足りる？
+    srs = ['H', 'MZ', 'KP', 'C', 'P', 'L']
+    res = []
     return sorted(short_full_name.items())
 
 
@@ -433,35 +445,41 @@ def make_all_section_db():
 
 def make_short_name(db):
     """
-    省略名を生成する
+    dbから省略名を生成する
     :param db:鋼材データ
     :return: 省略名 => フル名称の辞書
     """
     names = db.keys()
     res = {}
-    # hs = ['H-150x75x5x7', 'H-175x90x5x8', 'H-198x99x4.5x7', 'H-200x100x5.5x8', 'H-248x124x5x8', 'H-250x125x6x9',
-    #       'H-298x149x5.5x8', 'H-300x150x6.5x9', 'H-346x174x6x9', 'H-350x175x7x11', 'H-396x199x7x11', 'H-400x200x8x13',
-    #       'H-446x199x8x12', 'H-450x200x9x14', 'H-496x199x9x14', 'H-500x200x10x16', 'H-596x199x10x15', 'H-600x200x11x17']
     for name in names:
-        # if name in hs:
-        #     sh_name = 'HS' + name[2:4]
-        #     res[sh_name] = name
-        # H鋼の場合　H200*100, h500*200 など
         if name[0] == 'H':
             h, w, t1, t2 = name[2:].split('x')
             sh_name = 'H' + h + '*' + w
+
             res[sh_name] = name
+            if int(h) in [150, 175, 198, 200, 248, 250, 298, 300, 346, 350, 396, 400, 446, 450, 496, 500, 596,
+                          600] and h != w:
+                res['H{}'.format(h[:2])] = name
+            if int(h) in [148, 194, 244, 294, 340, 390, 440, 488, 582, 588, 692, 700, 792, 800, 890, 900, 912, 918]:
+                res['H{}'.format(h)] = name
+            if int(h) in [100, 125, 150, 175, 200, 250, 300, 350, 400] and h == w:
+                res['H{}'.format(h)] = name
+
         # 鋼管の場合　P89.1*2.8, p139.8*4.5 など
         if name[0] == 'P':
-            # name = name.replace('-', '').replace('x', '*').replace('.', '')
             sh_name = name.replace('-', '').replace('x', '*')
             res[sh_name] = name
         # 角パイプの場合　KP100*100*3.2, kp150*100*4.5 など
         if name[0] == '□':
+            h, w, t = name[3:].split('x')
+
             sh_name = name.replace('□', 'K').replace('-', '').replace('x', '*')
             if sh_name.endswith('.0'):
                 sh_name = sh_name[:-2]
             res[sh_name] = name
+            if h == w:
+                res['KP{}*{}'.format(h, t)] = name
+
         # C形鋼の場合 C100*50*2.3, C125*50*3.2 など
         if name[0] == 'C':
             h, w, l, t = name[2:].split('x')

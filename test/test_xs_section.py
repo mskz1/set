@@ -136,7 +136,12 @@ def test_show_all_data_name():
     # pprint.pprint(short_full_name)
     db = make_all_section_db()
 
-    print(xs_show_all_data(db))
+    # print(xs_show_all_data(db))
+    print('----- H')
+    # print(xs_section_all_data(db, ['H']))
+    print('----- KP')
+    print(xs_section_all_data(db, ['□']))
+
 
 @pytest.mark.skip('出力確認用')
 def test_make_short_name():

@@ -63,14 +63,14 @@ def data_plot2():
 
     db = make_all_section_db()
     shape = 'H-200x100x5.5x8'
-    # shape = 'H-300x150x6.5x9'
+    shape = 'H-300x150x6.5x9'
     # shape = 'H-400x200x8x13'
     # shape = 'H-600x200x11x17'
     # shape = 'H-488x300x11x18'
     L = 6 * 1000  # mm
     pitch = 5
-    m1 = 2
-    m2 = -1
+    m1 = 4
+    m2 = 2
     m3 = 5
 
     x.clear()
@@ -95,7 +95,8 @@ def data_plot2():
     # ax.annotate(info, xy=(0.015, 0.02), xycoords='axes fraction')
     plt.ylabel('fb (N/mm2)')
     plt.xlabel('Lb (mm)')
-    plt.legend(bbox_to_anchor=(1, 1), loc='upper right', title=info)
+    # plt.legend(bbox_to_anchor=(1, 1), loc='upper right', title=info)
+    plt.legend(bbox_to_anchor=(0, 0), loc='lower left', title=info)
 
     plt.show()
 
