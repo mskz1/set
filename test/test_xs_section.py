@@ -137,10 +137,13 @@ def test_show_all_data_name():
     db = make_all_section_db()
 
     # print(xs_show_all_data(db))
-    print('----- H')
+    # print('----- H')
     # print(xs_section_all_data(db, ['H']))
-    print('----- KP')
-    print(xs_section_all_data(db, ['□']))
+    # print('----- KP')
+    # print(xs_section_all_data(db, ['□']))
+    # print(xs_section_all_data(db, ['P']))
+    # print(xs_section_all_data(db, ['C']))
+    print(xs_section_all_data(db, ['[']))
 
 
 @pytest.mark.skip('出力確認用')
