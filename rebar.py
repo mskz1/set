@@ -15,8 +15,8 @@ for name, unit in zip(PROPERTY_NAMES, PROPERTY_UNITS):
     PROPERTY_INFO.append("{}({})".format(name, unit))
 
 DEFORMED_BAR_SPEC = {}
-DEFORMED_BAR_SPEC[D6] = {d: 6.35, DO: 0, A: 31.67, L: 20}
-DEFORMED_BAR_SPEC[D8] = {d: 7.94, DO: 0, A: 49.51, L: 25}
+DEFORMED_BAR_SPEC[D6] = {d: 6.35, DO: 7, A: 31.67, L: 20}
+DEFORMED_BAR_SPEC[D8] = {d: 7.94, DO: 9, A: 49.51, L: 25}
 DEFORMED_BAR_SPEC[D10] = {d: 9.53, DO: 11, A: 71.33, L: 30}
 DEFORMED_BAR_SPEC[D13] = {d: 12.7, DO: 14, A: 126.7, L: 40}
 DEFORMED_BAR_SPEC[D16] = {d: 15.9, DO: 18, A: 198.6, L: 50}
@@ -27,8 +27,8 @@ DEFORMED_BAR_SPEC[D29] = {d: 28.6, DO: 33, A: 642.4, L: 90}
 DEFORMED_BAR_SPEC[D32] = {d: 31.8, DO: 36, A: 794.2, L: 100}
 DEFORMED_BAR_SPEC[D35] = {d: 34.9, DO: 40, A: 956.6, L: 110}
 DEFORMED_BAR_SPEC[D38] = {d: 38.1, DO: 43, A: 1140, L: 120}
-DEFORMED_BAR_SPEC[D41] = {d: 41.3, DO: 0, A: 1340, L: 130}
-DEFORMED_BAR_SPEC[D51] = {d: 50.8, DO: 0, A: 2027, L: 160}
+DEFORMED_BAR_SPEC[D41] = {d: 41.3, DO: 46, A: 1340, L: 130}
+DEFORMED_BAR_SPEC[D51] = {d: 50.8, DO: 58, A: 2027, L: 160}
 
 
 def rebar_spec(name="", prop_name='ALL'):
@@ -38,3 +38,11 @@ def rebar_spec(name="", prop_name='ALL'):
 
     if prop_name == 'ALL':
         return PROPERTY_INFO
+
+
+def rebar_size_list():
+    # return D_BAR_SIZE
+    res = '[ '
+    for d in D_BAR_SIZE:
+        res += d + ', '
+    return res[:-2] + ' ]'

@@ -126,11 +126,16 @@ def htb_spec(size=M16, prop_name=QA, term=LONG, strength=F10T, property_names=Fa
 
 def bolt_spec(strength, size, prop_name):
     b_spc = {}
+
     if strength.upper() == '6.8':
         b_spc = BOLT_SPC_6T
     elif strength.upper() == '4.8':
         b_spc = BOLT_SPC_4T
     return b_spc[size][prop_name]
+
+def htb_spec_new(strength, size, prop_name):
+    b_spc = {}
+    # TODO WIP
 
 
 def xs_bolt_spec(strength, size, prop_name):

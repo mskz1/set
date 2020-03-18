@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import math
-from cross_section.xs_section import make_all_section_db
 
 E = 205000.0  # ヤング係数 N/mm2  (20500 kN/cm2)
 G = 79000.0  # せん弾弾性係数 N/mm2 (7900 kN/cm2)
@@ -77,7 +76,7 @@ def steel_fb_aij(F=235, lb=0, i=0, C=1, h=100, Af=30):
 
 def steel_fb_aij2002(shape_name, db, lb=0, M1=0, M2=0, M3=0, F=235):
     ib = db[shape_name][0]['ib']  # cm
-    C = calc_C(M1, M2, M3)  # TODO :内容check
+    C = calc_C(M1, M2, M3)  # TODO :内容check　2002と2005でM2/M1の符号の取り方変更有。結果の意味は同じ
     h = db[shape_name][0]['H']  # mm
     Af = db[shape_name][0]['B'] * db[shape_name][0]['t2']  # mm2
 

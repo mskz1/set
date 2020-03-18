@@ -5,7 +5,6 @@ from allowable_stress import steel_ft, steel_fc_aij, steel_fc_bsl, steel_fb2_aij
     steel_fb_bsl, steel_fs, calc_J, calc_Iw, calc_C, steel_fb_aij2005,steel_fb_aij2002
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 def test_steel_ft():
@@ -85,7 +84,7 @@ def test_steel_fb():
     assert steel_fb_aij(F=235, lb=5000, i=52, C=1, h=500, Af=200 * 16) == pytest.approx(116.2895)
     assert steel_fb_aij(F=235, lb=7000, i=52, C=1, h=500, Af=200 * 16) == pytest.approx(81.3714)
 
-    from cross_section.xs_section import make_all_section_db
+    from xs_section import make_all_section_db
     db = make_all_section_db()
 
     assert steel_fb_aij2002('H-500x200x10x16',db,lb=5000,M3=1) == pytest.approx(116.2895)
@@ -124,7 +123,7 @@ def test_calc_C():
 
 @pytest.mark.skip('Not implemented yet')
 def test_steel_fb_aij2005():
-    from cross_section.xs_section import make_all_section_db
+    from xs_section import make_all_section_db
     db = make_all_section_db()
     assert steel_fb_aij2005('H-200x100x5.5x8', db) == 235 / 1.5
     assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=2000, M3=1) == 235 / 1.5

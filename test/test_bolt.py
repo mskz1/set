@@ -67,9 +67,9 @@ def test_bolt_spec():
     # TODO:WIP
 
 
-@pytest.mark.skip('未実装のため')
+# @pytest.mark.skip('未実装のため')
 def test_xs_bolt():
     # xl_set udf 検討
-    assert xs_bolt_spec('F10T', 'M16', 'QAS') == 45.2
+    assert xs_bolt_spec('F10T', 'M16', 'Qas') == 45.2
 
     pass

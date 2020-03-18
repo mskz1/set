@@ -305,6 +305,7 @@ L-,150,150,19,14,10,53.38,41.9,1090,1090,1730,451,4.52,4.52,5.69,2.91,103,103
 def xs_section_all_data(db, sr=None):
     """dbに登録されている断面(key)の名称を返す。略称も追加"""
 
+    #  TODO シリーズ名のパラメーター　文字列の場合、リストに変換せずともOKか？
     def get_keys_from_value(d, val):
         return [k for k, v in d.items() if v == val]
 
@@ -327,7 +328,7 @@ def xs_section_all_data(db, sr=None):
 
 
 def xs_show_all_data(db):
-    #  部材種類順に、すべての略称：フル名称を返す。上記xs_section_all_dataで事足りる？
+    #  部材種類順に、すべての略称：フル名称を返す。上記xs_section_all_dataで事足りる？　作成中だが＜保留＞
     srs = ['H', 'MZ', 'KP', 'C', 'P', 'L']
     res = []
     return sorted(short_full_name.items())
@@ -496,10 +497,9 @@ def make_short_name(db):
             if sh_name in res:
                 sh_name += '*' + t1
             res[sh_name] = name
-            if sh_name in ['MZ75*40','MZ100*50','MZ125*65','MZ150*75','MZ180*75','MZ200*80']:
-                sh_name2 = 'MZ'+h
+            if sh_name in ['MZ75*40', 'MZ100*50', 'MZ125*65', 'MZ150*75', 'MZ180*75', 'MZ200*80']:
+                sh_name2 = 'MZ' + h
                 res[sh_name2] = name
-
 
         # 等辺山形鋼の場合 L65*65*6, L65*6 どちらも可
         if name[0] == 'L':
@@ -511,5 +511,6 @@ def make_short_name(db):
     return res
 
 
+# import された時点で、省略名の辞書データを生成する
 short_full_name = make_short_name(make_all_section_db())
 # print(short_full_name)

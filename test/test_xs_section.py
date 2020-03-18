@@ -2,47 +2,47 @@
 import pytest
 import pprint
 
-from cross_section.xs_section import *
+from xs_section import *
 
 
 def test_xs_H_sec_name():
-    # assert xs_section_name('HS20') == 'H-200x100x5.5x8'
+    assert xs_section_name('H20') == 'H-200x100x5.5x8'
     assert xs_section_name('H200*100') == 'H-200x100x5.5x8'
-    # assert xs_section_name('HS15') == 'H-150x75x5x7'
+    assert xs_section_name('H15') == 'H-150x75x5x7'
     assert xs_section_name('H150*75') == 'H-150x75x5x7'
-    # assert xs_section_name('hs15') == 'H-150x75x5x7'
+    assert xs_section_name('h15') == 'H-150x75x5x7'
     assert xs_section_name('h150*75') == 'H-150x75x5x7'
     # with pytest.raises(KeyError):
     #     xs_section_name('hs100')
-    # assert xs_section_name('hs100') == 'Section_Not_Defined'
+    assert xs_section_name('h100') == 'H-100x100x6x8'
     assert xs_section_name('h100*50') == 'Section_Not_Defined'
     # assert xs_section_name('C100_23') == 'C-100x50x20x2.3'
     assert xs_section_name('C100*50*2.3') == 'C-100x50x20x2.3'
     # assert xs_section_name('C100*23') == 'C-100x50x20x2.3'
-    # assert xs_section_name('KP100*32') == '□P-100x100x3.2'
+    assert xs_section_name('KP100*3.2') == '□P-100x100x3.2'
     assert xs_section_name('KP100*100*3.2') == '□P-100x100x3.2'
-    # assert xs_section_name('HM700') == 'H-700x300x13x24'
+    assert xs_section_name('H700') == 'H-700x300x13x24'
     assert xs_section_name('H700*300') == 'H-700x300x13x24'
-    # assert xs_section_name('HM900') == 'H-900x300x16x28'
+    assert xs_section_name('H900') == 'H-900x300x16x28'
     assert xs_section_name('H900*300') == 'H-900x300x16x28'
 
 
 # @pytest.mark.skip()
 def test_xs_section_property():
     # assert set(xs_section_property('HS20')) == {'H', 'An', 'Ix', 'Iy', 'ix', 'iy', 'Zx', 'Zy'}
-    # assert xs_section_property('HS20') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
-    #                                        'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
-    #                                        'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
+    assert xs_section_property('H20') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
+                                           'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
+                                           'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
     assert xs_section_property('H200*100') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
                                                'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
                                                'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
 
-    # assert xs_section_property('HS20',
-    #                            'ALL') == "['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)', 'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)', 'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']"
+    assert xs_section_property('H20',
+                               'ALL') == "['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)', 'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)', 'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']"
     assert xs_section_property('H200*100',
                                'ALL') == "['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)', 'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)', 'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']"
 
-    # assert xs_section_property('HS20', 'An') == 26.67  # unit:cm2
+    assert xs_section_property('H20', 'An') == 26.67  # unit:cm2
     assert xs_section_property('H200*100', 'An') == 26.67  # unit:cm2
     assert xs_section_property('H-200x100x5.5x8', 'An') == 26.67  # unit:cm2
     # assert xs_section_property('H-199x199x5x5', 'An') == 'Section_Not_Defined'
@@ -119,31 +119,25 @@ def test_xs_section_help():
     print(xs_section_help())
 
 
-@pytest.mark.skip('出力確認用')
+# @pytest.mark.skip('出力確認用')
 def test_xs_section_registered_all_names():
     db = make_all_section_db()
     # print(xs_section_all_data(db))
-    print(xs_section_all_data(db, ('H')))
-    print(xs_section_all_data(db, ['□']))
-    print(xs_section_all_data(db, ['P']))
-    print(xs_section_all_data(db, ['C']))
-    print(xs_section_all_data(db, ['[']))
-    print(xs_section_all_data(db, ['L']))
+    # print(xs_section_all_data(db, ['H']))
+    print(xs_section_all_data(db, 'H'))
+    # print(xs_section_all_data(db, ['□']))
+    print(xs_section_all_data(db, '□'))
+    # print(xs_section_all_data(db, ['P']))
+    # print(xs_section_all_data(db, ['C']))
+    # print(xs_section_all_data(db, ['[']))
+    # print(xs_section_all_data(db, ['L']))
 
 
-# @pytest.mark.skip('出力確認用')
+@pytest.mark.skip('出力確認用')
 def test_show_all_data_name():
     # pprint.pprint(short_full_name)
     db = make_all_section_db()
-
-    # print(xs_show_all_data(db))
-    # print('----- H')
-    # print(xs_section_all_data(db, ['H']))
-    # print('----- KP')
-    # print(xs_section_all_data(db, ['□']))
-    # print(xs_section_all_data(db, ['P']))
-    # print(xs_section_all_data(db, ['C']))
-    print(xs_section_all_data(db, ['[']))
+    print(xs_show_all_data(db))
 
 
 @pytest.mark.skip('出力確認用')
