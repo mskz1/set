@@ -9,6 +9,9 @@ M12 = 'M12'
 HTB_STRENGTHS = ['F8T', 'F10T']
 F8T, F10T = HTB_STRENGTHS
 
+BOLT_STRENGTHS = ['4T','6T']
+B4T, B6T = BOLT_STRENGTHS
+
 TERMS = ['LONG', 'SHORT']
 LONG, SHORT = TERMS
 
@@ -80,7 +83,7 @@ class ParameterError(Exception):
         return repr(self.value)
 
 
-def htb_spec(size=M16, prop_name=QA, term=LONG, strength=F10T, property_names=False, doc=False):
+def htb_spec_old(size=M16, prop_name=QA, term=LONG, strength=F10T, property_names=False, doc=False):
     """指定されたHTBの性能値を返す。
 
     サイズ(M16～M30)、性能名(QA/TA/DIA/HOLE_DIA)、長期・短期(LONG/SHORT)、HTB強度(F10T/F8T)を指定
@@ -89,7 +92,7 @@ def htb_spec(size=M16, prop_name=QA, term=LONG, strength=F10T, property_names=Fa
     return : 許容せん断力(kN)、許容引張力(kN)、軸径(mm)、孔径(mm)"""
 
     if doc:
-        return htb_spec.__doc__
+        return htb_spec_old.__doc__
 
     if property_names:
         return PROPERTY_NAMES
@@ -124,18 +127,23 @@ def htb_spec(size=M16, prop_name=QA, term=LONG, strength=F10T, property_names=Fa
         raise ParameterError('invalid parameter given')
 
 
-def bolt_spec(strength, size, prop_name):
+def bolt_spec(size, prop_name, strength=B4T):
     b_spc = {}
 
-    if strength.upper() == '6.8':
+    if strength.upper() == B6T:
         b_spc = BOLT_SPC_6T
-    elif strength.upper() == '4.8':
+    elif strength.upper() == B4T:
         b_spc = BOLT_SPC_4T
-    return b_spc[size][prop_name]
+    return b_spc[size.upper()][prop_name.capitalize()]
 
-def htb_spec_new(strength, size, prop_name):
+def htb_spec_new(size, prop_name, strength=F10T):
     b_spc = {}
-    # TODO WIP
+
+    if strength.upper() == F10T:
+        b_spc = HTB_SPC_F10T
+    elif strength.upper() == F8T:
+        b_spc = HTB_SPC_F8T
+    return b_spc[size.upper()][prop_name.capitalize()]
 
 
 def xs_bolt_spec(strength, size, prop_name):
@@ -147,4 +155,4 @@ def xs_bolt_spec(strength, size, prop_name):
     :return:
     """
 
-    return htb_spec(strength=strength, size=size, prop_name=prop_name)
+    return htb_spec_old(size=size, prop_name=prop_name, strength=strength)
