@@ -55,11 +55,13 @@ def test_get_all_property_names():
 
 def test_bolt_spec():
     assert bolt_spec('M16', 'Qal', '6T') == 25.4
+
     assert bolt_spec('M16', 'QAL', '6T') == 25.4
     assert bolt_spec('M16', 'Qas', '6T') == 38.1
     assert bolt_spec('M24', 'Qas', '6T') == 85.6
     assert bolt_spec('M27', 'Tas', '6T') == 193.0
     assert bolt_spec('M16', 'Qal', '4T') == 14.5
+    assert bolt_spec('M16', 'Qal') == 14.5  # default strength='4T'
     assert bolt_spec('M16', 'Tal', '4T') == 25.1
     assert bolt_spec('M24', 'Qas', '4T') == 48.9
     assert bolt_spec('M12', 'Qas', '4T') == 11.7
@@ -69,6 +71,13 @@ def test_bolt_spec():
     assert htb_spec_new('M16', 'Qas', 'F10T') == 45.2
     assert htb_spec_new('m16', 'QAS', 'F10T') == 45.2
     assert htb_spec_new(size='M16', prop_name='Qal') == 30.2
+
+    assert htb_spec_new('M16', 'Qu') == 121
+    assert htb_spec_new('M16', 'Tu') == 157
+    assert htb_spec_new('M27', 'Tu') == 459
+    assert htb_spec_new('M27', 'Tu', 'F8T') == 367
+    assert htb_spec_new('M20', 'QU', 'F8T') == 151
+    assert htb_spec_new('M20', 'qu', 'f8t') == 151
 
 
 @pytest.mark.skip('未実装のため')

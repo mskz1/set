@@ -9,7 +9,7 @@ M12 = 'M12'
 HTB_STRENGTHS = ['F8T', 'F10T']
 F8T, F10T = HTB_STRENGTHS
 
-BOLT_STRENGTHS = ['4T','6T']
+BOLT_STRENGTHS = ['4T', '6T']
 B4T, B6T = BOLT_STRENGTHS
 
 TERMS = ['LONG', 'SHORT']
@@ -38,21 +38,21 @@ Tu = 'Tu'  # 最大引張耐力（kN）
 
 # HTB F10T データの設定
 HTB_SPC_F10T = {}
-HTB_SPC_F10T[M16] = {DIA: 16, HOLE_DIA: 18, Qal: 30.2, Qas: 45.2, Tal: 62.3, Tas: 93.5}
-HTB_SPC_F10T[M20] = {DIA: 20, HOLE_DIA: 22, Qal: 47.1, Qas: 70.7, Tal: 97.4, Tas: 146.0}
-HTB_SPC_F10T[M22] = {DIA: 22, HOLE_DIA: 24, Qal: 57.0, Qas: 85.5, Tal: 118.0, Tas: 177.0}
-HTB_SPC_F10T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 67.9, Qas: 102.0, Tal: 140.0, Tas: 210.0}
-HTB_SPC_F10T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 85.9, Qas: 129.0, Tal: 177.0, Tas: 266.0}
-HTB_SPC_F10T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 106.0, Qas: 159.0, Tal: 219.0, Tas: 329.0}
+HTB_SPC_F10T[M16] = {DIA: 16, HOLE_DIA: 18, Qal: 30.2, Qas: 45.2, Tal: 62.3, Tas: 93.5, Qu: 121, Tu: 157}
+HTB_SPC_F10T[M20] = {DIA: 20, HOLE_DIA: 22, Qal: 47.1, Qas: 70.7, Tal: 97.4, Tas: 146.0, Qu: 188, Tu: 245}
+HTB_SPC_F10T[M22] = {DIA: 22, HOLE_DIA: 24, Qal: 57.0, Qas: 85.5, Tal: 118.0, Tas: 177.0, Qu: 228, Tu: 303}
+HTB_SPC_F10T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 67.9, Qas: 102.0, Tal: 140.0, Tas: 210.0, Qu: 271, Tu: 353}
+HTB_SPC_F10T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 85.9, Qas: 129.0, Tal: 177.0, Tas: 266.0, Qu: 343, Tu: 459}
+HTB_SPC_F10T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 106.0, Qas: 159.0, Tal: 219.0, Tas: 329.0, Qu: 424, Tu: 561}
 
 # HTB F8T データの設定
 HTB_SPC_F8T = {}
-HTB_SPC_F8T[M16] = {DIA: 16, HOLE_DIA: 18, Qal: 21.4, Qas: 32.1, Tal: 50.3, Tas: 75.4}
-HTB_SPC_F8T[M20] = {DIA: 20, HOLE_DIA: 22, Qal: 33.5, Qas: 50.2, Tal: 78.5, Tas: 117.0}
-HTB_SPC_F8T[M22] = {DIA: 22, HOLE_DIA: 24, Qal: 40.5, Qas: 60.8, Tal: 95.0, Tas: 142.0}
-HTB_SPC_F8T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 48.2, Qas: 72.3, Tal: 113.0, Tas: 169.0}
-HTB_SPC_F8T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 61.0, Qas: 91.5, Tal: 143.0, Tas: 214.0}
-HTB_SPC_F8T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 75.4, Qas: 113.0, Tal: 177.0, Tas: 265.0}
+HTB_SPC_F8T[M16] = {DIA: 16, HOLE_DIA: 18, Qal: 21.4, Qas: 32.1, Tal: 50.3, Tas: 75.4, Qu: 96.5, Tu: 125}
+HTB_SPC_F8T[M20] = {DIA: 20, HOLE_DIA: 22, Qal: 33.5, Qas: 50.2, Tal: 78.5, Tas: 117.0, Qu: 151, Tu: 196}
+HTB_SPC_F8T[M22] = {DIA: 22, HOLE_DIA: 24, Qal: 40.5, Qas: 60.8, Tal: 95.0, Tas: 142.0, Qu: 182, Tu: 242}
+HTB_SPC_F8T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 48.2, Qas: 72.3, Tal: 113.0, Tas: 169.0, Qu: 217, Tu: 282}
+HTB_SPC_F8T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 61.0, Qas: 91.5, Tal: 143.0, Tas: 214.0, Qu: 274, Tu: 367}
+HTB_SPC_F8T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 75.4, Qas: 113.0, Tal: 177.0, Tas: 265.0, Qu: 339, Tu: 448}
 
 # 6.8 BOLT  データの設定 AIJ S規準
 BOLT_SPC_6T = {}
@@ -136,6 +136,7 @@ def bolt_spec(size, prop_name, strength=B4T):
         b_spc = BOLT_SPC_4T
     return b_spc[size.upper()][prop_name.capitalize()]
 
+
 def htb_spec_new(size, prop_name, strength=F10T):
     b_spc = {}
 
@@ -148,7 +149,7 @@ def htb_spec_new(size, prop_name, strength=F10T):
 
 def xs_bolt_spec(strength, size, prop_name):
     """
-
+    中ボルトとHTBを統一化する？
     :param strength:  F10T, F8T, 6TB, 4TB
     :param size:
     :param prop_name:
