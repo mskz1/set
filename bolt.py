@@ -15,7 +15,7 @@ B4T, B6T = BOLT_STRENGTHS
 TERMS = ['LONG', 'SHORT']
 LONG, SHORT = TERMS
 
-PROPERTY_NAMES = ['QA', 'TA', 'DIA', 'HOLE_DIA']
+PROPERTY_NAMES = ['QA', 'TA', 'Dia', 'Hole_dia']
 # 許容せん断力, 許容引張力, ボルト軸径(mm), ボルト孔径(mm)
 QA, TA, DIA, HOLE_DIA = PROPERTY_NAMES
 
@@ -54,6 +54,9 @@ HTB_SPC_F8T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 48.2, Qas: 72.3, Tal: 113.0, Tas
 HTB_SPC_F8T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 61.0, Qas: 91.5, Tal: 143.0, Tas: 214.0, Qu: 274, Tu: 367}
 HTB_SPC_F8T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 75.4, Qas: 113.0, Tal: 177.0, Tas: 265.0, Qu: 339, Tu: 448}
 
+# HTB_PROPNAME_UNIT = dict(DIA='mm', HOLE_DIA='mm', Qal='kN', Qas='kN', Tal='kN', Tas='kN', Qu='kN', Tu='kN')
+HTB_PROPNAME_UNIT = {DIA:'mm', HOLE_DIA:'mm', Qal:'kN', Qas:'kN', Tal:'kN', Tas:'kN', Qu:'kN', Tu:'kN'}
+
 # 6.8 BOLT  データの設定 AIJ S規準
 BOLT_SPC_6T = {}
 BOLT_SPC_6T[M12] = {DIA: 12, HOLE_DIA: 13, Qal: 13.6, Qas: 20.4, Tal: 23.6, Tas: 35.4}
@@ -73,6 +76,9 @@ BOLT_SPC_4T[M22] = {DIA: 22, HOLE_DIA: 23.5, Qal: 28.0, Qas: 42.0, Tal: 48.5, Ta
 BOLT_SPC_4T[M24] = {DIA: 24, HOLE_DIA: 25.5, Qal: 32.6, Qas: 48.9, Tal: 56.5, Tas: 84.7}
 BOLT_SPC_4T[M27] = {DIA: 27, HOLE_DIA: 28.5, Qal: 42.4, Qas: 63.6, Tal: 73.4, Tas: 110.0}
 BOLT_SPC_4T[M30] = {DIA: 30, HOLE_DIA: 31.5, Qal: 51.8, Qas: 77.7, Tal: 89.8, Tas: 135.0}
+
+# BOLT_PROPNAME_UNIT = dict(DIA='mm', HOLE_DIA='mm', Qal='kN', Qas='kN', Tal='kN', Tas='kN')
+BOLT_PROPNAME_UNIT = {DIA: 'mm', HOLE_DIA: 'mm', Qal: 'kN', Qas: 'kN', Tal: 'kN', Tas: 'kN'}
 
 
 class ParameterError(Exception):
@@ -134,17 +140,27 @@ def bolt_spec(size, prop_name, strength=B4T):
         b_spc = BOLT_SPC_6T
     elif strength.upper() == B4T:
         b_spc = BOLT_SPC_4T
-    return b_spc[size.upper()][prop_name.capitalize()]
+    else:
+        return 'NO_DATA'
+    try:
+        return b_spc[size.upper()][prop_name.capitalize()]
+    except KeyError:
+        return 'NO_DATA'
 
 
-def htb_spec_new(size, prop_name, strength=F10T):
+def htb_spec(size, prop_name, strength=F10T):
     b_spc = {}
 
     if strength.upper() == F10T:
         b_spc = HTB_SPC_F10T
     elif strength.upper() == F8T:
         b_spc = HTB_SPC_F8T
-    return b_spc[size.upper()][prop_name.capitalize()]
+    else:
+        return 'NO_DATA'
+    try:
+        return b_spc[size.upper()][prop_name.capitalize()]
+    except KeyError:
+        return 'NO_DATA'
 
 
 def xs_bolt_spec(strength, size, prop_name):
@@ -157,3 +173,18 @@ def xs_bolt_spec(strength, size, prop_name):
     """
 
     return htb_spec_old(size=size, prop_name=prop_name, strength=strength)
+
+
+def xs_bolt_all_property_names():
+    # return BOLT_SPC_4T[list(BOLT_SPC_4T.keys())[0]].keys()
+    res = ''
+    for name in BOLT_SPC_4T[list(BOLT_SPC_4T.keys())[0]].keys():
+        res += '{}({}), '.format(name, BOLT_PROPNAME_UNIT[name])
+
+    return res[:-2]
+
+def xs_htb_all_property_names():
+    res = ''
+    for name in HTB_SPC_F10T[list(HTB_SPC_F10T.keys())[0]].keys():
+        res += '{}({}), '.format(name, HTB_PROPNAME_UNIT[name])
+    return res[:-2]
