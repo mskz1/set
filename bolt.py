@@ -171,8 +171,27 @@ def xs_bolt_spec(strength, size, prop_name):
     :param prop_name:
     :return:
     """
+    if strength.upper() == F10T:
+        b_spc = HTB_SPC_F10T
+    elif strength.upper() == F8T:
+        b_spc = HTB_SPC_F8T
+    elif strength.upper() == B4T:
+        b_spc = BOLT_SPC_4T
+    elif strength.upper() == B6T:
+        b_spc = BOLT_SPC_6T
+    else:
+        return 'NO_DATA'
+    if prop_name.upper() == 'ALL' and (strength == F10T or strength == F8T):
+        return xs_htb_all_property_names()
+    elif prop_name.upper() == 'ALL' and (strength == B6T or strength == B4T):
+        return xs_bolt_all_property_names()
 
-    return htb_spec_old(size=size, prop_name=prop_name, strength=strength)
+    try:
+        return b_spc[size.upper()][prop_name.capitalize()]
+    except KeyError:
+        return 'NO_DATA'
+
+    # return htb_spec_old(size=size, prop_name=prop_name, strength=strength)
 
 
 def xs_bolt_all_property_names():

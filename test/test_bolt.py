@@ -76,7 +76,7 @@ def test_bolt_spec():
     assert bolt_spec('M16', 'DIA') == 16
     assert bolt_spec('M16', 'HOLE_DIA') == 17
 
-    assert bolt_spec('M17','Qas') == 'NO_DATA'
+    assert bolt_spec('M17', 'Qas') == 'NO_DATA'
 
     assert htb_spec('M16', 'Qas', 'F10T') == 45.2
     assert htb_spec('m16', 'QAS', 'F10T') == 45.2
@@ -105,9 +105,13 @@ def test_bolt_spec():
     assert htb_spec('M20', 'qu', 'f8t') == 151
 
 
-@pytest.mark.skip('未実装のため')
+# @pytest.mark.skip('未実装のため')
 def test_xs_bolt():
     # xl_set udf 検討
     assert xs_bolt_spec('F10T', 'M16', 'Qas') == 45.2
+    assert xs_bolt_spec('F10T', 'M16',
+                        'ALL') == 'Dia(mm), Hole_dia(mm), Qal(kN), Qas(kN), Tal(kN), Tas(kN), Qu(kN), Tu(kN)'
 
-    pass
+    assert xs_bolt_spec('4T', 'M16', 'Tal') == 25.1
+    assert xs_bolt_spec('4T', 'M24', 'Qas') == 48.9
+    assert xs_bolt_spec('4T', 'M12', 'Qas') == 11.7
