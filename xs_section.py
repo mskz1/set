@@ -324,7 +324,13 @@ def xs_section_all_data(db, sr=None):
                 sh_names_str = sh_names_str[:-2]
             res.append('[ ' + sh_names_str + ' ]' + ' : ' + name)
     # return ", ".join(res)
-    return "\n".join(res)
+    return "\r\n".join(res)
+
+
+
+
+
+
 
 
 def xs_show_all_data(db):

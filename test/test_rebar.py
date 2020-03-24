@@ -14,8 +14,10 @@ def test_rebar_spec():
     assert rebar_spec('D22', 'A') == 387.1
     assert rebar_spec('D25', 'A') == 506.7
 
-    assert rebar_spec(prop_name='ALL') == ['d(mm)', 'DO(mm)', 'A(mm**2)', 'L(mm)']
-    assert rebar_spec() == ['d(mm)', 'DO(mm)', 'A(mm**2)', 'L(mm)']
+    # assert rebar_spec(prop_name='ALL') == ['d(mm)', 'DO(mm)', 'A(mm**2)', 'L(mm)']
+    assert rebar_spec(prop_name='ALL') == "['d(mm)', 'DO(mm)', 'A(mm**2)', 'L(mm)']"
+    # assert rebar_spec() == ['d(mm)', 'DO(mm)', 'A(mm**2)', 'L(mm)']
+    assert rebar_spec() == "['d(mm)', 'DO(mm)', 'A(mm**2)', 'L(mm)']"
 
 def test_get_size_list():
     print(rebar_size_list())

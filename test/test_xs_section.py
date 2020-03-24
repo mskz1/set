@@ -126,7 +126,7 @@ def test_xs_section_registered_all_names():
     # print(xs_section_all_data(db, ['H']))
     print(xs_section_all_data(db, 'H'))
     # print(xs_section_all_data(db, ['□']))
-    print(xs_section_all_data(db, '□'))
+    # print(xs_section_all_data(db, '□'))
     # print(xs_section_all_data(db, ['P']))
     # print(xs_section_all_data(db, ['C']))
     # print(xs_section_all_data(db, ['[']))
