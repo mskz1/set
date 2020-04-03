@@ -17,7 +17,7 @@ def steel_ft(F=235):
 
 def steel_fs(F=235):
     """
-    長期許容せん応力度（N/mm2）を返す。
+    長期許容せん断応力度（N/mm2）を返す。
     :param F:
     :return:
     """

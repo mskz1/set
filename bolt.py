@@ -166,7 +166,7 @@ def htb_spec(size, prop_name, strength=F10T):
 def xs_bolt_spec(strength, size, prop_name):
     """
     中ボルトとHTBを統一化する？
-    :param strength:  F10T, F8T, 6TB, 4TB
+    :param strength:  F10T, F8T, 6T, 4T
     :param size:
     :param prop_name:
     :return:
