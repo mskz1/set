@@ -76,6 +76,8 @@ def test_steel_fb():
     assert steel_fb_aij(F=235, lb=2000, i=26.3, C=1, h=200, Af=100 * 8) == pytest.approx(235 / 1.5)
     assert steel_fb_aij(F=235, lb=3000, i=26.3, C=1, h=200, Af=100 * 8) == pytest.approx(118.6667)
     assert steel_fb_aij(F=235, lb=4000, i=26.3, C=1, h=200, Af=100 * 8) == pytest.approx(89.0)
+    assert steel_fb_bsl(F=235, lb=4000, i=26.3, C=1, h=200, Af=100 * 8) == pytest.approx(89.0)
+
     assert steel_fb_aij(F=235, lb=5000, i=26.3, C=1, h=200, Af=100 * 8) == pytest.approx(71.2)
     assert steel_fb_aij(F=235, lb=6000, i=26.3, C=1, h=200, Af=100 * 8) == pytest.approx(59.3333)
     assert steel_fb_aij(F=235, lb=7000, i=26.3, C=1, h=200, Af=100 * 8) == pytest.approx(50.8571)
