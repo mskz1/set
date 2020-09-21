@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'mskz'
+from collections import namedtuple
+
 
 # Cantilever with End Load - T301
 # Cantilever with Intermediate Load - T302
@@ -22,14 +24,64 @@ __author__ = 'mskz'
 # Simply Supported Beam with a Centered Load
 # 単純梁＿中央集中荷重
 #
-#def M_SSB_CL(L=0.0,P=0.0):
+# def M_SSB_CL(L=0.0,P=0.0):
 #    return P * L / 4.0
 #
-#def D_SSB_CL(L=0.0, P=0.0, E=20500.0, I=0.0):
+# def D_SSB_CL(L=0.0, P=0.0, E=20500.0, I=0.0):
 #    return  P * L**3 / (48.0 * E * I) *10.0
 #
 
-#----------------------------------------------
+# ----------------------------------------------
+
+# load_type = dict(UDL='uniform distributed load',)
+class LoadType:
+    UDL = 'Uniform Distributed Load'
+    UIL = 'Uniformly Increasing Load to One End'
+    PDL = 'Partial Distributed Load'
+
+    PLC = 'Point Load at Center'
+    PLA = 'Point Load at Any'
+
+
+DistributedLoad = namedtuple('DistributedLoad','value')
+PointLoad = namedtuple('PointLoad','value position')
+
+def uniform_distributed_load(load=0.0):
+    ld = Load(load_type=LoadType.UDL)
+    ld.value = load
+    return ld
+
+def point_load_at_center(load=0.0):
+    ld = Load(load_type=LoadType.PLC)
+    ld.value = load
+    return ld
+
+
+class Load:
+    def __init__(self, load_type=LoadType.UDL):
+        self._type = load_type
+        self._distributed_load = 0.
+        self._point_load = 0.
+        self._point_load_position = 0.
+
+        if self.type == LoadType.UDL:
+            self._load = 0.
+
+
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def value(self):
+        if self.type == LoadType.UDL:
+            return self._load
+
+    @value.setter
+    def value(self, val):
+        if self.type == LoadType.UDL:
+            self._load = val
 
 
 class AbstractBeamFormula(object):
@@ -44,7 +96,7 @@ class AbstractBeamFormula(object):
         propKeys = self.__dict__.keys()
 
         for key in propKeys:
-            print(key,":",self.__dict__[key])
+            print(key, ":", self.__dict__[key])
 
     def getR1(self):
         # 始点側反力を返す
@@ -54,19 +106,19 @@ class AbstractBeamFormula(object):
         # 終点側反力を返す
         pass
 
-    def getM_at_n(self,n):
+    def getM_at_n(self, n):
         # モーメント値を返す（部材をn分割する？）
         pass
 
-    def getM_at(self,a):
+    def getM_at(self, a):
         # モーメント値を返す（指定位置）
         pass
 
-    def getD_at_n(self,n,E,I):
+    def getD_at_n(self, n, E, I):
         # たわみ値を返す（部材をn分割する？）
         pass
 
-    def getD_at(self,n,E,I):
+    def getD_at(self, n, E, I):
         # たわみ値を返す（部材をn分割する？）
         pass
 
@@ -74,7 +126,7 @@ class AbstractBeamFormula(object):
         # 最大モーメント値を返す
         pass
 
-    def getDmax(self,E,I):
+    def getDmax(self, E, I):
         # 最大たわみ値を返す
         pass
 
@@ -82,8 +134,22 @@ class AbstractBeamFormula(object):
         # スパン中央位置のモーメント値を返す
         pass
 
-    def getDcenter(self,E,I):
+    def getDcenter(self, E, I):
         # スパン中央位置のたわみ値を返す
         pass
 
-#----------------------------
+
+# ----------------------------
+
+def simply_supported_beam_udl():
+    pass
+
+
+class SimplySupportedBeam:
+    def __init__(self, span, load_type=LoadType.UDL, **param):
+        self._span = span
+        self._param = param
+        self._load_type = load_type
+
+    def param(self):
+        return self._param
