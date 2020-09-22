@@ -97,8 +97,25 @@ class Load:
 
 class AbstractBeamFormula(object):
     # 抽象クラス
-    def __init__(self):
-        pass
+    def __init__(self, span, load):
+        self._span = span
+        self._load = load
+
+    @property
+    def span(self):
+        return self._span
+
+    @span.setter
+    def span(self, span):
+        self._span = span
+
+    @property
+    def load(self):
+        return self._load
+
+    @load.setter
+    def load(self, load):
+        self._load = load
 
     def calcM(self):
         pass
@@ -172,8 +189,10 @@ class SimplySupportedBeamWithUniformDistributedLoad(AbstractBeamFormula):
     """
 
     def __init__(self, span, load):
-        self._span = span
-        self._load = load
+        try:  # python2
+            super(AbstractBeamFormula, self).__init__(span, load)
+        except TypeError:  # python3
+            super().__init__(span, load)
 
     def getMmax(self):
         return self._load * self._span ** 2 / 8.
@@ -200,4 +219,123 @@ class SimplySupportedBeamWithUniformDistributedLoad(AbstractBeamFormula):
         return (self._load * a / 2) * (self._span - a)
 
     def getD_at(self, a, I=1.0, E=20500.):
-        return self._load * 0.01*a*100 *((self._span * 100) ** 3-2* (self._span * 100)*(a*100)**2+(a*100)**3)/ (24*E*I)
+        return self._load * 0.01 * a * 100 * (
+                (self._span * 100) ** 3 - 2 * (self._span * 100) * (a * 100) ** 2 + (a * 100) ** 3) / (24 * E * I)
+
+
+class SimplySupportedBeamWithPointLoadAtCenter(AbstractBeamFormula):
+    """
+    単純ばり公式　中央集中荷重作用
+    """
+
+    def __init__(self, span, load):
+        try:
+            super(AbstractBeamFormula, self).__init__(span, load)
+        except TypeError:
+            super().__init__(span, load)
+
+    def getMmax(self):
+        return self._load * self._span / 4.
+
+    def getMcenter(self):
+        return self.getMmax()
+
+    def getR1(self):
+        return self._load / 2.
+
+    def getR2(self):
+        return self.getR1()
+
+    def getDmax(self, I=1.0, E=20500.):
+        """
+        最大変形量を算出
+        :param I: 断面２次モーメント[cm4]
+        :param E: ヤング係数[kN/cm2]
+        :return:変形量[cm]
+        """
+        return self._load * (self._span * 100) ** 3 / (48. * E * I)
+
+    def getM_at(self, a):
+        if a <= self._span / 2.:
+            return self._load * a / 2
+        elif a <= self._span:
+            return self._load * (self._span - a) / 2.
+
+    def getD_at(self, a, I=1.0, E=20500.):
+        if a <= self._span / 2.:
+            return self._load * (a * 100) * (3 * (self._span * 100) ** 2 - 4 * (a * 100) ** 2) / (48. * E * I)
+        elif a <= self._span:
+            b = self._span - a
+            return self._load * (b * 100) * (3 * (self._span * 100) ** 2 - 4 * (b * 100) ** 2) / (48. * E * I)
+
+
+class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
+    """
+    単純ばり公式　任意位置　集中荷重作用
+    """
+
+    def __init__(self, span, load, a):
+        try:
+            super(AbstractBeamFormula, self).__init__(span, load)
+        except TypeError:
+            super().__init__(span, load)
+        self._a = a
+        self._b = self._span - self._a
+
+    @property
+    def a(self):
+        return self._a
+
+    @a.setter
+    def a(self, a):
+        self._a = a
+        self._b = self._span - self._a
+
+    def getMmax(self):
+        return self._load * self._a * self._b / self._span
+
+    def getMcenter(self):
+        return self.getM_at(self._span / 2.)
+
+    def getM_at(self, x):
+        if x <= self._a:
+            return self._load * self._b * x / self._span
+        elif x <= self._span:
+            return self._load * self._a * (self._span - x) / self._span
+
+    def getR1(self):
+        return self._load * self._b / self._span
+
+    def getR2(self):
+        return self._load * self._a / self._span
+
+    def getDmax(self, I=1.0, E=20500.):
+        """
+        最大変形量を算出
+        :param I: 断面２次モーメント[cm4]
+        :param E: ヤング係数[kN/cm2]
+        :return:変形量[cm]
+        """
+        P = self._load
+        if self._a > self._b:
+            a = self._a * 100.
+            b = self._b * 100.
+        else:
+            a = self._b * 100.
+            b = self._a * 100.
+        L = self._span * 100.
+
+        return P * a * b * (a + 2 * b) * ((3 * a * (a + 2 * b)) ** 0.5) / (27. * E * I * L)
+
+    def getD_at(self, x, I=1.0, E=20500.):
+
+        P = self._load
+        a = self._a * 100.
+        b = self._b * 100.
+        L = self._span * 100.
+        x1 = x * 100.
+
+        if x <= self._a:
+            return P * b * x1 * (L ** 2 - b ** 2 - x1 ** 2) / (6. * E * I * L)
+        elif x <= self._span:
+            return P * a * (L - x1) * (2 * L * x1 - x1 ** 2 - a ** 2) / (6. * E * I * L)
