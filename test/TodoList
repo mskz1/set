@@ -75,6 +75,9 @@ HTB、中ボルトの耐力、孔径などの情報を扱う
 ＝＝＝＝＝＝＝＝＝＝
 ■梁計算モジュール   beam_model.py / beam_problem.py??
 
+＝＝＝＝＝＝＝＝＝＝
+■鉄骨断面算定モジュール   steel_section_check.py
+
 
 
 
@@ -95,6 +98,8 @@ ExcelDNA-C#-ironPythonで動かせる(2020-0220)
 ・溶接性能
 ・断面諸量計算
 ・材料定数
+・断面、F値、応力（MNQ）、短期／長期　から断面算定する
+
 
 =========Excel Structural Engineering Tools  -> xl_set  -> xs
 excel udf 用　xs_***モジュール　2020-0216
