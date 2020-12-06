@@ -31,6 +31,9 @@ def test_allowable_compressive_force():
     lk = 400.
     assert allowable_compressive_force(sec, F_235, SHORT_TERM, lk) == pytest.approx(61.86, abs=0.1)
 
+    sec = "L65*6"
+    lk = 400.
+    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lk) == pytest.approx(1., abs=0.1)
 
 
 @pytest.mark.skip("WIP")

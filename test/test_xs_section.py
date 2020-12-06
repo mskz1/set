@@ -119,7 +119,7 @@ def test_xs_section_help():
     print(xs_section_help())
 
 
-# @pytest.mark.skip('出力確認用')
+@pytest.mark.skip('出力確認用')
 def test_xs_section_registered_all_names():
     db = make_all_section_db()
     # print(xs_section_all_data(db))
@@ -144,3 +144,19 @@ def test_show_all_data_name():
 def test_make_short_name():
     db = make_all_section_db()
     pprint.pprint(make_short_name(db))
+
+
+def test_section_type():
+    db= make_all_section_db()
+    # 断面の種類は、H形鋼、角形鋼管、鋼管、C形、溝形、山形　の６種類　2020-12時点
+    assert xs_section_type("h19") == 'H'
+    assert xs_section_type("H-200x100x5.5x8") == 'H'
+    assert xs_section_type("KP100*100*3.2") == '□'
+    assert xs_section_type("P-89.1x2.8") == 'P'
+    assert xs_section_type("C100*50*2.3") == 'C'
+    assert xs_section_type("[-100x50x5x7.5") == '['
+    assert xs_section_type("L65*6") == 'L'
+    assert xs_section_type("L65*6") == 'L'
+
+
+
