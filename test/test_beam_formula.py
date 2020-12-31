@@ -41,7 +41,7 @@ def test_point_load_at_center_factory():
 
 @pytest.mark.skip()
 def test_1():
-    dl = DistributedLoad(1)
+    dl = uniform_distributed_load(1)
     print(dl)
     print(dl.value)
 
