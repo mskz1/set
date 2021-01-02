@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import pytest
 from pytest import approx
-from beam_formula import LoadType, SimplySupportedBeam
+# from beam_formula import LoadType, SimplySupportedBeam
 
-from beam_formula import Load
-from beam_formula import uniform_distributed_load, point_load_at_center
+# from beam_formula import Load
+# from beam_formula import uniform_distributed_load, point_load_at_center
+
 from beam_formula import SimplySupportedBeamWithUniformDistributedLoad
 from beam_formula import SimplySupportedBeamWithPointLoadAtCenter
 from beam_formula import SimplySupportedBeamWithPointLoadAtAny
@@ -12,7 +13,7 @@ from beam_formula import SimplySupportedBeamWithPointLoadAtAny
 
 # from beam_formula import DistributedLoad,PointLoad
 
-@pytest.mark.skip()
+@pytest.mark.skip("不要？")
 def test_simply_supported_beam():
     bf = SimplySupportedBeam(span=6, dl=1)
     print(bf.param())
@@ -21,32 +22,32 @@ def test_simply_supported_beam():
     print(bf.param())
 
 
-@pytest.mark.skip()
+@pytest.mark.skip("不要？")
 def test_load_object():
     ld = Load()
     assert ld.type == LoadType.UDL
 
 
-@pytest.mark.skip()
+@pytest.mark.skip("不要？")
 def test_uniform_distributed_load_factory():
     udl = uniform_distributed_load(1.0)
     assert udl.value == 1.
 
 
-@pytest.mark.skip()
+@pytest.mark.skip("不要？")
 def test_point_load_at_center_factory():
     pcl = point_load_at_center(5.)
     assert pcl.value == 5.
 
 
-@pytest.mark.skip()
+@pytest.mark.skip("不要？")
 def test_1():
     dl = uniform_distributed_load(1)
     print(dl)
     print(dl.value)
 
 
-@pytest.mark.skip()
+@pytest.mark.skip("不要？")
 def test_Load_class():
     udl = Load.uniform_distributed_load(2)
     print(udl.value)
@@ -54,11 +55,11 @@ def test_Load_class():
 
 def test_SimplySupportedBeamWithUniformDistributedLoad():
     bf = SimplySupportedBeamWithUniformDistributedLoad(5., 1.)
-    assert bf.span == 5.
-    assert bf.load == 1.
-    assert bf.getMmax() == 3.125
+    assert bf.span == 5.    # (m)
+    assert bf.load == 1.    # (kN/m)
+    assert bf.getMmax() == 3.125    # (kN*m)
     assert bf.getMcenter() == 3.125
-    assert bf.getR1() == 2.5
+    assert bf.getR1() == 2.5    # (kN)
     assert bf.getDmax() == approx(396.9766)
     assert bf.getM_at(1.5) == 2.625
     assert bf.getD_at(1.5) == approx(322.7896)
@@ -72,11 +73,13 @@ def test_SimplySupportedBeamWithUniformDistributedLoad():
     assert bf.getD_at(1.5) == approx(3359.9466)
 
 
+
+
 def test_SimplySupportedBeamWithPointLoadAtCenter():
     bf = SimplySupportedBeamWithPointLoadAtCenter(5., 10.)
-    assert bf.span == 5.
-    assert bf.load == 10.
-    assert bf.getMmax() == 12.5
+    assert bf.span == 5.    # (m)
+    assert bf.load == 10.   # (kN)
+    assert bf.getMmax() == 12.5 # (kN*m)
     assert bf.getMcenter() == 12.5
     assert bf.getR1() == 5.
     assert bf.getDmax() == approx(1270.3252)
@@ -90,9 +93,9 @@ def test_SimplySupportedBeamWithPointLoadAtCenter():
 
 def test_SimplySupportedBeamWithPointLoadAtAny():
     bf = SimplySupportedBeamWithPointLoadAtAny(7., 10., 2.)
-    assert bf.span == 7.
-    assert bf.load == 10.
-    assert bf.a == 2.
+    assert bf.span == 7.    # (m)
+    assert bf.load == 10.   # (kN)
+    assert bf.a == 2.       # (m)
     assert bf.getMmax() == approx(14.2857, abs=0.001)
     assert bf.getMcenter() == 10.0
     assert bf.getR1() == approx(7.1429, abs=0.001)

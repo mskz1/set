@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = 'mskz'
+
 from collections import namedtuple
 
 
@@ -34,6 +35,7 @@ from collections import namedtuple
 # ----------------------------------------------
 
 # load_type = dict(UDL='uniform distributed load',)
+# 不要？
 class LoadType:
     UDL = 'Uniform Distributed Load'
     UIL = 'Uniformly Increasing Load to One End'
@@ -46,18 +48,21 @@ class LoadType:
 # DistributedLoad = namedtuple('DistributedLoad','value')
 # PointLoad = namedtuple('PointLoad','value position')
 
+# 不要？
 def uniform_distributed_load(load=0.0):
     ld = Load(load_type=Load.DL)
     ld.value = load
     return ld
 
 
+# 不要？
 def point_load_at_center(load=0.0):
     ld = Load(load_type=LoadType.PLC)
     ld.value = load
     return ld
 
 
+# 不要？
 class Load:
     DL = 'DistributedLoad'
     PL = 'PointLoad'
@@ -167,12 +172,7 @@ class AbstractBeamFormula(object):
         pass
 
 
-# ----------------------------
-
-def simply_supported_beam_udl():
-    pass
-
-
+# 不要？
 class SimplySupportedBeam:
     def __init__(self, span, load_type=LoadType.UDL, **param):
         self._span = span
@@ -186,6 +186,8 @@ class SimplySupportedBeam:
 class SimplySupportedBeamWithUniformDistributedLoad(AbstractBeamFormula):
     """
     単純ばり公式　等分布荷重作用
+    span:スパン（m）
+    load:荷重値（kN/m）
     """
 
     def __init__(self, span, load):
@@ -226,6 +228,9 @@ class SimplySupportedBeamWithUniformDistributedLoad(AbstractBeamFormula):
 class SimplySupportedBeamWithPointLoadAtCenter(AbstractBeamFormula):
     """
     単純ばり公式　中央集中荷重作用
+    span:スパン（m）
+    load:荷重値（kN）
+
     """
 
     def __init__(self, span, load):
@@ -272,6 +277,9 @@ class SimplySupportedBeamWithPointLoadAtCenter(AbstractBeamFormula):
 class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
     """
     単純ばり公式　任意位置　集中荷重作用
+    span:スパン（m）
+    load:荷重値（kN/m）
+    a:荷重作用位置(m)　左端から
     """
 
     def __init__(self, span, load, a):
