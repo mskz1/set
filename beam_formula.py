@@ -225,6 +225,43 @@ class SimplySupportedBeamWithUniformDistributedLoad(AbstractBeamFormula):
                 (self._span * 100) ** 3 - 2 * (self._span * 100) * (a * 100) ** 2 + (a * 100) ** 3) / (24 * E * I)
 
 
+class SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(AbstractBeamFormula):
+    """
+    単純ばり公式　単純増加分布荷重作用
+    span:スパン（m）
+    load:荷重値（kN/m2）
+    a:荷重負担幅（m）端部位置での
+    """
+    def __init__(self,span, load, a):
+        try:  # python2
+            super(AbstractBeamFormula, self).__init__(span, load)
+        except TypeError:  # python3
+            super().__init__(span, load)
+        self._a = a
+
+    @property
+    def a(self):
+        return self._a
+
+    @a.setter
+    def a(self, a):
+        self._a = a
+
+    def getMmax(self):
+        return 2 * self._span * self._span * self._a * self._load/ (9*3**0.5*2)
+
+    def getR1(self):
+        return (self._span * self._a / 2) / 3
+
+    def getR2(self):
+        return 2*self.getR1()
+
+
+
+
+
+
+
 class SimplySupportedBeamWithPointLoadAtCenter(AbstractBeamFormula):
     """
     単純ばり公式　中央集中荷重作用
@@ -278,7 +315,7 @@ class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
     """
     単純ばり公式　任意位置　集中荷重作用
     span:スパン（m）
-    load:荷重値（kN/m）
+    load:荷重値（kN）
     a:荷重作用位置(m)　左端から
     """
 
@@ -347,3 +384,5 @@ class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
             return P * b * x1 * (L ** 2 - b ** 2 - x1 ** 2) / (6. * E * I * L)
         elif x <= self._span:
             return P * a * (L - x1) * (2 * L * x1 - x1 ** 2 - a ** 2) / (6. * E * I * L)
+
+

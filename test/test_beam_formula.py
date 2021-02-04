@@ -9,6 +9,7 @@ from pytest import approx
 from beam_formula import SimplySupportedBeamWithUniformDistributedLoad
 from beam_formula import SimplySupportedBeamWithPointLoadAtCenter
 from beam_formula import SimplySupportedBeamWithPointLoadAtAny
+from beam_formula import SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad
 
 
 # from beam_formula import DistributedLoad,PointLoad
@@ -73,6 +74,16 @@ def test_SimplySupportedBeamWithUniformDistributedLoad():
     assert bf.getD_at(1.5) == approx(3359.9466)
 
 
+def test_SimplySupportedBeamWithUniformlyIncreasingDistributedLoad():
+    # a = 3./(2**0.5)
+    a = 2.1212
+
+    bf = SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(5.,1.,a)
+    assert bf.getMmax() == approx(3.4019, abs=0.001)
+
+    bf = SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(5.,1.,2)
+    assert bf.getMmax() == approx(3.2075)
+    assert bf.getR1() == approx(1.6666666666666667)
 
 
 def test_SimplySupportedBeamWithPointLoadAtCenter():
