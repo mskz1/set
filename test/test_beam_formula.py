@@ -56,11 +56,11 @@ def test_Load_class():
 
 def test_SimplySupportedBeamWithUniformDistributedLoad():
     bf = SimplySupportedBeamWithUniformDistributedLoad(5., 1.)
-    assert bf.span == 5.    # (m)
-    assert bf.load == 1.    # (kN/m)
-    assert bf.getMmax() == 3.125    # (kN*m)
+    assert bf.span == 5.  # (m)
+    assert bf.load == 1.  # (kN/m)
+    assert bf.getMmax() == 3.125  # (kN*m)
     assert bf.getMcenter() == 3.125
-    assert bf.getR1() == 2.5    # (kN)
+    assert bf.getR1() == 2.5  # (kN)
     assert bf.getDmax() == approx(396.9766)
     assert bf.getM_at(1.5) == 2.625
     assert bf.getD_at(1.5) == approx(322.7896)
@@ -78,19 +78,25 @@ def test_SimplySupportedBeamWithUniformlyIncreasingDistributedLoad():
     # a = 3./(2**0.5)
     a = 2.1212
 
-    bf = SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(5.,1.,a)
+    bf = SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(5., 1., a)
     assert bf.getMmax() == approx(3.4019, abs=0.001)
 
-    bf = SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(5.,1.,2)
+    # span:5[m], w=1[kN/m2], a=2[m]
+    bf = SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(5., 1., 2)
     assert bf.getMmax() == approx(3.2075)
     assert bf.getR1() == approx(1.6666666666666667)
+    assert bf.getR2() == approx(3.333333333333333)
+    assert bf.getMcenter() == approx(3.125)
+    assert bf.getM_at(0.5) == approx(0.825)
+    # https://structx.com/Beam_Formulas_002.html のたわみ間違い？
+    assert bf.getDmax() == approx(397.56, abs=0.02)
 
 
 def test_SimplySupportedBeamWithPointLoadAtCenter():
     bf = SimplySupportedBeamWithPointLoadAtCenter(5., 10.)
-    assert bf.span == 5.    # (m)
-    assert bf.load == 10.   # (kN)
-    assert bf.getMmax() == 12.5 # (kN*m)
+    assert bf.span == 5.  # (m)
+    assert bf.load == 10.  # (kN)
+    assert bf.getMmax() == 12.5  # (kN*m)
     assert bf.getMcenter() == 12.5
     assert bf.getR1() == 5.
     assert bf.getDmax() == approx(1270.3252)
@@ -104,9 +110,9 @@ def test_SimplySupportedBeamWithPointLoadAtCenter():
 
 def test_SimplySupportedBeamWithPointLoadAtAny():
     bf = SimplySupportedBeamWithPointLoadAtAny(7., 10., 2.)
-    assert bf.span == 7.    # (m)
-    assert bf.load == 10.   # (kN)
-    assert bf.a == 2.       # (m)
+    assert bf.span == 7.  # (m)
+    assert bf.load == 10.  # (kN)
+    assert bf.a == 2.  # (m)
     assert bf.getMmax() == approx(14.2857, abs=0.001)
     assert bf.getMcenter() == 10.0
     assert bf.getR1() == approx(7.1429, abs=0.001)
@@ -115,3 +121,28 @@ def test_SimplySupportedBeamWithPointLoadAtAny():
     assert bf.getD_at(1.5) == approx(1894.5993)
     assert bf.getD_at(3.5) == approx(2662.6016)
 
+
+def test_SSBwPL_calc_delta_n_points():
+    bf = SimplySupportedBeamWithPointLoadAtAny(4., 10., 2.)
+    assert bf.get_points(2) == [0.0, 2.0, 4.0]
+    assert bf.get_points(4) == [0.0, 1.0, 2.0, 3.0, 4.0]
+    # たわみはcm
+    assert bf.getD_npoints(2) == approx([0.0, 650.4065, 0.0], abs=0.01)
+    assert bf.getD_npoints(4) == approx([0.0, 447.1545, 650.4065, 447.1545, 0.0], abs=0.01)
+    assert bf.getD_npoints(4) == approx([0.0, 447.1545, 650.4065, 447.1545, 0.0], abs=0.01)
+
+    bf = SimplySupportedBeamWithPointLoadAtAny(6., 10., 1.)
+    assert bf.getD_npoints(6) == approx([0.0, 677.5068, 1029.8103, 1056.9106, 840.1084, 460.7046, 0.0], abs=0.01)
+
+
+# @pytest.mark.skip()
+def test_SSBwPL_plot():
+    import matplotlib.pyplot as plt
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    bf = SimplySupportedBeamWithPointLoadAtAny(6., 10., 2)
+    x = bf.get_points(50)
+    y = bf.getD_npoints(50)
+    ax.plot(x, y, marker=".")
+    plt.show()

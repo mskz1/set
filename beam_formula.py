@@ -232,7 +232,8 @@ class SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(AbstractBeamForm
     load:荷重値（kN/m2）
     a:荷重負担幅（m）端部位置での
     """
-    def __init__(self,span, load, a):
+
+    def __init__(self, span, load, a):
         try:  # python2
             super(AbstractBeamFormula, self).__init__(span, load)
         except TypeError:  # python3
@@ -248,18 +249,29 @@ class SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(AbstractBeamForm
         self._a = a
 
     def getMmax(self):
-        return 2 * self._span * self._span * self._a * self._load/ (9*3**0.5*2)
+        return 2 * self._span * self._span * self._a * self._load / (9 * 3 ** 0.5 * 2)
 
     def getR1(self):
         return (self._span * self._a / 2) / 3
 
     def getR2(self):
-        return 2*self.getR1()
+        return 2 * self.getR1()
 
+    def getM_at(self, a):
+        return a / (3 * self._span ** 2) * (1 / 2) * self._span * self._a * self._load * (self._span ** 2 - a ** 2)
 
+    def getMcenter(self):
+        return self.getM_at(self._span / 2)
 
+    def getDmax(self, E=20500., I=1.0):
+        """
+        最大変形量を算出
+        :param I: 断面２次モーメント[cm4]
+        :param E: ヤング係数[kN/cm2]
+        :return:変形量[cm]
+        """
 
-
+        return 0.01304 * ((self._span * 100.0) ** 3 / (E * I)) * (1 / 2) * (self._span * self._a * self._load)
 
 
 class SimplySupportedBeamWithPointLoadAtCenter(AbstractBeamFormula):
@@ -385,4 +397,16 @@ class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
         elif x <= self._span:
             return P * a * (L - x1) * (2 * L * x1 - x1 ** 2 - a ** 2) / (6. * E * I * L)
 
+    def getD_npoints(self, n, E=20500., I=1.0):
+        # スパンをn分割した点ごとのたわみをリストで返す
+        result = []
+        for pos in self.get_points(n):
+            result.append(self.getD_at(pos, I, E))
+        return result
 
+    def get_points(self, n):
+        # スパンをn分割した座標値をリストで返す。最初の要素は0,最後はスパン
+        segment = self._span / n
+        points = [segment * i for i in range(n)]
+        points.append(self._span)
+        return points
