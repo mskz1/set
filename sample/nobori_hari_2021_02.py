@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
-from beam_formula import SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad, SimplySupportedBeamWithPointLoadAtAny
+from beam_formula import SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad, \
+    SimplySupportedBeamWithPointLoadAtAny
 
 
 def divided_loads(w, a, n, on_edge=True):
@@ -39,13 +40,47 @@ def divided_loads(w, a, n, on_edge=True):
 
 
 def hikaku_sample():
-    bf_base = SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(4.242, 1, 3/1.4142)
-    Mmax= bf_base.getMmax()
+    a = 3.
+    span = a * 2 ** 0.5
+
+    bf_base = SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(span=span, load=1, a=a / 2 ** 0.5)
+    Mmax = bf_base.getMmax()
     Dmax = bf_base.getDmax()
-    print("基準：Mmax={:8.2f}, Dmax={:8.2f}".format(Mmax,Dmax))
+    print("三角形分布荷重：Mmax={:8.2f}, Dmax={:8.2f}".format(Mmax, Dmax))
 
+    from beam_formula import sum_lists
+    import matplotlib.pyplot as plt
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
 
+    n_segment = 50
 
+    loads = divided_loads(w=1, a=a, n=4, on_edge=True)
+    # loads = divided_loads(w=1, a=a, n=4, on_edge=False)
+
+    r1_m = [0.0] * (n_segment + 1)
+    r1_d = [0.0] * (n_segment + 1)
+
+    for load in loads:
+        bf = SimplySupportedBeamWithPointLoadAtAny(span, load[0], load[1] * 2 ** 0.5)
+        x = bf.get_points(n_segment)
+
+        moment = bf.getM_npoints(n_segment)
+
+        result_m = sum_lists(moment, r1_m)
+        r1_m = result_m[:]
+
+        disp = bf.getD_npoints(n_segment)
+        result_d = sum_lists(disp, r1_d)
+        r1_d = result_d[:]
+
+    Mmax_1 = max(result_m)
+    Dmax_1 = max(result_d)
+
+    print("集中荷重１：Mmax={:8.2f}, Dmax={:8.2f}".format(Mmax_1, Dmax_1))
+
+    # ax.plot(x, result, marker=".")
+    # plt.show()
 
 
 def test_divide_load():
