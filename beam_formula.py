@@ -404,9 +404,30 @@ class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
             result.append(self.getD_at(pos, I, E))
         return result
 
+    def getM_npoints(self, n):
+        # スパンをn分割した点ごとのモーメントをリストで返す
+        result = []
+        for pos in self.get_points(n):
+            result.append(self.getM_at(pos))
+        return result
+
     def get_points(self, n):
         # スパンをn分割した座標値をリストで返す。最初の要素は0,最後はスパン
         segment = self._span / n
         points = [segment * i for i in range(n)]
         points.append(self._span)
         return points
+
+
+def add_list_contents(a, b):
+    result = [x + y for (x, y) in zip(a, b)]
+    return result
+
+
+def add_list_contents2(lists):
+    # ２つ以上のリストを入力し、要素ごとの和のリストにして返す
+    pass
+
+
+def sum_lists(*args):
+    return list(map(sum, zip(*args)))

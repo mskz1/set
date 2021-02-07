@@ -123,6 +123,7 @@ def test_SimplySupportedBeamWithPointLoadAtAny():
 
 
 def test_SSBwPL_calc_delta_n_points():
+    # n分割した箇所のたわみを算出
     bf = SimplySupportedBeamWithPointLoadAtAny(4., 10., 2.)
     assert bf.get_points(2) == [0.0, 2.0, 4.0]
     assert bf.get_points(4) == [0.0, 1.0, 2.0, 3.0, 4.0]
@@ -135,7 +136,96 @@ def test_SSBwPL_calc_delta_n_points():
     assert bf.getD_npoints(6) == approx([0.0, 677.5068, 1029.8103, 1056.9106, 840.1084, 460.7046, 0.0], abs=0.01)
 
 
+def test_SSBwPL_calc_moment_n_poitns():
+    # n分割した箇所のモーメントを算出
+    bf = SimplySupportedBeamWithPointLoadAtAny(4., 10., 2.)
+    assert bf.get_points(2) == [0.0, 2.0, 4.0]
+    assert bf.getM_npoints(2) == approx([0.0, 10, 0.0], abs=0.01)
+    assert bf.getM_npoints(4) == approx([0.0, 5, 10, 5, 0.0], abs=0.01)
+
+    bf = SimplySupportedBeamWithPointLoadAtAny(6., 10., 1.)
+    assert bf.getM_npoints(6) == approx([0.0, 8.33, 6.6667, 5, 3.3333, 1.6667, 0.0], abs=0.01)
+
+
+@pytest.mark.skip()
+def test_SSBwPL_multi_load():
+    # 複数の荷重を作用させた梁のたわみ量を重ね合わせて算出
+    from beam_formula import sum_lists
+    import matplotlib.pyplot as plt
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    span = 6.
+    n_segment = 60
+    loads = [(40, 1), (30, 2), (20, 3), (10, 4), (1, 5)]
+    r1 = [0.0] * (n_segment + 1)
+
+    for load in loads:
+        bf = SimplySupportedBeamWithPointLoadAtAny(span, load[0], load[1])
+        x = bf.get_points(n_segment)
+
+        disp = bf.getD_npoints(n_segment)
+
+        ax.plot(x, disp, marker=".")
+        result = sum_lists(disp, r1)
+        r1 = result[:]
+        # print(disp)
+        # print( [round(disp[n], 1) for n in range(len(disp))])
+    # print(result)
+    # print([round(result[n], 1) for n in range(len(result))])
+    # print("max={}".format(max(result)))
+    ax.plot(x, result, marker=".")
+    plt.show()
+
+
 # @pytest.mark.skip()
+def test_SSBwPL_multi_load_moment_chk():
+    # 複数の荷重を作用させた梁のモーメントを重ね合わせて算出
+    from beam_formula import sum_lists
+    import matplotlib.pyplot as plt
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    span = 6.
+    n_segment = 60
+    # loads = [(10, 1), (10, 2), (10, 3), (10, 4), (10, 5)]
+    loads = [(50, 1), (40, 2), (30, 3), (20, 4), (10, 5)]
+    r1 = [0.0] * (n_segment + 1)
+
+    for load in loads:
+        bf = SimplySupportedBeamWithPointLoadAtAny(span, load[0], load[1])
+        x = bf.get_points(n_segment)
+
+        moment = bf.getM_npoints(n_segment)
+
+        ax.plot(x, moment, marker=".")
+        result = sum_lists(moment, r1)
+        r1 = result[:]
+    ax.plot(x, result, marker=".")
+    plt.show()
+
+
+@pytest.mark.skip()
+def test_list_add():
+    from beam_formula import add_list_contents, sum_lists
+    span = 6.
+
+    bf = SimplySupportedBeamWithPointLoadAtAny(span, 10., 1)
+    d1 = bf.getD_npoints(5)
+
+    loads = [1, 2, 3, 4]
+    a = [1, 2, 3, 4]
+    b = [10, 11, 12, 13]
+    c = [10, 11, 12, 13]
+
+    r1 = add_list_contents(a, b)
+    r2 = add_list_contents(r1, c)
+    print(r2)
+
+    print(sum_lists(a, b, c))
+
+
+@pytest.mark.skip()
 def test_SSBwPL_plot():
     import matplotlib.pyplot as plt
     fig = plt.figure()
