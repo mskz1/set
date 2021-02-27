@@ -113,7 +113,7 @@ def steel_spec(name=SS400, data_name=F, property_names=False, doc=False):
     return STEEL_SPC[name][data_name]
 
 
-# -------------------------test code
+# -------------------------tests code
 if __name__ == '__main__':
     print("---テスト---")
     ss400 = Steel()

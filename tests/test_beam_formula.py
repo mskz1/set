@@ -178,7 +178,7 @@ def test_SSBwPL_multi_load():
     plt.show()
 
 
-# @pytest.mark.skip()
+@pytest.mark.skip('プロットサンプル')
 def test_SSBwPL_multi_load_moment_chk():
     # 複数の荷重を作用させた梁のモーメントを重ね合わせて算出
     from beam_formula import sum_lists

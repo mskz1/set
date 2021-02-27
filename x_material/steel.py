@@ -141,7 +141,7 @@ def fc(F_value, lk, i):
 
     return res_fc
 
-#-------------------------test code
+#-------------------------tests code
 if __name__ == '__main__':
     print("---テスト---")
     # print("{:~}".format(E))

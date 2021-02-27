@@ -5,7 +5,6 @@ from allowable_stress import steel_fb_bsl, steel_fb_aij2005, steel_fb_aij2002, c
 from xs_section import make_all_section_db
 import matplotlib.pyplot as plt
 
-
 # import numpy as np
 
 
@@ -90,7 +89,7 @@ def data_plot2():
     ax.set_ylim(0, 160)
     ax.set_xlim(0, L)
     ib = db[shape][0]['ib']
-    info = '{}\nib={}(cm), C={:.2f}\n lambda=0~{:.0f}'.format(shape,ib , calc_C(m1, m2, m3),L/(ib*10))
+    info = '{}\nib={}(cm), C={:.2f}\n lambda=0~{:.0f}'.format(shape, ib, calc_C(m1, m2, m3), L / (ib * 10))
     # ax.annotate(info, xy=(0.015, 0.02), xycoords='axes fraction')
     plt.ylabel('fb (N/mm2)')
     plt.xlabel('Lb (mm)')
@@ -98,7 +97,6 @@ def data_plot2():
     plt.legend(bbox_to_anchor=(0, 0), loc='lower left', title=info)
 
     plt.show()
-
 
 
 if __name__ == '__main__':
