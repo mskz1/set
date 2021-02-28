@@ -34,11 +34,11 @@ def test_allowable_compressive_force():
 
     sec = "L65*6"
     lk = 400.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lk) == pytest.approx(1., abs=0.1)
+    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lky=lk) == pytest.approx(10.68, abs=0.1)
 
 
 @pytest.mark.skip("WIP")
 def test_allowable_bending_moment():
     sec = "H-200x100x5.5x8"  # An = 26.67 [cm2], Zx=181 [cm3]
-
+    # TODO : add code
     pass

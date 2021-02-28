@@ -76,6 +76,8 @@ HTB、中ボルトの耐力、孔径などの情報を扱う
 
 ＝＝＝＝＝＝＝＝＝＝
 ■梁計算モジュール   beam_model.py / beam_problem.py??
+・必要な断面を算定する　関数？
+
 
 ＝＝＝＝＝＝＝＝＝＝
 ■鉄骨断面算定モジュール   steel_section_check.py

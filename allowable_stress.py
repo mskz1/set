@@ -8,30 +8,30 @@ G = 79000.0  # せん弾弾性係数 N/mm2 (7900 kN/cm2)
 
 def steel_ft(F=235):
     """
-    長期許容引張応力度(N/mm2)を返す。
-    :param F: F値(N/mm2)
-    :return: ft(N/mm2)
+    長期許容引張応力度 ft (N/mm2) を返す。
+    :param F: F値 (N/mm2)
+    :return: ft (N/mm2)
     """
     return F / 1.5
 
 
 def steel_fs(F=235):
     """
-    長期許容せん断応力度（N/mm2）を返す。
-    :param F:
-    :return:
+    長期許容せん断応力度 fs（N/mm2）を返す。
+    :param F: F値 (N/mm2)
+    :return: fs (N/mm2)
     """
     return F / (1.5 * 3 ** 0.5)
 
 
 def steel_fc_aij(F=235, lambda_=100):
     """
-    長期許容圧縮応力度(N/mm2)を返す。日本建築学会版
+    長期許容圧縮応力度(N/mm2)を返す。鋼構造設計規準**年版 式(*.*)　日本建築学会(Architectural Institute of Japan)版
     :param F:F値(N/mm2)
     :param lambda_:細長比
-    :return:
+    :return: fc(N/mm2)
     """
-    # critical slenderness ratio 限界細長比
+    # critical slenderness ratio : 限界細長比
     c_s_ratio = (((math.pi ** 2 * E) / (0.6 * F)) ** 0.5)
     if lambda_ <= c_s_ratio:
         mu = 3.0 / 2.0 + 2.0 / 3.0 * ((lambda_ / c_s_ratio) ** 2)
@@ -46,7 +46,7 @@ def steel_fc_bsl(F=235, lambda_=100):
     長期許容圧縮応力度(N/mm2)を返す。建築基準法(Building Standard Law)版
     :param F:F値(N/mm2)
     :param lambda_:細長比
-    :return:
+    :return: fc(N/mm2)
     """
     # critical slenderness ratio 限界細長比
     c_s_ratio = 1500. / (F / 1.5) ** 0.5
@@ -60,13 +60,14 @@ def steel_fc_bsl(F=235, lambda_=100):
 
 def steel_fb_aij(F=235, lb=0, i=0, C=1, h=100, Af=30):
     """
-    許容曲げ応力度を返す　式(5.7,5.8)
-    N/mm2
-    lb :圧縮フランジの支点間距離(mm)
-    i :断面二次半径(mm)
-    C : 補正係数
-    h :はりのせい(mm)
-    Af :圧縮フランジの断面積(mm2)
+    許容曲げ応力度を返す　鋼構造設計規準**年版 式(5.7,5.8) 日本建築学会(Architectural Institute of Japan)版
+    :param F:F値 (N/mm2)
+    :param lb:圧縮フランジの支点間距離 (mm)
+    :param i:断面二次半径 (mm)
+    :param C:補正係数
+    :param h:はりのせい (mm)
+    :param Af:圧縮フランジの断面積 (mm2)
+    :return: fb (N/mm2)
     """
     fb1 = steel_fb1_aij(F, lb, i, C)
     fb2 = steel_fb2_aij(F, lb, h, Af)
@@ -75,8 +76,21 @@ def steel_fb_aij(F=235, lb=0, i=0, C=1, h=100, Af=30):
 
 
 def steel_fb_aij2002(shape_name, db, lb=0, M1=0, M2=0, M3=0, F=235):
+    """
+    許容曲げ応力度を返す　鋼構造設計規準2002年版 式(5.7,5.8) 日本建築学会(Architectural Institute of Japan)版
+    はり断面サイズを指定する（H形鋼のみ？）TODO:その他の断面の処理
+
+    :param shape_name:断面形状
+    :param db:断面データベース
+    :param lb:圧縮フランジの支点間距離 (mm)
+    :param M1:座屈補剛区間端部の大きい方のM
+    :param M2:座屈補剛区間端部の小さい方のM
+    :param M3:座屈補剛区間内の最大のM
+    :param F:F値 (N/mm2)
+    :return:fb (N/mm2)
+    """
     ib = db[shape_name][0]['ib']  # cm
-    C = calc_C(M1, M2, M3)  # TODO :内容check　2002と2005でM2/M1の符号の取り方変更有。結果の意味は同じ
+    C = calc_C(M1, M2, M3)  # TODO :内容check　2002と2005でM2/M1の符号の取り方の変更有。結果の意味は同じ
     h = db[shape_name][0]['H']  # mm
     Af = db[shape_name][0]['B'] * db[shape_name][0]['t2']  # mm2
 
@@ -89,12 +103,13 @@ def steel_fb_aij2002(shape_name, db, lb=0, M1=0, M2=0, M3=0, F=235):
 def steel_fb_bsl(F=235, lb=0, i=0, C=1, h=100, Af=30):
     """
     許容曲げ応力度を返す　建築基準法
-    N/mm2
-    lb :圧縮フランジの支点間距離(mm)
-    i :断面二次半径(mm)
-    C : 補正係数
-    h :はりのせい(mm)
-    Af :圧縮フランジの断面積(mm2)
+    :param F:F値 (N/mm2)
+    :param lb:圧縮フランジの支点間距離(mm)
+    :param i:断面二次半径(mm)
+    :param C:補正係数
+    :param h:はりのせい(mm)
+    :param Af:圧縮フランジの断面積(mm2)
+    :return:fb (N/mm2)
     """
     fb1 = steel_fb1_bsl(F, lb, i, C)
     fb2 = steel_fb2_aij(F, lb, h, Af)
@@ -129,12 +144,15 @@ def steel_fb2_aij(F=235, lb=0, h=100, Af=30):
 
 def steel_fb_aij2005(shape_name, db, lb=0, M1=0, M2=0, M3=0, F=235):
     """
+    許容曲げ応力度を返す　鋼構造設計規準2005年版 式(*.*) 日本建築学会(Architectural Institute of Japan)版
+    はり断面サイズを指定する（H形鋼のみ？）
 
-    :param shape_name:
-    :param db:
-    :param lb: (mm)
-    :param F: (N/mm2)
-    :return:
+    TODO:その他の断面の処理
+    :param shape_name:断面形状
+    :param db:断面データベース
+    :param lb: 圧縮フランジの支点間距離 (mm)
+    :param F: F値 (N/mm2)
+    :return:fb (N/mm2)
     """
     Zx = db[shape_name][0]['Zx']
 
@@ -190,7 +208,11 @@ def calc_Iw(shape_name, Iy, Cy=0, An=0, Ix=0):
 
 
 def calc_J(shape_name):
-    # サンブナンのねじり定数を返す(cm4) H鋼、溝形鋼
+    """
+    サンブナンのねじり定数を返す(cm4) H鋼、溝形鋼
+    :param shape_name:
+    :return:
+    """
     j = 0
     if shape_name[0] == 'H':
         H, B, t1, t2 = [float(x) for x in shape_name[2:].split('x')]

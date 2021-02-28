@@ -30,7 +30,7 @@ def allowable_compressive_force(sec, F=235., term='LONG', lkx=0., lky=0.):
     if sec_full_name[0] in ['P']:
         iy = xs_section_property(sec, 'ix')
     if sec_full_name[0] in ['L']:
-        iy = xs_section_property(sec, 'iy')
+        iy = xs_section_property(sec, 'iv')
 
     term_factor = 1.0
     if term == 'LONG':

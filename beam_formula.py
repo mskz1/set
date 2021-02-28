@@ -420,13 +420,9 @@ class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
 
 
 def add_list_contents(a, b):
+    # 下記sum_listsで対応可能か。
     result = [x + y for (x, y) in zip(a, b)]
     return result
-
-
-def add_list_contents2(lists):
-    # ２つ以上のリストを入力し、要素ごとの和のリストにして返す
-    pass
 
 
 def sum_lists(*args):

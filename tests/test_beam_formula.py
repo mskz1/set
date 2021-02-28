@@ -14,45 +14,6 @@ from beam_formula import SimpliSupportedBeamWithUniformlyIncreasingDistributedLo
 
 # from beam_formula import DistributedLoad,PointLoad
 
-@pytest.mark.skip("不要？")
-def test_simply_supported_beam():
-    bf = SimplySupportedBeam(span=6, dl=1)
-    print(bf.param())
-
-    bf = SimplySupportedBeam(span=6, load_type=LoadType.PLC, P=10)
-    print(bf.param())
-
-
-@pytest.mark.skip("不要？")
-def test_load_object():
-    ld = Load()
-    assert ld.type == LoadType.UDL
-
-
-@pytest.mark.skip("不要？")
-def test_uniform_distributed_load_factory():
-    udl = uniform_distributed_load(1.0)
-    assert udl.value == 1.
-
-
-@pytest.mark.skip("不要？")
-def test_point_load_at_center_factory():
-    pcl = point_load_at_center(5.)
-    assert pcl.value == 5.
-
-
-@pytest.mark.skip("不要？")
-def test_1():
-    dl = uniform_distributed_load(1)
-    print(dl)
-    print(dl.value)
-
-
-@pytest.mark.skip("不要？")
-def test_Load_class():
-    udl = Load.uniform_distributed_load(2)
-    print(udl.value)
-
 
 def test_SimplySupportedBeamWithUniformDistributedLoad():
     bf = SimplySupportedBeamWithUniformDistributedLoad(5., 1.)
@@ -147,7 +108,7 @@ def test_SSBwPL_calc_moment_n_poitns():
     assert bf.getM_npoints(6) == approx([0.0, 8.33, 6.6667, 5, 3.3333, 1.6667, 0.0], abs=0.01)
 
 
-@pytest.mark.skip()
+@pytest.mark.skip('プロットサンプル')
 def test_SSBwPL_multi_load():
     # 複数の荷重を作用させた梁のたわみ量を重ね合わせて算出
     from beam_formula import sum_lists
@@ -205,7 +166,7 @@ def test_SSBwPL_multi_load_moment_chk():
     plt.show()
 
 
-@pytest.mark.skip()
+@pytest.mark.skip('sum_lists の試行')
 def test_list_add():
     from beam_formula import add_list_contents, sum_lists
     span = 6.
@@ -225,13 +186,13 @@ def test_list_add():
     print(sum_lists(a, b, c))
 
 
-@pytest.mark.skip()
+@pytest.mark.skip('プロットサンプル')
 def test_SSBwPL_plot():
     import matplotlib.pyplot as plt
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    bf = SimplySupportedBeamWithPointLoadAtAny(6., 10., 2)
+    bf = SimplySupportedBeamWithPointLoadAtAny(span=6., load=10., a=2.)
     x = bf.get_points(50)
     y = bf.getD_npoints(50)
     ax.plot(x, y, marker=".")

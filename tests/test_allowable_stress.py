@@ -4,12 +4,8 @@ import pytest
 from allowable_stress import steel_ft, steel_fc_aij, steel_fc_bsl, steel_fb2_aij, steel_fb_aij, steel_fb1_aij, \
     steel_fb_bsl, steel_fs, calc_J, calc_Iw, calc_C, steel_fb_aij2005,steel_fb_aij2002
 
-import matplotlib.pyplot as plt
-
 
 def test_steel_ft():
-    # print(steel_ft(235))
-    # print(steel_ft(235)*1.5)
     assert steel_ft(F=235) == 235 / 1.5
     assert steel_ft(F=235) == pytest.approx(156.6667)
     assert steel_ft(F=235) * 1.5 == 235.
@@ -39,9 +35,8 @@ def test_steel_fc():
 
 
 def test_steel_fc_compare_aij_to_bsl():
-    # 学会式と基準法式の比較
+    # 学会式と基準法式の fc 比較
     for l in range(0, 251):
-        # print(l)
         assert steel_fc_aij(F=235, lambda_=l) == pytest.approx(steel_fc_bsl(F=235, lambda_=l), abs=0.055)
 
 
@@ -94,7 +89,6 @@ def test_steel_fb():
     assert steel_fb_aij2002('H-200x100x5.5x8',db,lb=7000,M3=1) == pytest.approx(50.8571)
 
 
-
 def test_saint_venent_calc_j():
     assert calc_J('H-200x100x5.5x8') == pytest.approx(4.48, abs=0.01)
     assert calc_J('H-300x150x6.5x9') == pytest.approx(9.95, abs=0.01)
@@ -123,16 +117,23 @@ def test_calc_C():
     assert calc_C(M1=2, M2=1) == 2.3
 
 
-@pytest.mark.skip('Not implemented yet')
+# @pytest.mark.skip('Not implemented yet')
 def test_steel_fb_aij2005():
     from xs_section import make_all_section_db
     db = make_all_section_db()
     assert steel_fb_aij2005('H-200x100x5.5x8', db) == 235 / 1.5
-    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=2000, M3=1) == 235 / 1.5
+    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=1000, M3=1) == pytest.approx(144.9, abs=0.1)
+    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=2000, M3=1) == pytest.approx(114.0, abs=0.1)
+    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=4000, M3=1) == pytest.approx(71.8, abs=0.1)
+    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=6000, M3=1) == pytest.approx(45.4, abs=0.1)
+
+    assert steel_fb_aij2005('H-500x200x10x16', db, lb=5000, M3=1) == pytest.approx(96.0, abs=0.1)
+    assert steel_fb_aij2005('H-500x200x10x16', db, lb=7000, M3=1) == pytest.approx(72.5, abs=0.1)
 
 
-@pytest.mark.skip('時間がかかるため')
+# @pytest.mark.skip('時間がかかるため')
 def test_steel_fb_compare_aij_to_bsl():
+    # 学会式と基準法式の fb 比較
     for f in [235, 325]:
         for lb in range(0, 9000, 500):
             for i in range(20, 100, 10):
@@ -143,7 +144,7 @@ def test_steel_fb_compare_aij_to_bsl():
                                 steel_fb_bsl(F=f, lb=lb, i=i, C=c, h=h, Af=af), abs=0.17)
 
 
-@pytest.mark.skip('doc_test')
+@pytest.mark.skip('__doc__ の出力例')
 def test_steel_f_doc():
     print(steel_ft.__doc__)
     print(steel_fs.__doc__)
@@ -153,6 +154,8 @@ def test_steel_f_doc():
 
 @pytest.mark.skip('プロットサンプル')
 def test_data_plot():
+    import matplotlib.pyplot as plt
+
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     x = []
