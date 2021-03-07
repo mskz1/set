@@ -145,7 +145,7 @@ def test_steel_fb_compare_aij_to_bsl():
 
 
 @pytest.mark.skip('__doc__ の出力例')
-def test_steel_f_doc():
+def sample_test_steel_f_doc():
     print(steel_ft.__doc__)
     print(steel_fs.__doc__)
     print(steel_fc_bsl.__doc__)
@@ -153,7 +153,7 @@ def test_steel_f_doc():
 
 
 @pytest.mark.skip('プロットサンプル')
-def test_data_plot():
+def sample_test_data_plot():
     import matplotlib.pyplot as plt
 
     fig = plt.figure()

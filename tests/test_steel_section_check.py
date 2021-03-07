@@ -42,3 +42,4 @@ def test_allowable_bending_moment():
     sec = "H-200x100x5.5x8"  # An = 26.67 [cm2], Zx=181 [cm3]
     # TODO : add code
     pass
+

@@ -8,7 +8,7 @@ from bolt import HTB_SIZES, HTB_STRENGTHS
 
 
 @pytest.mark.skip('旧関数_実装変更のため')
-def test_bolt_spec_old():
+def xxx_test_bolt_spec_old():
     assert htb_spec_old(size='M16', prop_name='QA', term='LONG') == 30.2
     assert htb_spec_old(size='m16', prop_name='Qa', term='Long') == 30.2
     assert htb_spec_old(size='M16', prop_name='QA', term='SHORT') == 45.2
@@ -33,29 +33,20 @@ def test_bolt_spec_old():
 
 
 def test_bolt_spec_short_long():
-    for strg in HTB_STRENGTHS:
+    for strength in HTB_STRENGTHS:
         for size in HTB_SIZES:
-            qal = htb_spec_old(size=size, prop_name='QA', term='LONG', strength=strg)
-            qas = htb_spec_old(size=size, prop_name='QA', term='SHORT', strength=strg)
+            qal = htb_spec_old(size=size, prop_name='QA', term='LONG', strength=strength)
+            qas = htb_spec_old(size=size, prop_name='QA', term='SHORT', strength=strength)
             assert qas / qal == pytest.approx(1.5, rel=0.01)
         for size in HTB_SIZES:
-            tal = htb_spec_old(size=size, prop_name='TA', term='LONG', strength=strg)
-            tas = htb_spec_old(size=size, prop_name='TA', term='SHORT', strength=strg)
+            tal = htb_spec_old(size=size, prop_name='TA', term='LONG', strength=strength)
+            tas = htb_spec_old(size=size, prop_name='TA', term='SHORT', strength=strength)
             assert tas / tal == pytest.approx(1.5, rel=0.01)
 
 
-@pytest.mark.skip('不要か検討中')
-def test_get_function_docstring():
-    # print(htb_spec(doc=True))
-    print(htb_spec_old.__doc__)
-
-
 def test_get_all_property_names():
-    # print(htb_spec(property_names=True))
     assert htb_spec_old(property_names=True) == ['QA', 'TA', 'Dia', 'Hole_dia']
-    # print(xs_bolt_all_property_names())
     assert xs_bolt_all_property_names() == 'Dia(mm), Hole_dia(mm), Qal(kN), Qas(kN), Tal(kN), Tas(kN)'
-    # print(xs_htb_all_property_names())
     assert xs_htb_all_property_names() == 'Dia(mm), Hole_dia(mm), Qal(kN), Qas(kN), Tal(kN), Tas(kN), Qu(kN), Tu(kN)'
 
 
@@ -105,7 +96,7 @@ def test_bolt_spec():
     assert htb_spec('M20', 'qu', 'f8t') == 151
 
 
-# @pytest.mark.skip('未実装のため')
+# @pytest.mark.skip('')
 def test_xs_bolt():
     # xl_set udf 検討
     assert xs_bolt_spec('F10T', 'M16', 'Qas') == 45.2

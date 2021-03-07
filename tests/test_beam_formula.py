@@ -109,7 +109,7 @@ def test_SSBwPL_calc_moment_n_poitns():
 
 
 @pytest.mark.skip('プロットサンプル')
-def test_SSBwPL_multi_load():
+def sample_test_SSBwPL_multi_load():
     # 複数の荷重を作用させた梁のたわみ量を重ね合わせて算出
     from beam_formula import sum_lists
     import matplotlib.pyplot as plt
@@ -140,7 +140,7 @@ def test_SSBwPL_multi_load():
 
 
 @pytest.mark.skip('プロットサンプル')
-def test_SSBwPL_multi_load_moment_chk():
+def sample_test_SSBwPL_multi_load_moment_chk():
     # 複数の荷重を作用させた梁のモーメントを重ね合わせて算出
     from beam_formula import sum_lists
     import matplotlib.pyplot as plt
@@ -166,28 +166,23 @@ def test_SSBwPL_multi_load_moment_chk():
     plt.show()
 
 
-@pytest.mark.skip('sum_lists の試行')
+# @pytest.mark.skip('sum_lists の試行')
 def test_list_add():
     from beam_formula import add_list_contents, sum_lists
-    span = 6.
 
-    bf = SimplySupportedBeamWithPointLoadAtAny(span, 10., 1)
-    d1 = bf.getD_npoints(5)
-
-    loads = [1, 2, 3, 4]
     a = [1, 2, 3, 4]
     b = [10, 11, 12, 13]
     c = [10, 11, 12, 13]
 
     r1 = add_list_contents(a, b)
+    assert r1 == [11, 13, 15, 17]
     r2 = add_list_contents(r1, c)
-    print(r2)
-
-    print(sum_lists(a, b, c))
+    assert r2 == [21, 24, 27, 30]
+    assert sum_lists(a, b, c) == [21, 24, 27, 30]
 
 
 @pytest.mark.skip('プロットサンプル')
-def test_SSBwPL_plot():
+def sample_test_SSBwPL_plot():
     import matplotlib.pyplot as plt
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
