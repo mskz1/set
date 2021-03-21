@@ -32,8 +32,10 @@ DEFORMED_BAR_SPEC[D51] = {d: 50.8, DO: 58, A: 2027, L: 160}
 
 
 def rebar_spec(name="", prop_name='ALL'):
+    # if prop_name == 'ALL':
+    #     return PROPERTY_INFO
     if prop_name == 'ALL':
-        return str(PROPERTY_INFO)  # excel addin では、リストを直接返すとvalueエラー
+        return str(PROPERTY_INFO)  # excel addin では、リストを直接返すとvalueエラーとなるため
     if name != "" and name[0] == 'D':
         if prop_name in PROPERTY_NAMES:
             try:
@@ -41,13 +43,17 @@ def rebar_spec(name="", prop_name='ALL'):
             except KeyError:
                 return 'NO_DATA'
 
-    # if prop_name == 'ALL':
-    #     return PROPERTY_INFO
 
 
-def rebar_size_list():
+def rebar_size_list_as_string():
+    # この関数必要か？
     # return D_BAR_SIZE
     res = '[ '
     for d in D_BAR_SIZE:
         res += d + ', '
     return res[:-2] + ' ]'
+
+
+def rebar_size_list():
+    # この関数必要か？
+    return D_BAR_SIZE

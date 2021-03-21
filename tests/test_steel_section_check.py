@@ -1,5 +1,6 @@
 from section_check import allowable_tensile_force
 from section_check import allowable_compressive_force
+from section_check import allowable_bending_moment
 import pytest
 
 F_235 = 235  # N/mm2
@@ -37,9 +38,20 @@ def test_allowable_compressive_force():
     assert allowable_compressive_force(sec, F_235, SHORT_TERM, lky=lk) == pytest.approx(10.68, abs=0.1)
 
 
-@pytest.mark.skip("WIP")
+# @pytest.mark.skip("WIP")
 def test_allowable_bending_moment():
-    sec = "H-200x100x5.5x8"  # An = 26.67 [cm2], Zx=181 [cm3]
-    # TODO : add code
-    pass
+    sec = "H-200x100x5.5x8"  # An = 26.67 [cm2], Zx=181 [cm3], Zy=26.7 [cm3]
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(28.3566, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='SHORT') == pytest.approx(42.535, abs=0.01)
 
+    assert allowable_bending_moment(sec, direc='Y', lb=lb, term='LONG') == pytest.approx(4.183, abs=0.01)
+    assert allowable_bending_moment(sec, direc='Y', lb=lb, term='SHORT') == pytest.approx(6.2745, abs=0.01)
+
+    lb = 3000.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(16.258, abs=0.01)
+    assert allowable_bending_moment(sec, direc='Y', lb=lb, term='SHORT') == pytest.approx(6.2745, abs=0.01)
+
+
+
+    # TODO : add code
