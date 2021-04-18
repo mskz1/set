@@ -67,19 +67,33 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
     :return: Ma 許容曲げモーメント [kN*m]
     """
     # TODO:断面による処理の違いを実装
-    # H形鋼
     from xs_section import make_all_section_db
     db = make_all_section_db()
-    z, fb = 0, 0
-    if direc == 'X':
-        z = xs_section_property(sec, 'Zx')
-        fb = alws.steel_fb_aij2005(sec, db, lb=lb, M1=M1, M2=M2, M3=M3, F=F)
+    section_full_name = xs_section_name(sec)
 
-    if direc == 'Y':
-        z = xs_section_property(sec, 'Zy')
+    # H形鋼
+    if section_full_name.startswith('H-'):
+        z, fb = 0, 0
+        if direc == 'X':
+            z = xs_section_property(sec, 'Zx')
+            fb = alws.steel_fb_aij2005(sec, db, lb=lb, M1=M1, M2=M2, M3=M3, F=F)
+
+        if direc == 'Y':
+            z = xs_section_property(sec, 'Zy')
+            fb = alws.steel_ft()
+
+        term_factor = 1.0 if term == 'LONG' else 1.5
+
+        return term_factor * z * (fb / 10.) / 100.
+
+    # 角形鋼菅
+    if section_full_name.startswith('□P-'):
+        z, fb = 0, 0
+        if direc == 'X':
+            z = xs_section_property(sec, 'Zx')
+        if direc == 'Y':
+            z = xs_section_property(sec, 'Zy')
         fb = alws.steel_ft()
+        term_factor = 1.0 if term == 'LONG' else 1.5
 
-    term_factor = 1.0 if term == 'LONG' else 1.5
-
-    return term_factor * z * (fb / 10.) / 100.
-
+        return term_factor * z * (fb / 10.) / 100.

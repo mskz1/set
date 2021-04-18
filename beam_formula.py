@@ -185,7 +185,7 @@ class SimplySupportedBeam:
 
 class SimplySupportedBeamWithUniformDistributedLoad(AbstractBeamFormula):
     """
-    単純ばり公式　等分布荷重作用
+    単純ばり公式　等分布荷重が作用する場合。　
     span:スパン（m）
     load:荷重値（kN/m）
     """
@@ -227,7 +227,7 @@ class SimplySupportedBeamWithUniformDistributedLoad(AbstractBeamFormula):
 
 class SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(AbstractBeamFormula):
     """
-    単純ばり公式　単純増加分布荷重作用
+    単純ばり公式　単純増加分布荷重が作用する場合。
     span:スパン（m）
     load:荷重値（kN/m2）
     a:荷重負担幅（m）端部位置での
@@ -276,7 +276,7 @@ class SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(AbstractBeamForm
 
 class SimplySupportedBeamWithPointLoadAtCenter(AbstractBeamFormula):
     """
-    単純ばり公式　中央集中荷重作用
+    単純ばり公式　中央集中荷重が作用する場合。
     span:スパン（m）
     load:荷重値（kN）
 
@@ -325,7 +325,7 @@ class SimplySupportedBeamWithPointLoadAtCenter(AbstractBeamFormula):
 
 class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
     """
-    単純ばり公式　任意位置　集中荷重作用
+    単純ばり公式　任意位置　集中荷重が作用する場合。
     span:スパン（m）
     load:荷重値（kN）
     a:荷重作用位置(m)　左端から

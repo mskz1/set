@@ -52,6 +52,11 @@ def test_allowable_bending_moment():
     assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(16.258, abs=0.01)
     assert allowable_bending_moment(sec, direc='Y', lb=lb, term='SHORT') == pytest.approx(6.2745, abs=0.01)
 
+    sec = "KP100*100*3.2"  # An =  [cm2], Zx=37.5 [cm3], Zy= [cm3]
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.875, abs=0.01)
 
 
     # TODO : add code
+    #  断面による計算の違いを考慮
+
