@@ -52,9 +52,45 @@ def test_allowable_bending_moment():
     assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(16.258, abs=0.01)
     assert allowable_bending_moment(sec, direc='Y', lb=lb, term='SHORT') == pytest.approx(6.2745, abs=0.01)
 
-    sec = "KP100*100*3.2"  # An =  [cm2], Zx=37.5 [cm3], Zy= [cm3]
+    sec = "H-600x200x11x17"  # An = 131.7 [cm2], Zx=2520 [cm3], Zy=227 [cm3]
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(394.799, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='SHORT') == pytest.approx(592.2, abs=0.01)
+
+    lb = 3000.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(314.9, abs=0.01)
+
+    lb = 6000.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(199.85, abs=0.01)
+
+    sec = "KP100*100*3.2"  # An = 12.13 [cm2], Zx=37.5 [cm3], Zy= 37.5[cm3]
     lb = 0.  # mm
     assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.875, abs=0.01)
+
+    sec = "P114.3*4.5"  # An = 15.5 [cm2], Zx= 41[cm3], Zy= [cm3]
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(6.42, abs=0.01)
+
+
+
+
+    sec = "MZ100"  # An = 11.92 [cm2], Zx=37.6 [cm3], Zy= 7.52[cm3]
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.89, abs=0.01)
+
+    lb = 2000.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(4.07, abs=0.01)
+
+    lb = 4000.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(2.89, abs=0.01)
+
+
+    # チャートでは、u,v方向に荷重を分解し、(σu+σv)/ft で検定している。
+    sec = "L90*7"  # An = 12.2 [cm2], Zx= [cm3], Zy= [cm3]
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(1.873, abs=0.01)
+
+
 
 
     # TODO : add code

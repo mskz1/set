@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from collections import namedtuple
+# 2021-0312 ironpython collections module??
+# from collections import namedtuple
 
 
 HS_SEC_DATA = """SERIES,HS-,H形鋼細幅,H-HxBxt1xt2

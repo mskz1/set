@@ -1,7 +1,7 @@
 import subprocess
 
-# flag_make_one_dll = False
-flag_make_one_dll = True
+flag_make_one_dll = False
+# flag_make_one_dll = True
 
 ipyc_exe = r"C:\Program Files\IronPython 2.7\ipyc.exe"
 

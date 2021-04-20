@@ -80,6 +80,7 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
 
         if direc == 'Y':
             z = xs_section_property(sec, 'Zy')
+            # 弱軸曲げ 横座屈なし fb=ft
             fb = alws.steel_ft()
 
         term_factor = 1.0 if term == 'LONG' else 1.5
@@ -93,6 +94,46 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
             z = xs_section_property(sec, 'Zx')
         if direc == 'Y':
             z = xs_section_property(sec, 'Zy')
+        # 横座屈なし fb=ft
+        fb = alws.steel_ft()
+        term_factor = 1.0 if term == 'LONG' else 1.5
+
+        return term_factor * z * (fb / 10.) / 100.
+
+    # 鋼菅
+    if section_full_name.startswith('P-'):
+        z, fb = 0, 0
+        z = xs_section_property(sec, 'Zx')
+        # 横座屈なし fb=ft
+        fb = alws.steel_ft()
+        term_factor = 1.0 if term == 'LONG' else 1.5
+
+        return term_factor * z * (fb / 10.) / 100.
+
+    # 溝形鋼
+    if section_full_name.startswith('[-'):
+        z, fb = 0, 0
+
+        if direc == 'X':
+            z = xs_section_property(sec, 'Zx')
+            fb = alws.steel_fb_aij2005(section_full_name, db, lb=lb, M1=M1, M2=M2, M3=M3, F=F)
+
+        if direc == 'Y':
+            z = xs_section_property(sec, 'Zy')
+            # 横座屈なし fb=ft
+            fb = alws.steel_ft()
+        term_factor = 1.0 if term == 'LONG' else 1.5
+
+        return term_factor * z * (fb / 10.) / 100.
+
+    # 山形鋼
+    if section_full_name.startswith('L-'):
+        z, fb = 0, 0
+        if direc == 'X':
+            z = xs_section_property(sec, 'Zx')
+        if direc == 'Y':
+            z = xs_section_property(sec, 'Zy')
+        # 横座屈なし fb=ft
         fb = alws.steel_ft()
         term_factor = 1.0 if term == 'LONG' else 1.5
 
