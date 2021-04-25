@@ -128,6 +128,7 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
 
     # 山形鋼
     if section_full_name.startswith('L-'):
+        # TODO 主軸が傾いているため、u,v方向への分解が必要
         z, fb = 0, 0
         if direc == 'X':
             z = xs_section_property(sec, 'Zx')
