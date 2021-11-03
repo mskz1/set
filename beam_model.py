@@ -8,6 +8,8 @@ DIR_AROUND_YY = "yy"
 class BeamModel:
     """
     はりモデルのクラス
+
+
     """
 
     def __init__(self, span, n_support_xx=0, n_support_yy=0):
