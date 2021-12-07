@@ -35,13 +35,20 @@ def allowable_compressive_force(sec, F=235., term='LONG', lkx=0., lky=0.):
     sec_full_name = xs_section_name(sec)
     # TODO 断面により、iの名称が異なる。ix,iy,iu,iv,,,
     #  各方向別の座屈長さ指定などの対応
+    ix = 0.01
     iy = 0.01
     if sec_full_name[0] in ['H']:
+        ix = xs_section_property(sec, 'ix')
         iy = xs_section_property(sec, 'iy')
     if sec_full_name[0] in ['P']:
+        ix = xs_section_property(sec, 'ix')
         iy = xs_section_property(sec, 'ix')
     if sec_full_name[0] in ['L']:
         iy = xs_section_property(sec, 'iv')
+    if sec_full_name[0] in ['□']:
+        iy = xs_section_property(sec, 'iy')
+
+
 
     term_factor = 1.0
     if term == 'LONG':

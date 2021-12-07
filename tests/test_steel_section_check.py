@@ -23,11 +23,16 @@ def test_allowable_tensile_force():
 
 # @pytest.mark.skip("WIP")
 def test_allowable_compressive_force():
-    # TODO WIP チェック必要。関数引数もチェック　座屈長さ X方向とY方向
+    # TODO WIP チェック必要。関数引数もチェック　座屈長さ X方向とY方向　両方指定時
     sec = "H-200x100x5.5x8"  # An = 26.67 cm2, iy=2.24[cm]
     lk = 300.  # cm?
     assert allowable_compressive_force(sec, F_235, LONG_TERM, lky=lk) == pytest.approx(138.9, abs=0.1)
     assert allowable_compressive_force(sec, F_235, SHORT_TERM, lky=lk) == pytest.approx(208.4, abs=0.1)
+
+    lk_x = 600.  # cm?
+    lk_y = 100.  # cm?
+    assert allowable_compressive_force(sec, F_235, LONG_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(138.9, abs=0.1)
+    # 305.8?
 
     sec = "P89.1*2.8"
     lk = 400.
@@ -36,6 +41,10 @@ def test_allowable_compressive_force():
     sec = "L65*6"
     lk = 400.
     assert allowable_compressive_force(sec, F_235, SHORT_TERM, lky=lk) == pytest.approx(10.68, abs=0.1)
+
+    sec = "KP100*3.2"
+    lk = 400.
+    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lky=lk) == pytest.approx(153.5, abs=0.1)
 
 
 # @pytest.mark.skip("WIP")
