@@ -110,6 +110,14 @@ def test_allowable_bending_moment():
     lb = 0.  # mm
     assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.875, abs=0.01)
 
+    lb = 4000.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.875, abs=0.01)
+
+    sec = "KP150*100*4.5"  # An = 21.17 [cm2], Zx=87.7 [cm3], Zy= 70.4[cm3]
+    lb = 4000.  # mm
+    assert allowable_bending_moment(sec, lb=lb, direc='X', term='LONG') == pytest.approx(13.739, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, direc='Y', term='LONG') == pytest.approx(11.029, abs=0.01)
+
     sec = "P114.3*4.5"  # An = 15.5 [cm2], Zx= 41[cm3], Zy= [cm3]
     lb = 0.  # mm
     assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(6.42, abs=0.01)
@@ -123,6 +131,12 @@ def test_allowable_bending_moment():
 
     lb = 4000.  # mm
     assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(2.89, abs=0.01)
+
+    sec = "C100*50*2.3"  # An = 5.172 [cm2], Zx= 16.1[cm3], Zy= 6.06[cm3]
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.89, abs=0.01)
+
+
 
     # チャートでは、u,v方向に荷重を分解し、(σu+σv)/ft で検定している。
     # TODO 山形鋼　主軸がX、Y軸から傾いているため、処理が必要

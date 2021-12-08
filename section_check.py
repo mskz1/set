@@ -36,7 +36,6 @@ def allowable_compressive_force(sec, F=235., term='LONG', lkx=0., lky=0.):
     area = xs_section_property(sec, 'An')
     sec_full_name = xs_section_name(sec)
     # TODO:有効断面？（幅厚比、断面欠損）
-    # TODO:C形鋼？
     # 断面により、iの名称が異なる。ix,iy,iu,iv,,,
     ix = 0.01
     iy = 0.01
@@ -140,6 +139,11 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
         term_factor = 1.0 if term == 'LONG' else 1.5
 
         return term_factor * z * (fb / 10.) / 100.
+
+    # TODO:C形鋼  fbの計算を確認
+
+
+
 
     # 山形鋼
     if section_full_name.startswith('L-'):

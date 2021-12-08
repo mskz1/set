@@ -147,13 +147,14 @@ def steel_fb_aij2005(shape_name, db, lb=0, M1=0, M2=0, M3=0, F=235):
     許容曲げ応力度を返す　鋼構造設計規準2005年版 式(*.*) 日本建築学会(Architectural Institute of Japan)版
     はり断面サイズを指定する（H形鋼のみ？）
 
-    TODO:その他の断面の処理
     :param shape_name:断面形状
     :param db:断面データベース
     :param lb: 圧縮フランジの支点間距離 (mm)
     :param F: F値 (N/mm2)
     :return:fb (N/mm2)
     """
+    # TODO:その他の断面の処理
+
     Zx = db[shape_name][0]['Zx']
 
     My = F / 10 * Zx  # [kN*cm]
