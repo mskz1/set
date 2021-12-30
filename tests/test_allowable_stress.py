@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 import pytest
+import sys
+import os
+
+# print(sys.path)
+# print(os.environ['PYTHONPATH'])
 
 from allowable_stress import steel_ft, steel_fc_aij, steel_fc_bsl, steel_fb2_aij, steel_fb_aij, steel_fb1_aij, \
-    steel_fb_bsl, steel_fs, calc_J, calc_Iw, calc_C, steel_fb_aij2005,steel_fb_aij2002
+    steel_fb_bsl, steel_fs, calc_J, calc_Iw, calc_C, steel_fb_aij2005, steel_fb_aij2002
 
 
 def test_steel_ft():
@@ -84,9 +89,9 @@ def test_steel_fb():
     from xs_section import make_all_section_db
     db = make_all_section_db()
 
-    assert steel_fb_aij2002('H-500x200x10x16',db,lb=5000,M3=1) == pytest.approx(116.2895)
-    assert steel_fb_aij2002('H-500x200x10x16',db,lb=7000,M3=1) == pytest.approx(81.3714)
-    assert steel_fb_aij2002('H-200x100x5.5x8',db,lb=7000,M3=1) == pytest.approx(50.8571)
+    assert steel_fb_aij2002('H-500x200x10x16', db, lb=5000, M3=1) == pytest.approx(116.2895)
+    assert steel_fb_aij2002('H-500x200x10x16', db, lb=7000, M3=1) == pytest.approx(81.3714)
+    assert steel_fb_aij2002('H-200x100x5.5x8', db, lb=7000, M3=1) == pytest.approx(50.8571)
 
 
 def test_saint_venent_calc_j():
@@ -97,6 +102,7 @@ def test_saint_venent_calc_j():
     assert calc_J('[-100x50x5x7.5') == pytest.approx(1.72, abs=0.01)
     assert calc_J('[-125x65x6x8') == pytest.approx(2.96, abs=0.01)
     assert calc_J('[-300x90x9x13') == pytest.approx(19.5, abs=0.01)
+    assert calc_J('C-100x50x20x2.3') == pytest.approx(0.0936, abs=0.001)
 
 
 def test_calc_Iw():
@@ -108,6 +114,7 @@ def test_calc_Iw():
     assert calc_Iw('[-100x50x5x7.5', Iy=26, Cy=1.54, An=11.92, Ix=188) == pytest.approx(405, abs=0.1)
     assert calc_Iw('[-125x65x6x8', Iy=61.8, Cy=1.90, An=17.11, Ix=424) == pytest.approx(1540, abs=5)
     assert calc_Iw('[-300x90x9x13', Iy=309, Cy=2.22, An=48.57, Ix=6440) == pytest.approx(46300, abs=1)
+    assert calc_Iw('C-100x50x20x2.3', Iy=19, Cy=1.86, An=5.17, Ix=80.7) == pytest.approx(254.75, abs=0.1)
 
 
 def test_calc_C():
@@ -129,6 +136,13 @@ def test_steel_fb_aij2005():
 
     assert steel_fb_aij2005('H-500x200x10x16', db, lb=5000, M3=1) == pytest.approx(96.0, abs=0.1)
     assert steel_fb_aij2005('H-500x200x10x16', db, lb=7000, M3=1) == pytest.approx(72.5, abs=0.1)
+
+    # TODO:チャート出力と比較 2021-1230
+    assert steel_fb_aij2005('[-100x50x5x7.5', db, lb=0, M3=1) == pytest.approx(235 / 1.5, abs=0.1)
+    assert steel_fb_aij2005('[-100x50x5x7.5', db, lb=3000, M3=1) == pytest.approx(90.53, abs=0.1)
+    # TODO:チャート出力と比較
+    assert steel_fb_aij2005('C-100x50x20x2.3', db, lb=0, M3=1) == pytest.approx(235 / 1.5, abs=0.1)
+    assert steel_fb_aij2005('C-100x50x20x2.3', db, lb=3000, M3=1) == pytest.approx(67.09, abs=0.1)
 
 
 # @pytest.mark.skip('時間がかかるため')
