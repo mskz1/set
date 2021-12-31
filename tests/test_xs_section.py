@@ -31,8 +31,8 @@ def test_xs_H_sec_name():
 def test_xs_section_property():
     # assert set(xs_section_property('HS20')) == {'H', 'An', 'Ix', 'Iy', 'ix', 'iy', 'Zx', 'Zy'}
     assert xs_section_property('H20') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
-                                           'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
-                                           'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
+                                          'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
+                                          'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
     assert xs_section_property('H200*100') == ['H(mm)', 'B(mm)', 't1(mm)', 't2(mm)', 'r(mm)', 'An(cm**2)', 'W(kgf/m)',
                                                'Ix(cm**4)', 'Iy(cm**4)', 'ix(cm)', 'iy(cm)', 'Zx(cm**3)', 'Zy(cm**3)',
                                                'ib(cm)', 'eta(-)', 'Zpx(cm**3)', 'Zpy(cm**3)']
@@ -147,7 +147,7 @@ def test_make_short_name():
 
 
 def test_section_type():
-    db= make_all_section_db()
+    db = make_all_section_db()
     # 断面の種類は、H形鋼、角形鋼管、鋼管、C形、溝形、山形　の６種類　2020-12時点
     assert xs_section_type("h19") == 'H'
     assert xs_section_type("H-200x100x5.5x8") == 'H'
@@ -159,4 +159,27 @@ def test_section_type():
     assert xs_section_type("L65*6") == 'L'
 
 
-
+def test_angle_property_calc_Iu_Iv_sample():
+    import math
+    db = make_all_section_db()
+    sec = 'L-90x90x10'
+    A = xs_section_property(sec, 'A', db)
+    B = xs_section_property(sec, 'B', db)
+    t = xs_section_property(sec, 't', db)
+    Iu = xs_section_property(sec, 'Iu', db)
+    Iv = xs_section_property(sec, 'Iv', db)
+    # cx = xs_section_property(sec, 'Cx', db)
+    cx = 2.57
+    cy = 2.57
+    # cy = xs_section_property(sec, 'Cy', db)
+    print(A, B, t, cx, cy, Iu, Iv)
+    alpha = math.pi / 4.
+    eu1_s = A * math.sin(alpha)
+    ev1_s = 10 * cx / math.sin(alpha)
+    ev2_s = A * math.cos(alpha) - 10 * cx / math.sin(alpha)
+    print(eu1_s, ev1_s, ev2_s)
+    eu1 = -10 * cy * math.sin(alpha) + (10 * cx - A) * math.cos(alpha)
+    eu2 = (B - 10 * cx) * math.sin(alpha) + 10 * cx * math.cos(alpha)
+    ev1 = -10 * cy * math.cos(alpha) - 10 * cx * math.sin(alpha)
+    ev2 = (B - 10 * cx) * math.cos(alpha) - 10 * cx * math.sin(alpha)
+    print(eu1, eu2, ev1, ev2)

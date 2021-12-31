@@ -192,6 +192,7 @@ UNIT,mm,mm,mm,mm,mm,mm,cm**2,kgf/m,cm**4,cm**4,cm,cm,cm**3,cm**3,cm
 [-,200,90,8,13.5,14,7,38.65,30.3,2490,277,8.02,2.68,249,44.2,2.74
 """
 
+# TODO Cx,Cy,tan-alpha,
 L_SEC_DATA = """SERIES,L-,等辺山形鋼,L-AxBxt
 FORMAT,L-,A,B,t
 PROPERTY,A,B,t,r1,r2,An,W,Ix,Iy,Iu,Iv,ix,iy,iu,iv,Zx,Zy
@@ -293,10 +294,11 @@ def xs_section_property(name, property_name=None, db=None):
     断面名称が略名の時は内部でフル名称に変換する。
     断面特性のディクショナリデータが渡されたらそれを用い、渡されなければ生成する。
     property_name = 'ALL'の時は、登録されている断面特性名全てを文字列で返す。
+
     :param name:
     :param property_name:
     :param db:
-    :return:数値あるいは文字列
+    :return: 数値あるいは文字列
     UDF用公開関数
     """
     try:
@@ -320,6 +322,7 @@ def xs_section_property(name, property_name=None, db=None):
 def make_section_db(csv_data):
     """
     CSV文字列を受け取り、断面名称をキー、断面特性データ（辞書）と断面特性名（リスト）のリストを値とする辞書を返す。
+
     :param csv_data:
     :return:
     """
@@ -362,6 +365,7 @@ def make_section_db(csv_data):
 def make_all_section_db():
     """
     複数の鋼材種別のデータをまとめたデータを生成し、返す。
+
     :return:
     """
     db = make_section_db(HS_SEC_DATA)
@@ -378,7 +382,8 @@ def make_all_section_db():
 def make_short_name(db):
     """
     dbから省略名を生成する
-    :param db:鋼材データ
+
+    :param db: 鋼材データ
     :return: 省略名 => フル名称の辞書
     """
     names = db.keys()

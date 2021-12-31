@@ -135,16 +135,14 @@ def test_allowable_bending_moment():
     sec = "C100*50*2.3"  # An = 5.172 [cm2], Zx= 16.1[cm3], Zy= 6.06[cm3]
     lb = 0.  # mm
     # TODO:C形鋼の実装 fb=ft とする場合と、fb低減する場合
-    # assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.89, abs=0.01)
-
-
+    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(2.522, abs=0.01)
 
     # チャートでは、u,v方向に荷重を分解し、(σu+σv)/ft で検定している。
-    # TODO 山形鋼　主軸がX、Y軸から傾いているため、処理が必要
+    # TODO 山形鋼　主軸がX、Y軸から傾いているため、処理が必要　fbはftとして良いか？　断面形状にもよるか。
     # 2021-0425 一旦コメントアウト
-    # sec = "L90*7"  # An = 12.2 [cm2], Zx= [cm3], Zy= [cm3]
-    # lb = 0.  # mm
-    # assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(1.873, abs=0.01)
+    sec = "L90*7"  # An = 12.2 [cm2], Zx= 14.2[cm3], Zy= 14.2[cm3], Ix=Iy=93[cm4],Iu=148,Iv=38.3
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='X') == pytest.approx(2.22466, abs=0.01)
     #
 
     # TODO : add code
