@@ -60,8 +60,17 @@ def test_xs_section_property():
     # assert xs_section_property('hm900', 'Zx', db) == 8990
     assert xs_section_property('h900*300', 'Zx', db) == 8990
     assert xs_section_property('L65*65*6', 'An', db) == 7.527
+    assert xs_section_property('L65*65*6', 'Cx', db) == 1.81
+    assert xs_section_property('L65*65*6', 'tan_alpha', db) == 1
+    assert xs_section_property('L65*65*6', 'Iu', db) == 46.6
     assert xs_section_property('L100*10', 'An', db) == 19
     assert xs_section_property('L130*9', 'Zx', db) == 38.7
+    assert xs_section_property('L100*75*7', 'An', db) == 11.9
+    assert xs_section_property('L100*75*7', 'Cx', db) == 3.06
+    assert xs_section_property('L100*75*7', 'Cy', db) == 1.83
+    assert xs_section_property('L100*75*7', 'Iu', db) == 144
+    assert xs_section_property('L100*75*7', 'Iv', db) == 30.8
+    assert xs_section_property('L100*75*7', 'tan_alpha', db) == 0.548
 
 
 def test_csv_parse():
@@ -103,7 +112,7 @@ def test_convert_dict_to_CSharp_dict():
         print(',', end='')
 
 
-@pytest.mark.skip('ディクショナリのキー追加の試作用')
+# @pytest.mark.skip('ディクショナリのキー追加の試作用')
 def test_short_full_name_dict_modify():
     items = list(short_full_name.items())
     for item in items:
@@ -111,7 +120,18 @@ def test_short_full_name_dict_modify():
         if '_' in k:
             new_k = k.replace('_', '*')
             short_full_name[new_k] = v
-    pprint.pprint(short_full_name)
+
+    # pprint.pprint(short_full_name)
+    assert short_full_name['L100*10'] == 'L-100x100x10'
+    assert short_full_name['L100*7'] == 'L-100x100x7'
+    assert short_full_name['L100*75*7'] == 'L-100x75x7'
+    assert short_full_name['C100*50*2.3'] == 'C-100x50x20x2.3'
+    assert short_full_name['H100'] == 'H-100x100x6x8'
+    assert short_full_name['H19'] == 'H-198x99x4.5x7'
+    assert short_full_name['H30'] == 'H-300x150x6.5x9'
+    assert short_full_name['KP100*2.3'] == '□P-100x100x2.3'
+    assert short_full_name['MZ100'] == '[-100x50x5x7.5'
+    # assert short_full_name[''] == ''
 
 
 @pytest.mark.skip('helpの出力確認用')
@@ -156,11 +176,20 @@ def test_section_type():
     assert xs_section_type("C100*50*2.3") == 'C'
     assert xs_section_type("[-100x50x5x7.5") == '['
     assert xs_section_type("L65*6") == 'L'
-    assert xs_section_type("L65*6") == 'L'
+    assert xs_section_type("L65*65*6") == 'L'
 
 
 def test_angle_property_calc_Iu_Iv_sample():
     import math
+
+    def get_eu_ev(A, B, alpha, cx, cy):
+        eu1 = -10 * cy * math.sin(alpha) + (10 * cx - A) * math.cos(alpha)
+        eu2 = (B - 10 * cy) * math.sin(alpha) + 10 * cx * math.cos(alpha)
+        ev1 = -10 * cy * math.cos(alpha) - 10 * cx * math.sin(alpha)
+        ev2 = (B - 10 * cy) * math.cos(alpha) - 10 * cx * math.sin(alpha)
+        ev2a = -10 * cy * math.cos(alpha) - (10 * cx - A) * math.sin(alpha)
+        return eu1, eu2, ev1, ev2, ev2a
+
     db = make_all_section_db()
     sec = 'L-90x90x10'
     A = xs_section_property(sec, 'A', db)
@@ -168,18 +197,70 @@ def test_angle_property_calc_Iu_Iv_sample():
     t = xs_section_property(sec, 't', db)
     Iu = xs_section_property(sec, 'Iu', db)
     Iv = xs_section_property(sec, 'Iv', db)
-    # cx = xs_section_property(sec, 'Cx', db)
-    cx = 2.57
-    cy = 2.57
-    # cy = xs_section_property(sec, 'Cy', db)
-    print(A, B, t, cx, cy, Iu, Iv)
+    cy = xs_section_property(sec, 'Cx', db)
+    cx = xs_section_property(sec, 'Cy', db)
+    # cx = 2.57
+    # cy = 2.57
+    # print(A, B, t, cx, cy, Iu, Iv)
     alpha = math.pi / 4.
     eu1_s = A * math.sin(alpha)
     ev1_s = 10 * cx / math.sin(alpha)
     ev2_s = A * math.cos(alpha) - 10 * cx / math.sin(alpha)
-    print(eu1_s, ev1_s, ev2_s)
-    eu1 = -10 * cy * math.sin(alpha) + (10 * cx - A) * math.cos(alpha)
-    eu2 = (B - 10 * cx) * math.sin(alpha) + 10 * cx * math.cos(alpha)
-    ev1 = -10 * cy * math.cos(alpha) - 10 * cx * math.sin(alpha)
-    ev2 = (B - 10 * cx) * math.cos(alpha) - 10 * cx * math.sin(alpha)
-    print(eu1, eu2, ev1, ev2)
+    # print(eu1_s, ev1_s, ev2_s)
+    # eu1 = -10 * cy * math.sin(alpha) + (10 * cx - A) * math.cos(alpha)
+    # eu2 = (B - 10 * cy) * math.sin(alpha) + 10 * cx * math.cos(alpha)
+    # ev1 = -10 * cy * math.cos(alpha) - 10 * cx * math.sin(alpha)
+    # ev2 = (B - 10 * cy) * math.cos(alpha) - 10 * cx * math.sin(alpha)
+    # eu1, eu2, ev1, ev2, ev2a = get_eu_ev(A, B, alpha, cx, cy)
+    eu1, eu2, ev1, ev2 = get_eu_ev_of_angle(A, B, alpha, cx, cy)
+
+    # print(eu1, eu2, ev1, ev2)
+    assert eu1 == pytest.approx(63.63961030678927)
+    assert eu2 == pytest.approx(63.63961030678927)
+    assert ev1 == pytest.approx(36.345288552988535)
+    assert ev2 == pytest.approx(27.294321753800737)
+    print(10 * Iu / eu1, 10 * Iv / ev1)
+
+    zu, zv = get_Zu_Zv_of_angle(sec, db)
+    print(zu, zv)
+
+    # print('-' * 30)
+    # L-100x75x7
+    A = 100
+    B = 75
+    t = 7
+    Iu = 144
+    Iv = 30.8
+    # cx = 1.83
+    cx = 3.06
+    # cy = 3.06
+    cy = 1.83
+    # print(A, B, t, cx, cy, Iu, Iv)
+    alpha = math.atan(0.548)
+    # アングルのフィレット部は考慮しない
+    eu1, eu2, ev1, ev2, ev2a = get_eu_ev(A, B, alpha, cx, cy)
+    eu1, eu2, ev1, ev2 = get_eu_ev_of_angle(A, B, alpha, cx, cy)
+    # print(eu1, eu2, ev1, ev2, ev2a)
+    assert eu1 == pytest.approx(69.65517135983993)
+    assert eu2 == pytest.approx(54.08324813335662)
+    assert ev1 == pytest.approx(30.75377665147421)
+    assert ev2 == pytest.approx(35.01788502102573)
+    # assert ev2a == pytest.approx(17.303384143899073)
+    zu, zv = get_Zu_Zv_of_angle('L-100x75x7')
+    print('L-100x75x7 : Zu, Zv', zu, zv)
+    Iu_100x75 = xs_section_property('L-100x75x7', 'Iu')
+    Iv_100x75 = xs_section_property('L-100x75x7', 'Iv')
+    print('L-100x75 : Iu, Iv', Iu_100x75, Iv_100x75)
+
+
+
+def test_get_zu_zv_of_angle():
+    db = make_all_section_db()
+    sec_name = 'L90*10'
+    zu, zv = get_Zu_Zv_of_angle(sec_name, db)
+    assert zu == pytest.approx(31.269, abs=0.01)
+    assert zv == pytest.approx(14.224, abs=0.01)
+    sec_name = 'L-100x75x7'
+    zu, zv = get_Zu_Zv_of_angle(sec_name, db)
+    assert zu == pytest.approx(20.673, abs=0.01)
+    assert zv == pytest.approx(8.795, abs=0.01)
