@@ -550,6 +550,20 @@ def get_Zu_Zv_of_angle(name, db=None):
     return Iu / (max(eu1, eu2) * 0.1), Iv / (max(ev1, ev2) * 0.1)
 
 
+def rotated_coord(p, alpha):
+    """
+    座標軸を反時計回りに回転させた新座標を返す
+
+    :param p: (x,y) 座標 tuple
+    :param alpha: 座標軸の回転角度 radian
+    :return: 新座標(x',y') tuple
+    """
+    x, y = p
+    sin = math.sin
+    cos = math.cos
+    return x * cos(alpha) + y * sin(alpha), -x * sin(alpha) + y * cos(alpha)
+
+
 # import された時点で、省略名の辞書データを生成する
 short_full_name = make_short_name(make_all_section_db())
 # print(short_full_name)

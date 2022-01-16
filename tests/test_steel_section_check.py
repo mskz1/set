@@ -139,11 +139,31 @@ def test_allowable_bending_moment():
 
     # チャートでは、u,v方向に荷重を分解し、(σu+σv)/ft で検定している。
     # TODO 山形鋼　主軸がX、Y軸から傾いているため、処理が必要　fbはftとして良いか？　断面形状にもよるか。
-    # 2021-0425 一旦コメントアウト
+    # 2022-0109 一旦コメントアウト
     sec = "L90*7"  # An = 12.2 [cm2], Zx= 14.2[cm3], Zy= 14.2[cm3], Ix=Iy=93[cm4],Iu=148,Iv=38.3
     lb = 0.  # mm
     assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='X') == pytest.approx(2.22466, abs=0.01)
-    #
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='U') == pytest.approx(3.643, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='V') == pytest.approx(1.724, abs=0.01)
+
+    sec = "L90*10"  # An =  [cm2], Zx= [cm3], Zy= [cm3], Ix=Iy=[cm4],Iu=,Iv=
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='X') == pytest.approx(3.055, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='U') == pytest.approx(4.898, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='V') == pytest.approx(2.228, abs=0.01)
+
+    sec = "L75*6"  # An =  [cm2], Zx= [cm3], Zy= [cm3], Ix=Iy=[cm4],Iu=,Iv=
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='X') == pytest.approx(1.326, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='U') == pytest.approx(2.162, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='V') == pytest.approx(1.021, abs=0.01)
+
+    sec = "L100*75*7"  # An =  [cm2], Zx= [cm3], Zy= [cm3], Ix=Iy=[cm4],Iu=,Iv=
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='X') == pytest.approx(2.663, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='Y') == pytest.approx(1.566, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='U') == pytest.approx(3.238, abs=0.01)
+    assert allowable_bending_moment(sec, lb=lb, term='LONG', direc='V') == pytest.approx(1.377, abs=0.01)
 
     # TODO : add code
-    #  断面による計算の違いを考慮
+    #  断面による計算の違いを考慮　山形鋼の各ポイントで、圧縮側、引張側で不利な判定

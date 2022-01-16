@@ -1,14 +1,14 @@
-from xs_section import xs_section_property, xs_section_name
+from xs_section import xs_section_property, xs_section_name, get_Zu_Zv_of_angle
 import allowable_stress as alws
 
 
-def allowable_tensile_force(sec, F, term):
+def allowable_tensile_force(sec, F=235., term='LONG'):
     """
     部材の許容引張耐力を返す。全断面積に対して。
 
     :param sec: 断面名
     :param F: F値 [N/mm2]
-    :param term: 荷重種別（短期・長期）"LONG" / "SHORT"
+    :param term: 荷重種別（短期・長期）str "LONG" / "SHORT"
     :return: tNa 許容引張耐力[kN]
     """
     # TODO:有効断面積の対応？　
@@ -28,7 +28,7 @@ def allowable_compressive_force(sec, F=235., term='LONG', lkx=0., lky=0.):
 
     :param sec: 断面名
     :param F: F値 [N/mm2]
-    :param term: 荷重種別（短期・長期）"LONG" / "SHORT"
+    :param term: 荷重種別（短期・長期）str "LONG" / "SHORT"
     :param lkx: 座屈長さ X方向 [cm]
     :param lky: 座屈長さ Y方向 [cm]
     :return: cNa 許容圧縮耐力[kN]
@@ -76,7 +76,7 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
     :param direc: 断面の軸指定 強軸/弱軸まわり　"X" / "Y"
     :param lb: 圧縮フランジの支点間距離 (mm)
     :param F: F値 [N/mm2]
-    :param term: 荷重種別（短期・長期）"LONG" / "SHORT"
+    :param term: 荷重種別（短期・長期）str "LONG" / "SHORT"
     :return: Ma 許容曲げモーメント [kN*m]
     """
 
@@ -89,11 +89,11 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
     if section_full_name.startswith('H-'):
         z, fb = 0, 0
         if direc == 'X':
-            z = xs_section_property(sec, 'Zx')
+            z = xs_section_property(sec, 'Zx', db)
             fb = alws.steel_fb_aij2005(sec, db, lb=lb, M1=M1, M2=M2, M3=M3, F=F)
 
         if direc == 'Y':
-            z = xs_section_property(sec, 'Zy')
+            z = xs_section_property(sec, 'Zy', db)
             # 弱軸曲げ 横座屈なし fb=ft
             fb = alws.steel_ft()
 
@@ -105,9 +105,9 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
     if section_full_name.startswith('□P-'):
         z, fb = 0, 0
         if direc == 'X':
-            z = xs_section_property(sec, 'Zx')
+            z = xs_section_property(sec, 'Zx', db)
         if direc == 'Y':
-            z = xs_section_property(sec, 'Zy')
+            z = xs_section_property(sec, 'Zy', db)
         # 横座屈なし fb=ft
         fb = alws.steel_ft()
         term_factor = 1.0 if term == 'LONG' else 1.5
@@ -117,7 +117,7 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
     # 鋼菅
     if section_full_name.startswith('P-'):
         z, fb = 0, 0
-        z = xs_section_property(sec, 'Zx')
+        z = xs_section_property(sec, 'Zx', db)
         # 横座屈なし fb=ft
         fb = alws.steel_ft()
         term_factor = 1.0 if term == 'LONG' else 1.5
@@ -129,11 +129,11 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
         z, fb = 0, 0
 
         if direc == 'X':
-            z = xs_section_property(sec, 'Zx')
+            z = xs_section_property(sec, 'Zx', db)
             fb = alws.steel_fb_aij2005(section_full_name, db, lb=lb, M1=M1, M2=M2, M3=M3, F=F)
 
         if direc == 'Y':
-            z = xs_section_property(sec, 'Zy')
+            z = xs_section_property(sec, 'Zy', db)
             # 横座屈なし fb=ft
             fb = alws.steel_ft()
         term_factor = 1.0 if term == 'LONG' else 1.5
@@ -145,10 +145,10 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
     if section_full_name.startswith('C-'):
         z, fb = 0, 0
         if direc == 'X':
-            z = xs_section_property(sec, 'Zx')
+            z = xs_section_property(sec, 'Zx', db)
             fb = alws.steel_fb_aij2005(section_full_name, db, lb=lb, M1=M1, M2=M2, M3=M3, F=F)
         if direc == 'Y':
-            z = xs_section_property(sec, 'Zy')
+            z = xs_section_property(sec, 'Zy', db)
             # 横座屈なし fb=ft
             fb = alws.steel_ft()
         term_factor = 1.0 if term == 'LONG' else 1.5
@@ -160,11 +160,14 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
         # TODO 主軸が傾いているため、u,v方向への分解が必要　u,v方向のそれぞれのMaを返す？
         z, fb = 0, 0
         if direc == 'X':
-            z = xs_section_property(sec, 'Zx')
+            z = xs_section_property(sec, 'Zx', db)
         if direc == 'Y':
-            z = xs_section_property(sec, 'Zy')
-        if direc =='U':
-            pass
+            z = xs_section_property(sec, 'Zy', db)
+        if direc == 'U':
+            z, _ = get_Zu_Zv_of_angle(sec, db)
+        if direc == 'V':
+            _, z = get_Zu_Zv_of_angle(sec, db)
+
 
         # 横座屈なし fb=ft
         fb = alws.steel_ft()
