@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-import pprint
 
-from text_calc import strip_square_brackets, get_square_brackets_index
+from src.text_calc import strip_square_brackets, get_square_brackets_index
 
 """ VBA の textCalc udf のpython版
 

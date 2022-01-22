@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from bolt import htb_spec_old, bolt_spec, xs_bolt_spec, htb_spec, xs_bolt_all_property_names
-from bolt import xs_htb_all_property_names
-from bolt import ParameterError
-from bolt import HTB_SIZES, HTB_STRENGTHS
+from src.bolt import htb_spec_old, bolt_spec, xs_bolt_spec, htb_spec, xs_bolt_all_property_names
+from src.bolt import xs_htb_all_property_names
+from src.bolt import ParameterError
+from src.bolt import HTB_SIZES, HTB_STRENGTHS
 
 
 @pytest.mark.skip('旧関数_実装変更のため')

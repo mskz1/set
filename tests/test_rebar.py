@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import pytest
 
-from rebar import rebar_spec, rebar_size_list_as_string, rebar_size_list
+from src.rebar import rebar_spec, rebar_size_list_as_string, rebar_size_list
 
 
 def test_rebar_spec():

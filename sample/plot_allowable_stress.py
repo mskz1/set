@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from allowable_stress import steel_fb_bsl, steel_fb_aij2005, steel_fb_aij2002, calc_C
+from src.allowable_stress import steel_fb_bsl, steel_fb_aij2005, steel_fb_aij2002, calc_C
 
-from xs_section import make_all_section_db
+from src.xs_section import make_all_section_db
 import matplotlib.pyplot as plt
 
 # import numpy as np

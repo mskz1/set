@@ -564,6 +564,24 @@ def rotated_coord(p, alpha):
     return x * cos(alpha) + y * sin(alpha), -x * sin(alpha) + y * cos(alpha)
 
 
+def get_point_on_arc(r, alpha):
+    """
+    半径rの円と、X軸から角度αの中心を原点とする直線の交点の座標を返す
+
+    :param r: 円の半径
+    :param alpha: 直線がX軸となす角度 radian
+    :return: 座標(x,y) tuple
+    """
+    sin = math.sin
+    cos = math.cos
+    return r * cos(alpha), r * sin(alpha)
+
+
+
+
+
+
+
 # import された時点で、省略名の辞書データを生成する
 short_full_name = make_short_name(make_all_section_db())
 # print(short_full_name)

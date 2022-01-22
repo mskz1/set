@@ -2,7 +2,8 @@
 
 """溶接に関する計算をするモジュール"""
 
-import allowable_stress
+from src import allowable_stress
+
 
 def fillet_weld_size(t, weld_type='T'):
     """

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-from pytest import approx
 
-from beam_model import SimpleBeam
+from src.beam_model import SimpleBeam
 
 @pytest.mark.skip("WIP")
 def test_simple_beam():

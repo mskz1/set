@@ -4,7 +4,7 @@ import math
 import pytest
 import pprint
 
-from xs_section import *
+from src.xs_section import *
 
 
 def test_xs_H_sec_name():
@@ -229,9 +229,22 @@ def test_get_zu_zv_of_angle():
 
 
 def test_rotate_coordinate_system():
-    assert rotated_coord((1, 1), math.pi / 4) == pytest.approx((1.4142135623731, 0))
-    assert rotated_coord((-1, 1), math.pi / 4) == pytest.approx((0, 1.4142135623731))
-    assert rotated_coord((-1, -1), math.pi / 4) == pytest.approx((-1.4142135623731, 0))
-    assert rotated_coord((1, -1), math.pi / 4) == pytest.approx((0, -1.4142135623731))
-    assert rotated_coord((1, 0), math.pi / 6) == pytest.approx((0.86602540378444, -0.5))
+    assert rotated_coord((1, 1), math.radians(45)) == pytest.approx((1.4142135623731, 0))
+    assert rotated_coord((-1, 1), math.radians(45)) == pytest.approx((0, 1.4142135623731))
+    assert rotated_coord((-1, -1), math.radians(45)) == pytest.approx((-1.4142135623731, 0))
+    assert rotated_coord((1, -1), math.radians(45)) == pytest.approx((0, -1.4142135623731))
+    assert rotated_coord((1, 0), math.radians(30)) == pytest.approx((0.86602540378444, -0.5))
 
+
+def test_get_point_on_arc():
+    r1 = 10
+    assert get_point_on_arc(r=r1, alpha=math.radians(45)) == pytest.approx((r1 / 2 ** 0.5, r1 / 2 ** 0.5))
+    assert get_point_on_arc(r=r1, alpha=math.radians(135)) == pytest.approx((-r1 / 2 ** 0.5, r1 / 2 ** 0.5))
+    assert get_point_on_arc(r=r1, alpha=math.radians(225)) == pytest.approx((-r1 / 2 ** 0.5, -r1 / 2 ** 0.5))
+    assert get_point_on_arc(r=r1, alpha=math.radians(315)) == pytest.approx((r1 / 2 ** 0.5, -r1 / 2 ** 0.5))
+    assert get_point_on_arc(r=r1, alpha=math.radians(0)) == pytest.approx((r1, 0))
+    assert get_point_on_arc(r=r1, alpha=math.radians(360)) == pytest.approx((r1, 0))
+
+
+def test_get_rotated_points():
+    pass

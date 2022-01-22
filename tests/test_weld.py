@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from weld import fillet_weld_size, fillet_weld_strength
+from src.weld import fillet_weld_size, fillet_weld_strength
 
 
 def test_fillet_welding_size():

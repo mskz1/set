@@ -1,5 +1,5 @@
-from xs_section import xs_section_property, xs_section_name, get_Zu_Zv_of_angle
-import allowable_stress as alws
+from src.xs_section import xs_section_property, xs_section_name, get_Zu_Zv_of_angle
+import src.allowable_stress as alws
 
 
 def allowable_tensile_force(sec, F=235., term='LONG'):
@@ -81,7 +81,7 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
     """
 
     # TODO:断面による処理の違いを実装
-    from xs_section import make_all_section_db
+    from src.xs_section import make_all_section_db
     db = make_all_section_db()
     section_full_name = xs_section_name(sec)
 

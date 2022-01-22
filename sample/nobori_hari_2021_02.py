@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import matplotlib.pyplot as plt
-from beam_formula import SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad, \
+from src.beam_formula import SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad, \
     SimplySupportedBeamWithPointLoadAtAny
 
 
@@ -48,7 +47,7 @@ def hikaku_sample():
     Dmax = bf_base.getDmax()
     print("三角形分布荷重：Mmax={:8.2f}, Dmax={:8.2f}".format(Mmax, Dmax))
 
-    from beam_formula import sum_lists
+    from src.beam_formula import sum_lists
     import matplotlib.pyplot as plt
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)

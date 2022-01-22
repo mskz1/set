@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import allowable_stress
-from xs_section import make_all_section_db, xs_section_property, xs_section_name
-import matplotlib.pyplot as plt
-import weld
-import bolt
+from src.xs_section import xs_section_property, xs_section_name
+from src import bolt, allowable_stress, weld
 
 # Constants
 MEM_SIZE = 'size'

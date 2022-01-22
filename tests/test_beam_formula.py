@@ -6,10 +6,10 @@ from pytest import approx
 # from beam_formula import Load
 # from beam_formula import uniform_distributed_load, point_load_at_center
 
-from beam_formula import SimplySupportedBeamWithUniformDistributedLoad
-from beam_formula import SimplySupportedBeamWithPointLoadAtCenter
-from beam_formula import SimplySupportedBeamWithPointLoadAtAny
-from beam_formula import SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad
+from src.beam_formula import SimplySupportedBeamWithUniformDistributedLoad
+from src.beam_formula import SimplySupportedBeamWithPointLoadAtCenter
+from src.beam_formula import SimplySupportedBeamWithPointLoadAtAny
+from src.beam_formula import SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad
 
 
 # from beam_formula import DistributedLoad,PointLoad
@@ -111,7 +111,7 @@ def test_SSBwPL_calc_moment_n_poitns():
 @pytest.mark.skip('プロットサンプル')
 def sample_test_SSBwPL_multi_load():
     # 複数の荷重を作用させた梁のたわみ量を重ね合わせて算出
-    from beam_formula import sum_lists
+    from src.beam_formula import sum_lists
     import matplotlib.pyplot as plt
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -142,7 +142,7 @@ def sample_test_SSBwPL_multi_load():
 @pytest.mark.skip('プロットサンプル')
 def sample_test_SSBwPL_multi_load_moment_chk():
     # 複数の荷重を作用させた梁のモーメントを重ね合わせて算出
-    from beam_formula import sum_lists
+    from src.beam_formula import sum_lists
     import matplotlib.pyplot as plt
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -168,7 +168,7 @@ def sample_test_SSBwPL_multi_load_moment_chk():
 
 # @pytest.mark.skip('sum_lists の試行')
 def test_list_add():
-    from beam_formula import add_list_contents, sum_lists
+    from src.beam_formula import add_list_contents, sum_lists
 
     a = [1, 2, 3, 4]
     b = [10, 11, 12, 13]

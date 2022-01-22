@@ -1,6 +1,6 @@
-from section_check import allowable_tensile_force
-from section_check import allowable_compressive_force
-from section_check import allowable_bending_moment
+from src.section_check import allowable_tensile_force
+from src.section_check import allowable_compressive_force
+from src.section_check import allowable_bending_moment
 import pytest
 
 F_235 = 235  # N/mm2
