@@ -564,18 +564,36 @@ def rotated_coord(p, alpha):
     return x * cos(alpha) + y * sin(alpha), -x * sin(alpha) + y * cos(alpha)
 
 
-def get_point_on_arc(r, alpha):
+def get_point_on_arc(r, alpha, dx=0, dy=0):
     """
-    半径rの円と、X軸から角度αの中心を原点とする直線の交点の座標を返す
+    半径rの円と、X軸から角度αの円中心を端点とする直線の交点の座標を返す
 
     :param r: 円の半径
     :param alpha: 直線がX軸となす角度 radian
     :return: 座標(x,y) tuple
+    :param dx: x方向原点からの平行移動量
+    :param dy: y方向原点からの平行移動量
     """
     sin = math.sin
     cos = math.cos
-    return r * cos(alpha), r * sin(alpha)
+    return r * cos(alpha) + dx, r * sin(alpha) + dy
 
+
+def get_rotated_points(pts, dx, dy, alpha):
+    """
+    回転させた座標軸での座標値を返す
+
+    :param pts: [(x1,y1),(x2,y2),...] タプルのリスト
+    :param dx: 各点の座標原点からX方向移動量
+    :param dy: 各点の座標原点からY方向移動量
+    :param alpha: 座標軸X軸からの回転角度 radian
+    :return: [(x1',y1'),(x2',y2'),...] タプルのリスト
+    """
+    result = []
+    for pt in pts:
+        x, y = pt
+        result.append(rotated_coord((x + dx, y + dy), alpha))
+    return result
 
 
 

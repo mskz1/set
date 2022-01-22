@@ -244,7 +244,39 @@ def test_get_point_on_arc():
     assert get_point_on_arc(r=r1, alpha=math.radians(315)) == pytest.approx((r1 / 2 ** 0.5, -r1 / 2 ** 0.5))
     assert get_point_on_arc(r=r1, alpha=math.radians(0)) == pytest.approx((r1, 0))
     assert get_point_on_arc(r=r1, alpha=math.radians(360)) == pytest.approx((r1, 0))
+    assert get_point_on_arc(r=r1, alpha=math.radians(0), dx=100, dy=-100) == pytest.approx((r1 + 100, 0 - 100))
+    assert get_point_on_arc(r=r1, alpha=math.radians(45), dx=50, dy=20) == pytest.approx(
+        (r1 / 2 ** 0.5 + 50, r1 / 2 ** 0.5 + 20))
 
 
 def test_get_rotated_points():
-    pass
+    pts = [(0, 0), (0, 100), (75, 0)]
+    dx, dy = -18.31, -30.59
+    alpha = math.radians(28.709)
+    expected = [(-30.75, -18.03), (17.28, 69.67), (35.03, -54.06)]  # CADでの作図結果
+    result = get_rotated_points(pts, dx, dy, alpha)
+    for i, res in enumerate(result):
+        assert res == pytest.approx(expected[i], abs=0.01)
+
+    # sample1  L-100x75x7
+    alpha = math.radians(28.709)
+    rp1 = get_point_on_arc(r=5, alpha=alpha, dx=2, dy=95)
+    rp2 = get_point_on_arc(r=5, alpha=alpha, dx=70, dy=2)
+    pts = [(0, 0), (0, 100), rp1, rp2, (75, 0)]
+    dx, dy = -18.31, -30.59
+    expected = [(-30.75, -18.03), (17.28, 69.67), (21.64, 64.33), (36.6, -49.91), (35.03, -54.06)]  # CADでの作図結果
+    result = get_rotated_points(pts, dx, dy, alpha)
+    for i, res in enumerate(result):
+        assert res == pytest.approx(expected[i], abs=0.01)
+
+    # sample2  BL-75x45x4.5
+    alpha = math.radians(21.108)
+    rp1 = get_point_on_arc(r=9, alpha=math.radians(180 + 21.108), dx=9, dy=9)
+    pts = [rp1, (0, 9), (0, 75), (4.5, 75), (45, 4.5), (45, 0), (9, 0)]
+    dx, dy = -10.38, -25.77
+    expected = [(-16.33, -15.15), (-15.72, -11.91), (8.05, 49.66), (12.24, 48.04), (24.64, -32.31), (23.02, -36.51),
+                (-10.57, -23.54)]
+    result = get_rotated_points(pts, dx, dy, alpha)
+    for i, res in enumerate(result):
+        assert res == pytest.approx(expected[i], abs=0.01)
+
