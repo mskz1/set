@@ -554,9 +554,9 @@ def rotated_coord(p, alpha):
     """
     座標軸を反時計回りに回転させた新座標を返す
 
-    :param p: (x,y) 座標 tuple
-    :param alpha: 座標軸の回転角度 radian
-    :return: 新座標(x',y') tuple
+    :param p: (x, y) 座標 tuple
+    :param alpha: 座標軸の回転角度 [radian]
+    :return: 新座標 (x', y') tuple
     """
     x, y = p
     sin = math.sin
@@ -570,9 +570,9 @@ def get_point_on_arc(r, alpha, dx=0, dy=0):
 
     :param r: 円の半径
     :param alpha: 直線がX軸となす角度 radian
-    :return: 座標(x,y) tuple
     :param dx: x方向原点からの平行移動量
     :param dy: y方向原点からの平行移動量
+    :return: 座標 (x, y) tuple
     """
     sin = math.sin
     cos = math.cos
@@ -583,11 +583,11 @@ def get_rotated_points(pts, dx, dy, alpha):
     """
     回転させた座標軸での座標値を返す
 
-    :param pts: [(x1,y1),(x2,y2),...] タプルのリスト
-    :param dx: 各点の座標原点からX方向移動量
-    :param dy: 各点の座標原点からY方向移動量
-    :param alpha: 座標軸X軸からの回転角度 radian
-    :return: [(x1',y1'),(x2',y2'),...] タプルのリスト
+    :param pts: [(x1, y1), (x2, y2),...] タプルのリスト[mm]
+    :param dx: 各点の座標原点からX方向移動量[mm]
+    :param dy: 各点の座標原点からY方向移動量[mm]
+    :param alpha: 座標軸X軸からの回転角度 [radian]
+    :return: [(x1', y1'), (x2', y2'),...] タプルのリスト[mm]
     """
     result = []
     for pt in pts:
@@ -596,8 +596,59 @@ def get_rotated_points(pts, dx, dy, alpha):
     return result
 
 
+def get_Zu_Zv_at_points(pts: list, Iu: float, Iv: float):
+    """
+    指定位置での Zu, Zv を返す。
+
+    :param pts: [(x1, y1), (x2, y2),...] タプルのリスト[mm]
+    :param Iu: U軸まわりの断面二次モーメント[cm4]
+    :param Iv: V軸まわりの断面二次モーメント[cm4]
+    :return: [(Zu1, Zv1), (Zu2, Zv2),...] タプルのリスト[cm3]
+    """
+    result = []
+    for pt in pts:
+        u, v = pt
+        result.append((Iu / (abs(v) * 0.1), Iv / (abs(u) * 0.1)))
+    return result
 
 
+def get_stress_at_points(pts: list, alpha, Iu, Iv, Mx, My=0):
+    """
+    指定位置での、曲げによる応力度を返す。
+
+    :param pts:
+    :param Iu: 主軸まわりの断面二次モーメント[cm4]
+    :param Iv: 主軸まわりの断面二次モーメント[cm4]
+    :param Mx: X軸まわりのモーメント[kN*cm] Y軸正方向が引張の時を正
+    :param My: Y軸まわりのモーメント[kN*cm] Y軸正方向が引張の時を正
+    :return:
+    """
+    sin = math.sin
+    cos = math.cos
+
+    Mu = Mx * cos(alpha) - My * sin(alpha)
+    Mv = Mx * sin(alpha) + My * cos(alpha)
+    result = []
+    for pt in pts:
+        u, v = pt
+        zu = Iu / (abs(v) * 0.1)
+        zv = Iv / (abs(u) * 0.1)
+        su = Mu / zu
+        sv = Mv / zv
+        if u >= 0.:  # u tension side ?
+            if v >= 0.:
+                ss = su + sv
+            else:
+                ss = su - sv
+        else:  # u compression side ?
+            if v >= 0.:
+                ss = -su + sv
+            else:
+                ss = -su - sv
+        result.append(ss)
+    return result
+
+    # TODO:WIP 近い値ではあるが、結果がピタリとは合わないが？
 
 
 # import された時点で、省略名の辞書データを生成する

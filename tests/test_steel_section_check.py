@@ -167,3 +167,5 @@ def test_allowable_bending_moment():
 
     # TODO : add code
     #  断面による計算の違いを考慮　山形鋼の各ポイントで、圧縮側、引張側で不利な判定
+
+
