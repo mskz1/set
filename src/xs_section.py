@@ -612,6 +612,26 @@ def get_Zu_Zv_at_points(pts: list, Iu: float, Iv: float):
     return result
 
 
+def get_stress_at_points_m11(pts: list, Iu, Mu):
+    result = []
+    for pt in pts:
+        u, v = pt
+        zu = Iu / (v * 0.1)
+        su = Mu / zu
+        result.append(su)
+    return result
+
+
+def get_stress_at_points_m22(pts: list, Iv, Mv):
+    result = []
+    for pt in pts:
+        u, v = pt
+        zv = Iv / (u * 0.1)
+        sv = Mv / zv
+        result.append(sv)
+    return result
+
+
 def get_stress_at_points(pts: list, alpha, Iu, Iv, Mx, My=0):
     """
     指定位置での、曲げによる応力度を返す。
