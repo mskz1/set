@@ -579,6 +579,26 @@ def get_point_on_arc(r, alpha, dx=0, dy=0):
     return r * cos(alpha) + dx, r * sin(alpha) + dy
 
 
+def get_points_on_arc(r, dx=0, dy=0, start=0, end=math.radians(90), n=16):
+    """
+    半径rの円周上の複数の点の座標を得る。開始角度、終了角度と、分割数を与える。
+    :param r: 円の半径
+    :param dx:x方向原点からの平行移動量
+    :param dy:y方向原点からの平行移動量
+    :param start:開始角度(x軸方向が 0 deg.,y軸方向が 90 deg.）
+    :param end:終了角度（開始角度より大きい値を入力）
+    :param n: 円周の分割数
+    :return: 座標 (x, y) tuple
+    """
+    d_theta = (end - start) / n
+    result = []
+    theta = start
+    for i in range(n+1):
+        result.append(get_point_on_arc(r, theta, dx, dy))
+        theta += d_theta
+    return result
+
+
 def get_rotated_points(pts, dx, dy, alpha):
     """
     回転させた座標軸での座標値を返す
