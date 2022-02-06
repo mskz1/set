@@ -314,10 +314,10 @@ def test_get_z_at_points():
     pts = [(-25.59239426559226, -1.7763568394002505e-15), (20.36954651153333, 45.9619407771256),
            (22.955332949160223, 41.7193000900063), (22.955332949160233, -41.7193000900063),
            (20.369546511533336, -45.96194077712559)]  # L-65x65
-    expected = [(xx, 4.75), (10.13, 5.97), (11.16, 5.29), (11.16, 5.29), (10.13, 5.97)]
-    result = get_Zu_Zv_at_points(pts, Iu=46.579727445, Iv=12.164198330)
-    print(result)
-    # TODO:0割の対応
+    # expected = [(xx, 4.75), (10.13, 5.97), (11.16, 5.29), (11.16, 5.29), (10.13, 5.97)]
+    # result = get_Zu_Zv_at_points(pts, Iu=46.579727445, Iv=12.164198330)
+    # print(result)
+    # TODO:0割の対応 とりあえず実害はない？
 
 
 def test_m11_m22_angle_stress_tmp():
@@ -475,3 +475,33 @@ def test_check_angle_section_moment_tmp():
     print('L-65x65x6 修正　Mx=100[kN*cm]')
     print(ss)
     print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
+
+    # sample5  L-90x90x10 例題 円周上の点を分割計算
+    alpha = math.radians(45)
+    # rp1 = get_point_on_arc(r=4, alpha=alpha, dx=2, dy=61)
+    rpts1 = get_points_on_arc(r=7, dx=3, dy=83, start=math.radians(0), end=math.radians(90), n=32)
+    rp2 = get_point_on_arc(r=7, alpha=alpha, dx=83, dy=3)
+    # rpts2 = get_points_on_arc(r=4, dx=61, dy=2, start=math.radians(0), end=math.radians(90))
+
+    # pts = [(0, 0), (0, 65), rp1, rp2, (65, 0)]
+    pts = [(0, 0), (0, 90)]
+    pts.extend(rpts1)
+    # pts.extend(rpts2)
+    pts.extend([rp2, (90, 0)])
+
+    dx, dy = -25.722377552, -25.722377552
+    rotated_pts = get_rotated_points(pts, dx, dy, alpha)
+    # print(rotated_pts)
+    Iu, Iv = 198.64812558, 51.619538241  # (cm4)
+    # Mx, My = 40, 0  # (kN*cm)
+    Mx, My = 225, 0  # (kN*cm)
+    ss = get_stress_at_points(rotated_pts, math.radians(23.2), Iu, Iv, Mx, My)
+    print('L-90x90x10 修正　M=225[kN*cm]')
+    print(ss)
+    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
+
+    ssu = get_stress_at_points_m11(rotated_pts, Iu, 207)
+    ssv = get_stress_at_points_m22(rotated_pts, Iv, 88.7)
+    ssuv = [su + sv for su, sv in zip(ssu, ssv)]
+    print(ssuv)
+    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ssuv), min(ssuv)))

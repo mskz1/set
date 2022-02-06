@@ -593,7 +593,7 @@ def get_points_on_arc(r, dx=0, dy=0, start=0, end=math.radians(90), n=16):
     d_theta = (end - start) / n
     result = []
     theta = start
-    for i in range(n+1):
+    for i in range(n + 1):
         result.append(get_point_on_arc(r, theta, dx, dy))
         theta += d_theta
     return result
@@ -636,7 +636,11 @@ def get_stress_at_points_m11(pts: list, Iu, Mu):
     result = []
     for pt in pts:
         u, v = pt
-        zu = Iu / (v * 0.1)
+        try:
+            zu = Iu / (v * 0.1)
+        except ZeroDivisionError:
+            zu = Iu / (1e-16)
+
         su = Mu / zu
         result.append(su)
     return result
@@ -671,8 +675,18 @@ def get_stress_at_points(pts: list, alpha, Iu, Iv, Mx, My=0):
     result = []
     for pt in pts:
         u, v = pt
-        zu = Iu / (abs(v) * 0.1)
-        zv = Iv / (abs(u) * 0.1)
+
+        if u == 0.:
+            zv = Iv / (1e-15 * 0.1)
+
+        else:
+            zv = Iv / (abs(u) * 0.1)
+
+        if v == 0:
+            zu = Iu / (1e-15 * 0.1)
+        else:
+            zu = Iu / (abs(v) * 0.1)
+
         su = Mu / zu
         sv = Mv / zv
         if u >= 0.:  # u tension side ?
