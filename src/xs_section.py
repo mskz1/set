@@ -2,6 +2,7 @@
 # 2021-0312 ironpython collections module??
 # from collections import namedtuple
 import math
+# from typing import Tuple, List
 
 HS_SEC_DATA = """SERIES,HS-,H形鋼細幅,H-HxBxt1xt2
 FORMAT,H-,H,B,t1,t2
@@ -550,7 +551,7 @@ def get_Zu_Zv_of_angle(name, db=None):
     return Iu / (max(eu1, eu2) * 0.1), Iv / (max(ev1, ev2) * 0.1)
 
 
-def rotated_coord(p, alpha):
+def rotated_coord(p: tuple, alpha: float):
     """
     座標軸を反時計回りに回転させた新座標を返す
 
@@ -632,7 +633,15 @@ def get_Zu_Zv_at_points(pts: list, Iu: float, Iv: float):
     return result
 
 
-def get_stress_at_points_m11(pts: list, Iu, Mu):
+def get_stress_at_points_m11(pts: list, Iu: float, Mu: float):
+    """
+    指定位置での応力度を返す
+
+    :param pts: [(x1, y1), (x2, y2),...] 点座標値[mm]タプルのリスト
+    :param Iu: U軸まわりの断面二次モーメント[cm4]
+    :param Mu: U軸まわりの作用モーメント[kN*cm]
+    :return: 各点の応力度の[kN/cm2]リスト
+    """
     result = []
     for pt in pts:
         u, v = pt
@@ -640,13 +649,20 @@ def get_stress_at_points_m11(pts: list, Iu, Mu):
             zu = Iu / (v * 0.1)
         except ZeroDivisionError:
             zu = Iu / (1e-16)
-
         su = Mu / zu
         result.append(su)
     return result
 
 
-def get_stress_at_points_m22(pts: list, Iv, Mv):
+def get_stress_at_points_m22(pts: list, Iv: float, Mv: float):
+    """
+    指定位置での応力度を返す
+
+    :param pts: [(x1, y1), (x2, y2),...] 点座標値[mm]タプルのリスト
+    :param Iv: V軸まわりの断面二次モーメント[cm4]
+    :param Mv: V軸まわりの作用モーメント[kN*cm]
+    :return: 各点の応力度の[kN/cm2]リスト
+    """
     result = []
     for pt in pts:
         u, v = pt
@@ -656,7 +672,13 @@ def get_stress_at_points_m22(pts: list, Iv, Mv):
     return result
 
 
-def get_stress_at_points(pts: list, alpha, Iu, Iv, Mx, My=0):
+def get_stress_at_points_m11_m22(pts: list, Iu: float, Iv: float, Mu: float, Mv: float):
+    su = get_stress_at_points_m11(pts, Iu, Mu)
+    sv = get_stress_at_points_m22(pts, Iv, Mv)
+    return [s1 + s2 for s1, s2 in zip(su, sv)]
+
+
+def get_stress_at_points_mx_my(pts: list, alpha, Iu, Iv, Mx, My=0):
     """
     指定位置での、曲げによる応力度を返す。
 
@@ -675,18 +697,14 @@ def get_stress_at_points(pts: list, alpha, Iu, Iv, Mx, My=0):
     result = []
     for pt in pts:
         u, v = pt
-
         if u == 0.:
             zv = Iv / (1e-15 * 0.1)
-
         else:
             zv = Iv / (abs(u) * 0.1)
-
         if v == 0:
             zu = Iu / (1e-15 * 0.1)
         else:
             zu = Iu / (abs(v) * 0.1)
-
         su = Mu / zu
         sv = Mv / zv
         if u >= 0.:  # u tension side ?

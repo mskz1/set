@@ -181,7 +181,8 @@ def test_section_type():
     assert xs_section_type("L65*65*6") == 'L'
 
 
-def test_get_ue_uv_of_angle():
+def test_get_ue_uv_of_angle_inConsideration():
+    # memo 使わないか。
     db = make_all_section_db()
     sec = 'L-90x90x10'
     A = xs_section_property(sec, 'A', db)
@@ -216,7 +217,7 @@ def test_get_ue_uv_of_angle():
     assert ev2 == pytest.approx(35.01788502102573)
 
 
-def test_get_zu_zv_of_angle():
+def test_get_zu_zv_of_angle_inConsideration():
     db = make_all_section_db()
     sec_name = 'L90*10'
     zu, zv = get_Zu_Zv_of_angle(sec_name, db)
@@ -304,7 +305,7 @@ def test_get_rotated_points():
     # print(get_rotated_points(pts, dx, dy, alpha))
 
 
-def test_get_z_at_points():
+def test_get_z_at_points_inConsideration():
     pts = [(-30.75, -18.03), (17.28, 69.67), (21.64, 64.33), (36.6, -49.91), (35.03, -54.06)]  # CADでの作図結果 L-100x75
     expected = [(79.94, 10.00), (20.68, 17.80), (22.40, 14.21), (28.87, 8.40), (26.66, 8.78)]
     result = get_Zu_Zv_at_points(pts, Iu=144.136, Iv=30.76)
@@ -332,17 +333,6 @@ def test_m11_m22_angle_stress_tmp():
     # Iu, Iv = 144.136, 30.76  # (cm4)
     Iu, Iv = 144.15192995, 30.761482438  # (cm4)
 
-    # sample3  L-65x65x6
-    # alpha = math.radians(45)
-    # rp1 = get_point_on_arc(r=4, alpha=alpha, dx=2, dy=61)
-    # rp2 = get_point_on_arc(r=4, alpha=alpha, dx=61, dy=2)
-    # pts = [(0, 0), (0, 65), rp1, rp2, (65, 0)]
-    # # dx, dy = -18.10, -18.10
-    # dx, dy = -18.098250239, -18.098250239
-    # rotated_pts = get_rotated_points(pts, dx, dy, alpha)
-    # # Iu, Iv = 46.580, 12.164  # (cm4)
-    # Iu, Iv = 46.585752741, 12.164195004  # (cm4)
-
     Mu = 100 * math.cos(alpha)
     s11 = get_stress_at_points_m11(rotated_pts, Iu, Mu)
     print(s11)
@@ -352,156 +342,74 @@ def test_m11_m22_angle_stress_tmp():
     print([x + y for x, y in zip(s11, s22)])
 
 
-def test_check_angle_section_moment_tmp():
-    # sample1  L-100x75x7
-    alpha = math.radians(28.7088147)
-    rp1 = get_point_on_arc(r=5, alpha=alpha, dx=2, dy=95)
-    rp2 = get_point_on_arc(r=5, alpha=alpha, dx=70, dy=2)
-    pts = [(0, 0), (0, 100), rp1, rp2, (75, 0)]
-    dx, dy = -18.31, -30.59
-    dx, dy = -18.313859367, -30.586318718
-    rotated_pts = get_rotated_points(pts, dx, dy, alpha)
-    # Iu, Iv = 144.136, 30.76  # (cm4)
-    Iu, Iv = 144.13587130, 30.759679370  # (cm4)
-    Mx, My = 40, 0  # (kN*cm)
-    Mx, My = 100, 0  # (kN*cm)
-    ss = get_stress_at_points(rotated_pts, alpha, Iu, Iv, Mx, My)
-    print('L-100x75x7 Mx=100[kN*cm]')
-    print(ss)
-    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
-
+def test_angle_section_bending_moment_stress():
     # sample1  L-100x75x7　円周上の点を追加
     alpha = math.radians(28.7088147)
-    # rp1 = get_point_on_arc(r=5, alpha=alpha, dx=2, dy=95)
     rpts1 = get_points_on_arc(r=5, dx=2, dy=95, start=0, end=math.radians(90), n=32)
-    rp2 = get_point_on_arc(r=5, alpha=alpha, dx=70, dy=2)
-    # pts = [(0, 0), (0, 100), rp1, rp2, (75, 0)]
+    rpts2 = get_points_on_arc(r=5, dx=70, dy=2, start=0, end=math.radians(90), n=32)
+
     pts = [(0, 0), (0, 100)]
     pts.extend(rpts1)
-    pts.extend([rp2, (75, 0)])
+    pts.extend(rpts2)
+    pts.extend([(75, 0)])
 
-    dx, dy = -18.31, -30.59
-    dx, dy = -18.313859367, -30.586318718
+    dx, dy = -18.313859367, -30.586318718  # (mm)
     rotated_pts = get_rotated_points(pts, dx, dy, alpha)
-    # Iu, Iv = 144.136, 30.76  # (cm4)
     Iu, Iv = 144.13587130, 30.759679370  # (cm4)
-    Mx, My = 40, 0  # (kN*cm)
     Mx, My = 100, 0  # (kN*cm)
-    # print(get_stress_at_points(rotated_pts, alpha, Iu, Iv, Mx, My))
-    ss = get_stress_at_points(rotated_pts, alpha, Iu, Iv, Mx, My)
-    print('L-100x75x7 修正　Mx=100[kN*cm]')
-    print(ss)
-    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
 
-    # sample2  BL-75x45x4.5
-    alpha = math.radians(21.107967)
-    rp1 = get_point_on_arc(r=9, alpha=math.radians(180 + 21.107967), dx=9, dy=9)
-    pts = [rp1, (0, 9), (0, 75), (4.5, 75), (45, 4.5), (45, 0), (9, 0)]
-    dx, dy = -10.38, -25.77
-    dx, dy = -10.380125, -25.7687
-    rotated_pts = get_rotated_points(pts, dx, dy, alpha)
-    Iu, Iv = 33.501, 4.689  # (cm4)
-    Iu, Iv = 33.50109163, 4.68886877  # (cm4)
-    # Mx, My = 40, 0  # (kN*cm)
-    Mx, My = 100, 0  # (kN*cm)
-    ss = get_stress_at_points(rotated_pts, alpha, Iu, Iv, Mx, My)
-    print('BL-75x45x4.5 Mx=100[kN*cm]')
-    print(ss)
-    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
+    ss = get_stress_at_points_m11_m22(rotated_pts, Iu, Iv, Mu=Mx * math.cos(alpha), Mv=Mx * math.sin(alpha))
+    assert max(ss) == pytest.approx(7.3501, abs=0.001)
+    assert min(ss) == pytest.approx(-5.8999, abs=0.001)
 
     # sample2  BL-75x45x4.5 円周上の点を追加
     alpha = math.radians(21.107967)
-    rp1 = get_point_on_arc(r=9, alpha=math.radians(180 + 21.107967), dx=9, dy=9)
     rpts1 = get_points_on_arc(r=9, dx=9, dy=9, start=math.radians(180), end=math.radians(270), n=32)
     pts = []
     pts.extend(rpts1)
-    # pts = [rp1, (0, 9), (0, 75), (4.5, 75), (45, 4.5), (45, 0), (9, 0)]
     pts.extend([(0, 9), (0, 75), (4.5, 75), (45, 4.5), (45, 0), (9, 0)])
-    dx, dy = -10.38, -25.77
     dx, dy = -10.380125, -25.7687
 
     rotated_pts = get_rotated_points(pts, dx, dy, alpha)
-    Iu, Iv = 33.501, 4.689  # (cm4)
     Iu, Iv = 33.50109163, 4.68886877  # (cm4)
 
-    # Mx, My = 40, 0  # (kN*cm)
-    Mx, My = 100, 0  # (kN*cm)
-    ss = get_stress_at_points(rotated_pts, alpha, Iu, Iv, Mx, My)
-    print('BL-75x45x4.5 修正　Mx=100[kN*cm]')
-    print(ss)
-    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
-
-    # sample3  L-65x65x6
-    alpha = math.radians(45)
-    rp1 = get_point_on_arc(r=4, alpha=alpha, dx=2, dy=61)
-    rp2 = get_point_on_arc(r=4, alpha=alpha, dx=61, dy=2)
-    pts = [(0, 0), (0, 65), rp1, rp2, (65, 0)]
-    # dx, dy = -18.10, -18.10
-    dx, dy = -18.096555532, -18.096555532
-    rotated_pts = get_rotated_points(pts, dx, dy, alpha)
-    # print(rotated_pts)
-    # Iu, Iv = 46.580, 12.164  # (cm4)
-    Iu, Iv = 46.579727445, 12.164198330  # (cm4)
-    # Mx, My = 40, 0  # (kN*cm)
-    Mx, My = 100, 0  # (kN*cm)
-
-    ss = get_stress_at_points(rotated_pts, alpha, Iu, Iv, Mx, My)
-    print('L-65x65x6 Mx=100[kN*cm]')
-    print(ss)
-    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
+    ss = get_stress_at_points_m11_m22(rotated_pts, Iu, Iv, Mu=Mx * math.cos(alpha), Mv=Mx * math.sin(alpha))
+    assert max(ss) == pytest.approx(22.7831, abs=0.001)
+    assert min(ss) == pytest.approx(-17.1961, abs=0.001)
 
     # sample4  L-65x65x6 円周上の点を分割計算
     alpha = math.radians(45)
-    # rp1 = get_point_on_arc(r=4, alpha=alpha, dx=2, dy=61)
     rpts1 = get_points_on_arc(r=4, dx=2, dy=61, start=math.radians(0), end=math.radians(90), n=32)
-    rp2 = get_point_on_arc(r=4, alpha=alpha, dx=61, dy=2)
-    # rpts2 = get_points_on_arc(r=4, dx=61, dy=2, start=math.radians(0), end=math.radians(90))
-
-    # pts = [(0, 0), (0, 65), rp1, rp2, (65, 0)]
+    rpts2 = get_points_on_arc(r=4, dx=61, dy=2, start=math.radians(0), end=math.radians(90), n=32)
     pts = [(0, 0), (0, 65)]
     pts.extend(rpts1)
-    # pts.extend(rpts2)
-    pts.extend([rp2, (65, 0)])
+    pts.extend(rpts2)
+    pts.extend([(65, 0)])
 
-    # dx, dy = -18.10, -18.10
     dx, dy = -18.096555532, -18.096555532
     rotated_pts = get_rotated_points(pts, dx, dy, alpha)
-    # print(rotated_pts)
-    # Iu, Iv = 46.580, 12.164  # (cm4)
     Iu, Iv = 46.579727445, 12.164198330  # (cm4)
-    # Mx, My = 40, 0  # (kN*cm)
     Mx, My = 100, 0  # (kN*cm)
-    ss = get_stress_at_points(rotated_pts, alpha, Iu, Iv, Mx, My)
-    print('L-65x65x6 修正　Mx=100[kN*cm]')
-    print(ss)
-    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
+    # ss = get_stress_at_points_mx_my(rotated_pts, alpha, Iu, Iv, Mx, My)
+    ss = get_stress_at_points_m11_m22(rotated_pts, Iu, Iv, Mu=Mx * math.cos(alpha), Mv=Mx * math.sin(alpha))
+    assert max(ss) == pytest.approx(19.7551, abs=0.001)
+    assert min(ss) == pytest.approx(-14.8769, abs=0.001)
 
     # sample5  L-90x90x10 例題 円周上の点を分割計算
     alpha = math.radians(45)
-    # rp1 = get_point_on_arc(r=4, alpha=alpha, dx=2, dy=61)
     rpts1 = get_points_on_arc(r=7, dx=3, dy=83, start=math.radians(0), end=math.radians(90), n=32)
-    rp2 = get_point_on_arc(r=7, alpha=alpha, dx=83, dy=3)
-    # rpts2 = get_points_on_arc(r=4, dx=61, dy=2, start=math.radians(0), end=math.radians(90))
+    rpts2 = get_points_on_arc(r=7, dx=83, dy=3, start=math.radians(0), end=math.radians(90), n=32)
 
-    # pts = [(0, 0), (0, 65), rp1, rp2, (65, 0)]
     pts = [(0, 0), (0, 90)]
     pts.extend(rpts1)
-    # pts.extend(rpts2)
-    pts.extend([rp2, (90, 0)])
+    pts.extend(rpts2)
+    pts.extend([(90, 0)])
 
     dx, dy = -25.722377552, -25.722377552
     rotated_pts = get_rotated_points(pts, dx, dy, alpha)
-    # print(rotated_pts)
     Iu, Iv = 198.64812558, 51.619538241  # (cm4)
-    # Mx, My = 40, 0  # (kN*cm)
     Mx, My = 225, 0  # (kN*cm)
-    ss = get_stress_at_points(rotated_pts, math.radians(23.2), Iu, Iv, Mx, My)
-    print('L-90x90x10 修正　M=225[kN*cm]')
-    print(ss)
-    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
 
-    ssu = get_stress_at_points_m11(rotated_pts, Iu, 207)
-    ssv = get_stress_at_points_m22(rotated_pts, Iv, 88.7)
-    ssuv = [su + sv for su, sv in zip(ssu, ssv)]
-    print(ssuv)
-    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ssuv), min(ssuv)))
+    ss = get_stress_at_points_m11_m22(rotated_pts, Iu, Iv, 207, 88.7)
+    assert max(ss) == pytest.approx(11.5000, abs=0.001)
+    assert min(ss) == pytest.approx(-6.2508, abs=0.001)
