@@ -181,54 +181,6 @@ def test_section_type():
     assert xs_section_type("L65*65*6") == 'L'
 
 
-def test_get_ue_uv_of_angle_inConsideration():
-    # memo 使わないか。
-    db = make_all_section_db()
-    sec = 'L-90x90x10'
-    A = xs_section_property(sec, 'A', db)
-    B = xs_section_property(sec, 'B', db)
-    t = xs_section_property(sec, 't', db)
-    Iu = xs_section_property(sec, 'Iu', db)
-    Iv = xs_section_property(sec, 'Iv', db)
-    cx = xs_section_property(sec, 'Cx', db)
-    cy = xs_section_property(sec, 'Cy', db)
-    # alpha = math.pi / 4.
-    alpha = math.atan(xs_section_property(sec, 'tan_alpha', db))
-    eu1, eu2, ev1, ev2 = get_eu_ev_of_angle(A, B, alpha, cx, cy)
-    assert eu1 == pytest.approx(63.63961030678927)
-    assert eu2 == pytest.approx(63.63961030678927)
-    assert ev1 == pytest.approx(36.345288552988535)
-    assert ev2 == pytest.approx(27.294321753800737)
-
-    sec = 'L-100x75x7'
-    A = xs_section_property(sec, 'A', db)
-    B = xs_section_property(sec, 'B', db)
-    t = xs_section_property(sec, 't', db)
-    Iu = xs_section_property(sec, 'Iu', db)
-    Iv = xs_section_property(sec, 'Iv', db)
-    cx = xs_section_property(sec, 'Cx', db)
-    cy = xs_section_property(sec, 'Cy', db)
-    alpha = math.atan(xs_section_property(sec, 'tan_alpha', db))
-
-    eu1, eu2, ev1, ev2 = get_eu_ev_of_angle(A, B, alpha, cx, cy)
-    assert eu1 == pytest.approx(69.65517135983993)
-    assert eu2 == pytest.approx(54.08324813335662)
-    assert ev1 == pytest.approx(30.75377665147421)
-    assert ev2 == pytest.approx(35.01788502102573)
-
-
-def test_get_zu_zv_of_angle_inConsideration():
-    db = make_all_section_db()
-    sec_name = 'L90*10'
-    zu, zv = get_Zu_Zv_of_angle(sec_name, db)
-    assert zu == pytest.approx(31.269, abs=0.01)
-    assert zv == pytest.approx(14.224, abs=0.01)
-    sec_name = 'L-100x75x7'
-    zu, zv = get_Zu_Zv_of_angle(sec_name, db)
-    assert zu == pytest.approx(20.673, abs=0.01)
-    assert zv == pytest.approx(8.795, abs=0.01)
-
-
 def test_rotate_coordinate_system():
     assert rotated_coord((1, 1), math.radians(45)) == pytest.approx((1.4142135623731, 0))
     assert rotated_coord((-1, 1), math.radians(45)) == pytest.approx((0, 1.4142135623731))
@@ -305,22 +257,6 @@ def test_get_rotated_points():
     # print(get_rotated_points(pts, dx, dy, alpha))
 
 
-def test_get_z_at_points_inConsideration():
-    pts = [(-30.75, -18.03), (17.28, 69.67), (21.64, 64.33), (36.6, -49.91), (35.03, -54.06)]  # CADでの作図結果 L-100x75
-    expected = [(79.94, 10.00), (20.68, 17.80), (22.40, 14.21), (28.87, 8.40), (26.66, 8.78)]
-    result = get_Zu_Zv_at_points(pts, Iu=144.136, Iv=30.76)
-    for i, res in enumerate(result):
-        assert res == pytest.approx(expected[i], abs=0.01)
-
-    pts = [(-25.59239426559226, -1.7763568394002505e-15), (20.36954651153333, 45.9619407771256),
-           (22.955332949160223, 41.7193000900063), (22.955332949160233, -41.7193000900063),
-           (20.369546511533336, -45.96194077712559)]  # L-65x65
-    # expected = [(xx, 4.75), (10.13, 5.97), (11.16, 5.29), (11.16, 5.29), (10.13, 5.97)]
-    # result = get_Zu_Zv_at_points(pts, Iu=46.579727445, Iv=12.164198330)
-    # print(result)
-    # TODO:0割の対応 とりあえず実害はない？
-
-
 def test_m11_m22_angle_stress_tmp():
     # sample1  L-100x75x7
     alpha = math.radians(28.7105604)
@@ -335,11 +271,15 @@ def test_m11_m22_angle_stress_tmp():
 
     Mu = 100 * math.cos(alpha)
     s11 = get_stress_at_points_m11(rotated_pts, Iu, Mu)
-    print(s11)
+    # print(s11)
+    assert s11 == [-1.0969875242490872, 4.239258052970119, 3.913990022196299, -3.0362139296547888, -3.289078220981322]
     Mv = 100 * math.sin(alpha)
     s22 = get_stress_at_points_m22(rotated_pts, Iv, Mv)
-    print(s22)
-    print([x + y for x, y in zip(s11, s22)])
+    # print(s22)
+    assert s22 == [-4.803362514021558, 2.6985484170208016, 3.3782059204729507, 5.715067069812436, 5.469032686576473]
+    # print([x + y for x, y in zip(s11, s22)])
+    assert [x + y for x, y in zip(s11, s22)] == [-5.900350038270645, 6.937806469990921, 7.29219594266925,
+                                                 2.6788531401576474, 2.1799544655951513]
 
 
 def test_angle_section_bending_moment_stress():

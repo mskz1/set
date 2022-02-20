@@ -1,3 +1,4 @@
+import math
 import sys
 
 from src.xs_section import *
@@ -100,6 +101,12 @@ def sample_L_90x90x10():
 
     ssuv2 = get_stress_at_points_m11_m22(rotated_pts, Iu, Iv, 207, 88.7)
     print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ssuv2), min(ssuv2)))
+
+    Mu = Mx * math.cos(math.radians(23.2))
+    Mv = Mx * math.sin(math.radians(23.2))
+
+    ssuv3 = get_stress_at_points_m11_m22(rotated_pts, Iu, Iv, Mu, Mv)
+    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ssuv3), min(ssuv3)))
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@
 # 2021-0312 ironpython collections module??
 # from collections import namedtuple
 import math
+
 # from typing import Tuple, List
 
 HS_SEC_DATA = """SERIES,HS-,H形鋼細幅,H-HxBxt1xt2
@@ -511,6 +512,7 @@ def xs_section_type(name):
 
 def get_eu_ev_of_angle(A, B, alpha, cx, cy):
     """
+    不要か？
     山形鋼の主軸に対する縁端距離を返す。アール部分の考慮はしていない。
 
     :param A: 辺１長さ [mm]
@@ -530,6 +532,7 @@ def get_eu_ev_of_angle(A, B, alpha, cx, cy):
 
 def get_Zu_Zv_of_angle(name, db=None):
     """
+    不要か？
     山形鋼の主軸方向の断面係数を返す
 
     :param name: 断面名
@@ -648,7 +651,7 @@ def get_stress_at_points_m11(pts: list, Iu: float, Mu: float):
         try:
             zu = Iu / (v * 0.1)
         except ZeroDivisionError:
-            zu = Iu / (1e-16)
+            zu = Iu / 1e-16
         su = Mu / zu
         result.append(su)
     return result
@@ -666,7 +669,10 @@ def get_stress_at_points_m22(pts: list, Iv: float, Mv: float):
     result = []
     for pt in pts:
         u, v = pt
-        zv = Iv / (u * 0.1)
+        try:
+            zv = Iv / (u * 0.1)
+        except ZeroDivisionError:
+            zv = Iv / 1e-16
         sv = Mv / zv
         result.append(sv)
     return result
@@ -683,6 +689,7 @@ def get_stress_at_points_mx_my(pts: list, alpha, Iu, Iv, Mx, My=0):
     指定位置での、曲げによる応力度を返す。
 
     :param pts:
+    :param alpha:
     :param Iu: 主軸まわりの断面二次モーメント[cm4]
     :param Iv: 主軸まわりの断面二次モーメント[cm4]
     :param Mx: X軸まわりのモーメント[kN*cm] Y軸正方向が引張の時を正
@@ -694,30 +701,33 @@ def get_stress_at_points_mx_my(pts: list, alpha, Iu, Iv, Mx, My=0):
 
     Mu = Mx * cos(alpha) - My * sin(alpha)
     Mv = Mx * sin(alpha) + My * cos(alpha)
-    result = []
-    for pt in pts:
-        u, v = pt
-        if u == 0.:
-            zv = Iv / (1e-15 * 0.1)
-        else:
-            zv = Iv / (abs(u) * 0.1)
-        if v == 0:
-            zu = Iu / (1e-15 * 0.1)
-        else:
-            zu = Iu / (abs(v) * 0.1)
-        su = Mu / zu
-        sv = Mv / zv
-        if u >= 0.:  # u tension side ?
-            if v >= 0.:
-                ss = su + sv
-            else:
-                ss = su - sv
-        else:  # u compression side ?
-            if v >= 0.:
-                ss = -su + sv
-            else:
-                ss = -su - sv
-        result.append(ss)
+    # result = []
+
+    result = get_stress_at_points_m11_m22(pts, Iu, Iv, Mu, Mv)
+
+    # for pt in pts:
+    #     u, v = pt
+    #     if u == 0.:
+    #         zv = Iv / (1e-15 * 0.1)
+    #     else:
+    #         zv = Iv / (abs(u) * 0.1)
+    #     if v == 0:
+    #         zu = Iu / (1e-15 * 0.1)
+    #     else:
+    #         zu = Iu / (abs(v) * 0.1)
+    #     su = Mu / zu
+    #     sv = Mv / zv
+    #     if u >= 0.:  # u tension side ?
+    #         if v >= 0.:
+    #             ss = su + sv
+    #         else:
+    #             ss = su - sv
+    #     else:  # u compression side ?
+    #         if v >= 0.:
+    #             ss = -su + sv
+    #         else:
+    #             ss = -su - sv
+    #     result.append(ss)
     return result
 
     # TODO:WIP 近い値ではあるが、結果がピタリとは合わないが？
