@@ -353,3 +353,40 @@ def test_angle_section_bending_moment_stress():
     ss = get_stress_at_points_m11_m22(rotated_pts, Iu, Iv, 207, 88.7)
     assert max(ss) == pytest.approx(11.5000, abs=0.001)
     assert min(ss) == pytest.approx(-6.2508, abs=0.001)
+
+
+def test_angle_section_bending_moment_stress_2():
+    # TODO Mx, My 作用時のチェック 2022-0321
+    sec_name = 'L65*6'
+    ss = get_stress_of_angle_mx_my(sec_name, mx=100, my=0)
+    assert max(ss) == pytest.approx(19.7105, abs=0.001)
+    assert min(ss) == pytest.approx(-14.8361, abs=0.001)
+
+    sec_name = 'L90*10'
+    ss = get_stress_of_angle_mx_my(sec_name, mx=225, my=0)
+    assert max(ss) == pytest.approx(14.2772, abs=0.001)
+    assert min(ss) == pytest.approx(-11.1847, abs=0.001)
+
+    sec_name = 'L100*75*7'
+    ss = get_stress_of_angle_mx_my(sec_name, mx=100, my=0)
+    assert max(ss) == pytest.approx(7.3524, abs=0.001)
+    assert min(ss) == pytest.approx(-5.8972, abs=0.001)
+
+
+def test_get_angle_section_allowable_moment():
+    sec_name = 'L65*6'
+    ma_x, ma_y = get_allowable_moment_of_angle_section(sec_name, term='LONG', direc='X')
+    assert ma_x == pytest.approx(79.4840, abs=0.001)
+    assert ma_y == pytest.approx(0.000, abs=0.001)
+
+    sec_name = 'L90*10'
+    ma_x, ma_y = get_allowable_moment_of_angle_section(sec_name, term='LONG', direc='X')
+    assert ma_x == pytest.approx(246.8972, abs=0.001)
+    assert ma_y == pytest.approx(0.000, abs=0.001)
+
+    sec_name = 'L100*75*7'
+    ma_x, ma_y = get_allowable_moment_of_angle_section(sec_name, term='LONG', direc='X')
+    assert ma_x == pytest.approx(246.8972, abs=0.001)
+    assert ma_y == pytest.approx(0.000, abs=0.001)
+
+

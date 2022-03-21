@@ -174,3 +174,5 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
         term_factor = 1.0 if term == 'LONG' else 1.5
 
         return term_factor * z * (fb / 10.) / 100.
+
+

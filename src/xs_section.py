@@ -583,7 +583,7 @@ def get_point_on_arc(r, alpha, dx=0, dy=0):
     return r * cos(alpha) + dx, r * sin(alpha) + dy
 
 
-def get_points_on_arc(r, dx=0, dy=0, start=0, end=math.radians(90), n=16):
+def get_points_on_arc(r, dx=0.0, dy=0.0, start=0.0, end=math.radians(90), n=16):
     """
     半径rの円周上の複数の点の座標を得る。開始角度、終了角度と、分割数を与える。
     :param r: 円の半径
@@ -678,7 +678,7 @@ def get_stress_at_points_m22(pts: list, Iv: float, Mv: float):
     return result
 
 
-def get_stress_at_points_m11_m22(pts: list, Iu: float, Iv: float, Mu: float, Mv: float):
+def get_stress_at_points_m11_m22(pts: list, Iu: float, Iv: float, Mu: float, Mv: float) -> object:
     su = get_stress_at_points_m11(pts, Iu, Mu)
     sv = get_stress_at_points_m22(pts, Iv, Mv)
     return [s1 + s2 for s1, s2 in zip(su, sv)]
@@ -701,36 +701,69 @@ def get_stress_at_points_mx_my(pts: list, alpha, Iu, Iv, Mx, My=0):
 
     Mu = Mx * cos(alpha) - My * sin(alpha)
     Mv = Mx * sin(alpha) + My * cos(alpha)
-    # result = []
 
-    result = get_stress_at_points_m11_m22(pts, Iu, Iv, Mu, Mv)
+    return get_stress_at_points_m11_m22(pts, Iu, Iv, Mu, Mv)
 
-    # for pt in pts:
-    #     u, v = pt
-    #     if u == 0.:
-    #         zv = Iv / (1e-15 * 0.1)
-    #     else:
-    #         zv = Iv / (abs(u) * 0.1)
-    #     if v == 0:
-    #         zu = Iu / (1e-15 * 0.1)
-    #     else:
-    #         zu = Iu / (abs(v) * 0.1)
-    #     su = Mu / zu
-    #     sv = Mv / zv
-    #     if u >= 0.:  # u tension side ?
-    #         if v >= 0.:
-    #             ss = su + sv
-    #         else:
-    #             ss = su - sv
-    #     else:  # u compression side ?
-    #         if v >= 0.:
-    #             ss = -su + sv
-    #         else:
-    #             ss = -su - sv
-    #     result.append(ss)
-    return result
 
-    # TODO:WIP 近い値ではあるが、結果がピタリとは合わないが？
+def get_stress_of_angle_mx_my(sec_name_short, mx, my):
+    """
+    山形鋼に、曲げモーメントが作用した時の応力度を返す。
+
+    :param sec_name_short: 断面名
+    :param mx: x軸まわりの曲げモーメント[kN*cm]
+    :param my: y軸まわりの曲げモーメント[kN*cm]
+    :return:
+    """
+    db = make_all_section_db()
+    sec_name = xs_section_name(sec_name_short)
+
+    tan_alpha = xs_section_property(sec_name, 'tan_alpha', db)
+    alpha = math.atan(tan_alpha)
+    A = xs_section_property(sec_name, 'A', db)
+    B = xs_section_property(sec_name, 'B', db)
+    t = xs_section_property(sec_name, 't', db)
+    r1 = xs_section_property(sec_name, 'r1', db)
+    r2 = xs_section_property(sec_name, 'r2', db)
+    cx = xs_section_property(sec_name, 'Cx', db)
+    cy = xs_section_property(sec_name, 'Cy', db)
+    Iu = xs_section_property(sec_name, 'Iu', db)
+    Iv = xs_section_property(sec_name, 'Iv', db)
+
+    rpts1 = get_points_on_arc(r=r2, dx=t - r2, dy=A - r2, start=math.radians(0), end=math.radians(90), n=32)
+    rpts2 = get_points_on_arc(r=r2, dx=B - r2, dy=t - r2, start=math.radians(0), end=math.radians(90), n=32)
+    pts = [(0, 0), (0, A)]
+    pts.extend(rpts1)
+    pts.extend(rpts2)
+    pts.extend([(B, 0)])
+    dx, dy = -cy * 10, -cx * 10
+    rotated_pts = get_rotated_points(pts, dx, dy, alpha)
+
+    return get_stress_at_points_mx_my(rotated_pts, alpha, Iu, Iv, mx, my)
+
+
+def get_allowable_moment_of_angle_section(sec_name_short, term='LONG', direc='X', F=235):
+    """
+    WIP 2022-0321
+
+    :param sec_name_short:
+    :param term:
+    :param direc:
+    :param F:
+    :return:
+    """
+    mx, my =0,0
+    if direc == 'X':
+        mx, my = 100, 0.
+    elif direc == 'Y':
+        mx, my = 0, 100
+    ss = get_stress_of_angle_mx_my(sec_name_short, mx, my)
+    fb = 0.1*F / 1.5
+    if term == 'SHORT':
+        fb *=1.5
+    factor = fb / max(abs(max(ss)), abs(min(ss)))
+    return mx*factor, my*factor
+
+
 
 
 # import された時点で、省略名の辞書データを生成する

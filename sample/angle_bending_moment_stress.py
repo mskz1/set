@@ -23,12 +23,14 @@ def sample_L_100x75x7():
     # Mx, My = 40, 0  # (kN*cm)
     Mx, My = 100, 0  # (kN*cm)
     ss = get_stress_at_points_mx_my(rotated_pts, alpha, Iu, Iv, Mx, My)
+    print(' Start '.center(40, '='))
     print('L-100x75x7 修正　Mx=100[kN*cm]')
     print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
 
     ss2 = get_stress_at_points_m11_m22(rotated_pts, Iu, Iv, Mu=Mx * math.cos(alpha), Mv=Mx * math.sin(alpha))
     print('L-100x75x7 修正　Mu=100*cos(α)[kN*cm],Mv=100*sin(α)[kN*cm]')
     print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss2), min(ss2)))
+    print(' End '.center(40, '='))
 
 
 def sample_BL_75x45():
@@ -75,8 +77,10 @@ def sample_L_65x65x6():
     # Mx, My = 40, 0  # (kN*cm)
     Mx, My = 100, 0  # (kN*cm)
     ss = get_stress_at_points_mx_my(rotated_pts, alpha, Iu, Iv, Mx, My)
+    print(' Start '.center(40, '='))
     print('L-65x65x6 修正　Mx=100[kN*cm]')
     print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
+    print(' End '.center(40, '='))
 
 
 def sample_L_90x90x10():
@@ -96,7 +100,11 @@ def sample_L_90x90x10():
     # Mx, My = 40, 0  # (kN*cm)
     Mx, My = 225, 0  # (kN*cm)
     ss = get_stress_at_points_mx_my(rotated_pts, math.radians(23.2), Iu, Iv, Mx, My)
-    print('L-90x90x10 修正　M=225[kN*cm]')
+    print('L-90x90x10 修正　M=225[kN*cm] 角度あり')
+    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
+
+    ss = get_stress_at_points_mx_my(rotated_pts, math.radians(45.), Iu, Iv, Mx, My)
+    print('L-90x90x10 修正　M=225[kN*cm]　角度なし')
     print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
 
     ssuv2 = get_stress_at_points_m11_m22(rotated_pts, Iu, Iv, 207, 88.7)
@@ -109,8 +117,50 @@ def sample_L_90x90x10():
     print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ssuv3), min(ssuv3)))
 
 
+def sample_allowable_moment():
+    sec_name = xs_section_name('L65*6')
+    sec_name = xs_section_name('L90*10')
+    # sec_name = xs_section_name('L100*75*7')
+    db = make_all_section_db()
+    # print(sec_name)
+    tan_alpha = xs_section_property(sec_name, 'tan_alpha', db)
+    alpha = math.atan(tan_alpha)
+    # print(alpha)
+    A = xs_section_property(sec_name, 'A', db)
+    B = xs_section_property(sec_name, 'B', db)
+    t = xs_section_property(sec_name, 't', db)
+    r1 = xs_section_property(sec_name, 'r1', db)
+    r2 = xs_section_property(sec_name, 'r2', db)
+    cx = xs_section_property(sec_name, 'Cx', db)
+    cy = xs_section_property(sec_name, 'Cy', db)
+    Iu = xs_section_property(sec_name, 'Iu', db)
+    Iv = xs_section_property(sec_name, 'Iv', db)
+    print('A={}, B={}, t={}, r1={}, r2={}, cx={}, cy={}, Iu={}, Iv={}'.format(A, B, t, r1, r2, cx, cy, Iu, Iv))
+    rpts1 = get_points_on_arc(r=r2, dx=t - r2, dy=A - r2, start=math.radians(0), end=math.radians(90), n=32)
+    rpts2 = get_points_on_arc(r=r2, dx=B - r2, dy=t - r2, start=math.radians(0), end=math.radians(90), n=32)
+    pts = [(0, 0), (0, A)]
+    pts.extend(rpts1)
+    pts.extend(rpts2)
+    pts.extend([(B, 0)])
+    dx, dy = -cy * 10, -cx * 10
+    rotated_pts = get_rotated_points(pts, dx, dy, alpha)
+    Mx, My = 100, 0  # (kN*cm)
+    # Mx, My = 225, 0  # (kN*cm)
+    ss = get_stress_at_points_mx_my(rotated_pts, alpha, Iu, Iv, Mx, My)
+    print(' Start '.center(40, '='))
+    print('{}　Mx={}[kN*cm], My={}[kN*cm]'.format(sec_name, Mx, My))
+    print("max_ss={:10.4f}, min_ss={:10.4f}".format(max(ss), min(ss)))
+
+    fb = 23.5 / 1.5
+    factor = fb / max(abs(max(ss)), abs(min(ss)))
+    print('factor={:10.4f}'.format(factor))
+    print('xMal={:10.4f}, yMal={:10.4f}'.format(Mx * factor, My * factor))
+    print(' End '.center(40, '='))
+
+
 if __name__ == '__main__':
-    sample_L_100x75x7()
-    sample_BL_75x45()
-    sample_L_65x65x6()
-    sample_L_90x90x10()
+    # sample_L_100x75x7()
+    # sample_BL_75x45()
+    # sample_L_65x65x6()
+    # sample_L_90x90x10()
+    sample_allowable_moment()
