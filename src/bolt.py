@@ -55,7 +55,7 @@ HTB_SPC_F8T[M27] = {DIA: 27, HOLE_DIA: 30, Qal: 61.0, Qas: 91.5, Tal: 143.0, Tas
 HTB_SPC_F8T[M30] = {DIA: 30, HOLE_DIA: 33, Qal: 75.4, Qas: 113.0, Tal: 177.0, Tas: 265.0, Qu: 339, Tu: 448}
 
 # HTB_PROPNAME_UNIT = dict(DIA='mm', HOLE_DIA='mm', Qal='kN', Qas='kN', Tal='kN', Tas='kN', Qu='kN', Tu='kN')
-HTB_PROPNAME_UNIT = {DIA:'mm', HOLE_DIA:'mm', Qal:'kN', Qas:'kN', Tal:'kN', Tas:'kN', Qu:'kN', Tu:'kN'}
+HTB_PROPNAME_UNIT = {DIA: 'mm', HOLE_DIA: 'mm', Qal: 'kN', Qas: 'kN', Tal: 'kN', Tas: 'kN', Qu: 'kN', Tu: 'kN'}
 
 # 6.8 BOLT  データの設定 AIJ S規準
 BOLT_SPC_6T = {}
@@ -133,7 +133,15 @@ def htb_spec_old(size=M16, prop_name=QA, term=LONG, strength=F10T, property_name
         raise ParameterError('invalid parameter given')
 
 
-def bolt_spec(size, prop_name, strength=B4T):
+def bolt_spec(size: str, prop_name: str, strength: str = B4T):
+    """
+    ボルトの性能値を返す。
+
+    :param size: 'M12', 'M16', 'M20', 'M22', 'M24', 'M27', 'M30'
+    :param prop_name: 'Dia', 'Hole_dia', 'Qal', 'Qas', 'Tal', 'Tas'
+    :param strength: '4T', '6T'
+    :return:
+    """
     b_spc = {}
 
     if strength.upper() == B6T:
@@ -149,6 +157,14 @@ def bolt_spec(size, prop_name, strength=B4T):
 
 
 def htb_spec(size, prop_name, strength=F10T):
+    """
+    HTBの性能値を返す。
+
+    :param size: 'M16', 'M20', 'M22', 'M24', 'M27', 'M30'
+    :param prop_name: 'Dia', 'Hole_dia','Qal','Qas','Tal','Tas'
+    :param strength: 'F8T', 'F10T'
+    :return:
+    """
     b_spc = {}
 
     if strength.upper() == F10T:
@@ -166,6 +182,7 @@ def htb_spec(size, prop_name, strength=F10T):
 def xs_bolt_spec(strength, size, prop_name):
     """
     中ボルトとHTBを統一化する？
+
     :param strength:  F10T, F8T, 6T, 4T
     :param size:
     :param prop_name:
@@ -201,6 +218,7 @@ def xs_bolt_all_property_names():
         res += '{}({}), '.format(name, BOLT_PROPNAME_UNIT[name])
 
     return res[:-2]
+
 
 def xs_htb_all_property_names():
     res = ''

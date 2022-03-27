@@ -6,6 +6,7 @@
 def strip_square_brackets(src):
     """
     src文字列から、角括弧で囲まれた部分を削除した文字列を返す
+
     :param src:
     :return:
     """
@@ -25,6 +26,7 @@ def strip_square_brackets(src):
 def get_square_brackets_index(src):
     """
     補助関数　角括弧の位置をタプルのリストで返す
+
     :param src:
     :return:
     """

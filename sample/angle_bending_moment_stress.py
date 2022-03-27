@@ -120,7 +120,7 @@ def sample_L_90x90x10():
 def sample_allowable_moment():
     sec_name = xs_section_name('L65*6')
     sec_name = xs_section_name('L90*10')
-    # sec_name = xs_section_name('L100*75*7')
+    sec_name = xs_section_name('L100*75*7')
     db = make_all_section_db()
     # print(sec_name)
     tan_alpha = xs_section_property(sec_name, 'tan_alpha', db)

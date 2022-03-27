@@ -386,7 +386,7 @@ def test_get_angle_section_allowable_moment():
 
     sec_name = 'L100*75*7'
     ma_x, ma_y = get_allowable_moment_of_angle_section(sec_name, term='LONG', direc='X')
-    assert ma_x == pytest.approx(246.8972, abs=0.001)
+    assert ma_x == pytest.approx(213.0816, abs=0.001)
     assert ma_y == pytest.approx(0.000, abs=0.001)
 
 
