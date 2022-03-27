@@ -2,6 +2,42 @@
 
 """ボルト／HTBに関するデータを返す関数"""
 
+from enum import Enum
+
+# TODO: Enumだとpython的にはよいが、excelのUDFでうまく動くのか？
+class Size(Enum):
+    M12 = 'M12'
+    M16 = 'M16'
+    M20 = 'M20'
+    M22 = 'M22'
+    M24 = 'M24'
+    M27 = 'M27'
+    M30 = 'M30'
+
+
+class Strength(Enum):
+    F8T = 'F8T'
+    F10T = 'F10T'
+    B4T = '4T'
+    B6T = '6T'
+
+
+class Term(Enum):
+    LONG = 'LONG'
+    SHORT = 'SHORT'
+
+
+class Prop(Enum):
+    Qal = 'Qal'
+    Qas = 'Qas'
+    Tal = 'Tal'
+    Tas = 'Tas'
+    Qu = 'Qu'
+    Tu = 'Tu'
+    Dia = 'Dia'
+    Hole_dia = 'Hole_dia'
+
+
 HTB_SIZES = ['M16', 'M20', 'M22', 'M24', 'M27', 'M30']
 M16, M20, M22, M24, M27, M30 = HTB_SIZES  # アンパック代入
 M12 = 'M12'
@@ -36,9 +72,17 @@ Tu = 'Tu'  # 最大引張耐力（kN）
 # HTB_M16 = dict(name='M16', dia=16, hole_dia=18, Qal=30.2, Qas=45.3)
 # HTB_M20 = dict(name='M20', dia=20, hole_dia=22, Qal=47.1, Qas=70.6)
 
+
+
+
+
+
+
 # HTB F10T データの設定
 HTB_SPC_F10T = {}
-HTB_SPC_F10T[M16] = {DIA: 16, HOLE_DIA: 18, Qal: 30.2, Qas: 45.2, Tal: 62.3, Tas: 93.5, Qu: 121, Tu: 157}
+# HTB_SPC_F10T[M16] = {DIA: 16, HOLE_DIA: 18, Qal: 30.2, Qas: 45.2, Tal: 62.3, Tas: 93.5, Qu: 121, Tu: 157}
+HTB_SPC_F10T[Size.M16] = {Prop.Dia: 16, Prop.Hole_dia: 18, Prop.Qal: 30.2, Prop.Qas: 45.2, Prop.Tal: 62.3,
+                          Prop.Tas: 93.5, Prop.Qu: 121, Prop.Tu: 157}
 HTB_SPC_F10T[M20] = {DIA: 20, HOLE_DIA: 22, Qal: 47.1, Qas: 70.7, Tal: 97.4, Tas: 146.0, Qu: 188, Tu: 245}
 HTB_SPC_F10T[M22] = {DIA: 22, HOLE_DIA: 24, Qal: 57.0, Qas: 85.5, Tal: 118.0, Tas: 177.0, Qu: 228, Tu: 303}
 HTB_SPC_F10T[M24] = {DIA: 24, HOLE_DIA: 26, Qal: 67.9, Qas: 102.0, Tal: 140.0, Tas: 210.0, Qu: 271, Tu: 353}

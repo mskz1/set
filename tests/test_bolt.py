@@ -5,6 +5,8 @@ from src.bolt import htb_spec_old, bolt_spec, xs_bolt_spec, htb_spec, xs_bolt_al
 from src.bolt import xs_htb_all_property_names
 from src.bolt import ParameterError
 from src.bolt import HTB_SIZES, HTB_STRENGTHS
+from src.bolt import Size, Strength, Term, Prop
+
 
 
 @pytest.mark.skip('旧関数_実装変更のため')
@@ -69,7 +71,9 @@ def test_bolt_spec():
 
     assert bolt_spec('M17', 'Qas') == 'NO_DATA'
 
-    assert htb_spec('M16', 'Qas', 'F10T') == 45.2
+    # --------------------
+    # assert htb_spec('M16', 'Qas', 'F10T') == 45.2
+    assert htb_spec(Size.M16, Prop.Qas, Strength.F10T) == 45.2
     assert htb_spec('m16', 'QAS', 'F10T') == 45.2
     assert htb_spec(size='M16', prop_name='Qal') == 30.2
 
