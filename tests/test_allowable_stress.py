@@ -170,7 +170,7 @@ def sample_test_data_plot():
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    x = []
+    x = []  
     y = []
     for lb in range(1, 251, 1):
         x.append(lb)

@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from src.rebar import rebar_spec, rebar_size_list_as_string, rebar_size_list
+from src.rebar import BarSize
+
+
+def test_rebar_spec2():
+    assert rebar_spec(BarSize.D10.value, 'A') == 71.33
 
 
 def test_rebar_spec():
@@ -24,5 +29,7 @@ def test_get_size_list_as_string():
     # assert rebar_size_list_as_string() == ['D6', 'D8', 'D10', 'D13', 'D16', 'D19', 'D22', 'D25', 'D29', 'D32', 'D35', 'D38', 'D41', 'D51']
     assert rebar_size_list_as_string() == '[ D6, D8, D10, D13, D16, D19, D22, D25, D29, D32, D35, D38, D41, D51 ]'
 
+
 def test_get_size_list():
-    assert rebar_size_list() == ['D6', 'D8', 'D10', 'D13', 'D16', 'D19', 'D22', 'D25', 'D29', 'D32', 'D35', 'D38', 'D41', 'D51']
+    assert rebar_size_list() == ['D6', 'D8', 'D10', 'D13', 'D16', 'D19', 'D22', 'D25', 'D29', 'D32', 'D35', 'D38',
+                                 'D41', 'D51']

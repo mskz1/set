@@ -1,4 +1,29 @@
 # -*- coding: utf-8 -*-
+from enum import Enum
+
+
+class BarSize(Enum):
+    D6 = 'D6'
+    D8 = 'D8'
+    D10 = 'D10'
+    D13 = 'D13'
+    D16 = 'D16'
+    D19 = 'D19'
+    D22 = 'D22'
+    D25 = 'D25'
+    D29 = 'D29'
+    D32 = 'D32'
+    D35 = 'D35'
+    D38 = 'D38'
+    D41 = 'D41'
+    D51 = 'D51'
+
+
+class BarProperty(Enum):
+    Diameter = 'd'  # diameter'
+    MaxOuterDiameter = 'DO'  # max_diameter'
+    Area = 'A'  # area'
+    Perimeter = 'L'  # perimeter'
 
 
 D_BAR_SIZE = ['D6', 'D8', 'D10', 'D13', 'D16', 'D19', 'D22', 'D25', 'D29', 'D32', 'D35', 'D38', 'D41', 'D51']
@@ -42,6 +67,7 @@ def rebar_spec(name="", prop_name='ALL'):
                 return DEFORMED_BAR_SPEC[name][prop_name]
             except KeyError:
                 return 'NO_DATA'
+
 
 
 

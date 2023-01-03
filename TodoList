@@ -24,7 +24,7 @@ C形 C、2C形 2C
 鋼管 P
 山形 L
 
-＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝=======
 ■ボルトモジュール   bolt.py
 HTB、中ボルトの耐力、孔径などの情報を扱う
 □ データ構造　検討？ 2019-0922
@@ -136,6 +136,7 @@ ExcelDNA-C#-ironPythonで動かせる(2020-0220)
 =========Excel Structural Engineering Tools  -> xl_set  -> xs
 excel udf 用　xs_***モジュール　2020-0216
 断面性能：単位　をどう返す？
+
 ** udf案 **
 xs_sectionモジュール        [断面性能を返す。断面積・断面係数・・・
     xs_section_property() -> UDF:xsSectionProperty(断面名称,断面特性名)
