@@ -14,7 +14,7 @@ db = xs_section.make_all_section_db()
 @xw.func(category=XL_CATEGORY)
 @xw.arg('t', doc='文字列')
 def calcText(t, caller):
-    """文字列から、[...]を除き、数式として計算する"""
+    """文字列から、[...]で囲まれた部分を除き、数式として計算する"""
     return caller.sheet.Evaluate(text_calc.strip_square_brackets(t))
 
 
@@ -99,3 +99,5 @@ def xsSectionName(abbrName):
 def xsSectionProperty(name, propertyName):
     """形鋼の断面性能値を返す関数"""
     return xs_section.xs_section_property(name, propertyName, db)
+
+

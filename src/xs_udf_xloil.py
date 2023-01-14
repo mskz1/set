@@ -14,8 +14,9 @@ db = xs_section.make_all_section_db()
 @xlo.func(group=XL_CATEGORY,
           args={'t': '文字列'})
 def calcText(t):
-    """文字列から、[...]を除き、数式として計算する"""
-    return xlo.Caller().Worksheet.Evaluate(text_calc.strip_square_brackets(t))
+    """文字列から、[...]で囲まれた部分を除き、数式として計算する"""
+    # return xlo.Caller().Worksheet.Evaluate(text_calc.strip_square_brackets(t))
+    return xlo.active_worksheet().Evaluate(text_calc.strip_square_brackets(t))
 
 
 @xlo.func(group=XL_CATEGORY)
