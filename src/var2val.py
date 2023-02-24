@@ -1,6 +1,8 @@
 # import re
 
 SPACE_CHAR = '#'
+
+
 # SPACE_CHAR_ZENKAKU = '＃'
 
 

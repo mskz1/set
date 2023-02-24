@@ -5,10 +5,38 @@ import rebar
 import bolt
 import xs_section
 import text_calc
+import var2val
 
 XL_CATEGORY = 'Structural Engineering Tools'
 
 db = xs_section.make_all_section_db()
+
+
+def range2dict(app, rng):
+    """
+    エクセルのセルレンジの最左列に変数名、最右列に値が入っているとして変数名：値の辞書オブジェクトを返す
+
+    2023-0224 仮実装　要テスト xloil必要
+    :return:
+    """
+    result = {}
+    for rn in rng.Areas:
+        col_idx_left = rn.Column
+        col_idx_right = rn.Columns(rn.Column.Count).Column
+        row_idx_top = rn.Row
+        row_idx_bottom = rn.Rows(rn.Rows.Count).Row
+
+        for row_idx in range(row_idx_top, row_idx_bottom + 1):
+            if app.Cells(row_idx, col_idx_left).Value:
+                result[str(app.Cells(row_idx, col_idx_left).Value)] = app.Cells(row_idx, col_idx_right).Value
+    return result
+
+
+@xlo.func(group=XL_CATEGORY, args={'t': '文字列', 'rng': '変数名と価のセル範囲'})
+def var2val(t, rng):
+    """文字列内の変数名を価で置き換えた文字列を返す。"""
+    var_val = range2dict(xlo.app(), rng)
+    return var2val.var2val(t, var_val)
 
 
 @xlo.func(group=XL_CATEGORY,

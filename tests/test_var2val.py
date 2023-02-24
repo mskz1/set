@@ -52,6 +52,9 @@ def test_var2val():
     assert var2val("cos(radians(a))*b + tan(a/b) - sqrt(x)-((a/b)*c)", var_dict) \
            == 'cos(radians(2))*3 + tan(2/3) - sqrt(1.1)-((2/3)*4)'
 
+    assert var2val("a * b + x1 * y3", var_dict) == '2 * 3 + x1 * y3'
+    assert var2val("a * b + α1 * y_3 + b4", var_dict) == '2 * 3 + α1 * y_3 + b4'
+
 
 def test_var2val_zenkaku():
     var_dict = make_dict()
