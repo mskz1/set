@@ -1,5 +1,4 @@
 # import re
-
 SPACE_CHAR = '#'
 
 

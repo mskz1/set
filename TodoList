@@ -3,6 +3,7 @@ TODOリスト
 ＝＝＝＝＝＝＝＝＝
 ■断面モジュール    section.py  xs_section.py(pintなし)
 xs_section.py
+□ モジュール名変えるか？ steel_section.pyとか？　2023-0225
 ✔ H形鋼中幅　断面追加
 ✔ 山形　断面追加
 □ 2C形, 2[形　断面追加
@@ -12,6 +13,8 @@ xs_section.py
 □ short_full_name の変数の持ち方　モジュールトップレベルでよいか？ 2020-0309
 ✔ H-482　断面追加
 □ C形 断面追加
+□ ねじり定数Jを算出する関数？
+
 
 
 断面諸量データの仕様を考える。  Pintを使うか、使わないか。→とりあえず、数値だけ返すようにするか。単位は置いておいて
@@ -107,7 +110,7 @@ beam_formula 内で、荷重ケース実装できるか？別にした方が良�
 
 ------メモ
 2021-0619 定数的なものをモジュールにまとめる？ 3.4以降であれば、enumが使えるが...ironpython3.4がα版
-2021-1103 vbaのtextCalcをpython化する？
+【済】2021-1103 vbaのtextCalcをpython化する？
 
 
 
@@ -121,6 +124,7 @@ beam_formula 内で、荷重ケース実装できるか？別にした方が良�
 
 pythonと、xlwingsでExcelのUDFとしても公開する。VBAでさらっと作れるならそれでもよいが...
 ExcelDNA-C#-ironPythonで動かせる(2020-0220)
+xloil使うか（2023）
 
 モジュール群：案 python VBA javascript ???
 ・断面性能DB

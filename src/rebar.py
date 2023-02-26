@@ -2,7 +2,10 @@
 from enum import Enum
 
 
-class BarSize(Enum):
+class Size(Enum):
+    """
+    鉄筋サイズ　呼び名
+    """
     D6 = 'D6'
     D8 = 'D8'
     D10 = 'D10'
@@ -19,15 +22,17 @@ class BarSize(Enum):
     D51 = 'D51'
 
 
-class BarProperty(Enum):
-    Diameter = 'd'  # diameter'
-    MaxOuterDiameter = 'DO'  # max_diameter'
-    Area = 'A'  # area'
-    Perimeter = 'L'  # perimeter'
+class Property(Enum):
+    """
+    鉄筋の特性名
+    """
+    Diameter = 'd'  # diameter　[mm]鉄筋直径
+    MaxOuterDiameter = 'DO'  # max_diameter [mm]最外径
+    Area = 'A'  # area　[mm2]断面積
+    Perimeter = 'L'  # perimeter　[mm]周長
 
 
 D_BAR_SIZE = ['D6', 'D8', 'D10', 'D13', 'D16', 'D19', 'D22', 'D25', 'D29', 'D32', 'D35', 'D38', 'D41', 'D51']
-
 D6, D8, D10, D13, D16, D19, D22, D25, D29, D32, D35, D38, D41, D51 = D_BAR_SIZE
 
 PROPERTY_NAMES = ['d', 'DO', 'A', 'L']
@@ -56,6 +61,42 @@ DEFORMED_BAR_SPEC[D41] = {d: 41.3, DO: 46, A: 1340, L: 130}
 DEFORMED_BAR_SPEC[D51] = {d: 50.8, DO: 58, A: 2027, L: 160}
 
 
+def make_deformed_bar_data():
+    # Enum版のデータ生成
+    sizes = [Size.D6, Size.D8, Size.D10, Size.D13, Size.D16, Size.D19, Size.D22, Size.D25, Size.D29, Size.D32, Size.D35,
+             Size.D38, Size.D41, Size.D51]
+    properties = [Property.Diameter, Property.MaxOuterDiameter, Property.Area, Property.Perimeter]
+    #           d,DO, 　 　A, L
+    data = [[6.35, 7, 31.67, 20],  # D6
+            [7.94, 9, 49.51, 25],  # D8
+            [9.53, 11, 71.33, 30],  # D10
+            [12.7, 14, 126.7, 40],  # D13
+            [15.9, 18, 198.6, 50],  # D16
+            [19.1, 21, 286.5, 60],
+            [22.2, 25, 387.1, 70],
+            [25.4, 28, 506.7, 80],
+            [28.6, 33, 642.4, 90],
+            [31.8, 36, 794.2, 100],
+            [34.9, 40, 956.6, 110],
+            [38.1, 43, 1140, 120],
+            [41.3, 46, 1340, 130],
+            [50.8, 58, 2027, 160]]
+    propertyName_data = []
+    for d in data:
+        propertyName_data.append({k: v for k, v in zip(properties, d)})
+
+    result = {k: v for k, v in zip(sizes, propertyName_data)}
+    return result
+
+
+DEFORMED_BAR_SPEC2 = make_deformed_bar_data()
+
+
+def rebar_spec2(size: Size, prop_name: Property):
+    # 改良版 Enum利用
+    return DEFORMED_BAR_SPEC2[size][prop_name]
+
+
 def rebar_spec(name="", prop_name='ALL'):
     # if prop_name == 'ALL':
     #     return PROPERTY_INFO
@@ -67,8 +108,6 @@ def rebar_spec(name="", prop_name='ALL'):
                 return DEFORMED_BAR_SPEC[name][prop_name]
             except KeyError:
                 return 'NO_DATA'
-
-
 
 
 def rebar_size_list_as_string():

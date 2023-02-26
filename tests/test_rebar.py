@@ -1,11 +1,24 @@
 # -*- coding: utf-8 -*-
+import pprint
 
 from src.rebar import rebar_spec, rebar_size_list_as_string, rebar_size_list
-from src.rebar import BarSize
+from src.rebar import Size, Property, make_deformed_bar_data, rebar_spec2
 
 
 def test_rebar_spec2():
-    assert rebar_spec(BarSize.D10.value, 'A') == 71.33
+    assert rebar_spec(Size.D10.value, 'A') == 71.33
+    # spec = make_deformed_bar_data()
+    # pprint.pprint(spec)
+    # print(spec[Size.D6][Property.Area])
+    # print(spec[Size.D8][Property.Area])
+    assert rebar_spec2(Size.D10, Property.Area) == 71.33
+    assert rebar_spec2(Size.D10, Property.Perimeter) == 30
+    assert rebar_spec2(Size.D10, Property.Diameter) == 9.53
+    assert rebar_spec2(Size.D10, Property.MaxOuterDiameter) == 11
+    assert rebar_spec2(Size.D13, Property.Area) == 126.7
+    assert rebar_spec2(Size.D16, Property.Area) == 198.6
+    assert rebar_spec2(Size.D22, Property.Area) == 387.1
+    assert rebar_spec2(Size.D25, Property.Area) == 506.7
 
 
 def test_rebar_spec():
