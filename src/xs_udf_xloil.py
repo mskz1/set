@@ -1,3 +1,4 @@
+import numpy as np
 import xloil as xlo
 
 import allowable_stress as alws
@@ -5,9 +6,10 @@ import rebar
 import bolt
 import xs_section
 import text_calc
-import var2val
+import var2val as var2val_m
 
 XL_CATEGORY = 'Structural Engineering Tools'
+XS_VERSION_DATE = '2023-0304'
 
 db = xs_section.make_all_section_db()
 
@@ -22,7 +24,7 @@ def range2dict(app, rng):
     result = {}
     for rn in rng.Areas:
         col_idx_left = rn.Column
-        col_idx_right = rn.Columns(rn.Column.Count).Column
+        col_idx_right = rn.Columns(rn.Columns.Count).Column
         row_idx_top = rn.Row
         row_idx_bottom = rn.Rows(rn.Rows.Count).Row
 
@@ -32,11 +34,38 @@ def range2dict(app, rng):
     return result
 
 
-@xlo.func(group=XL_CATEGORY, args={'t': '文字列', 'rng': '変数名と価のセル範囲'})
-def var2val(t, rng):
+def array2dict(array: np.ndarray):
+    """
+    エクセルのセルレンジの最左列に変数名、最右列に値が入っているとして変数名：値の辞書オブジェクトを返す
+    xloil版：セル範囲がndarrayに変換される
+
+    2023-0304 仮実装
+    :param array:
+    :return:
+    """
+    r, c = array.shape
+    result = {}
+    for row_i in range(0, r):
+        if array[row_i][0]:
+            result[str(array[row_i][0])] = array[row_i][c - 1]
+    return result
+
+
+@xlo.func(group=XL_CATEGORY, args={'t': '文字列', 'rng': '変数名と価のセル範囲（複数範囲：不可）'})
+def var2val_old(t, rng):
     """文字列内の変数名を価で置き換えた文字列を返す。"""
     var_val = range2dict(xlo.app(), rng)
-    return var2val.var2val(t, var_val)
+    return var2val_m.var2val(t, var_val)
+
+
+@xlo.func(group=XL_CATEGORY, args={'t': '文字列', 'rng': '変数名と価のセル範囲（複数範囲：可）'})
+def var2val(t, *rng):
+    """文字列内の変数名を価で置き換えた文字列を返す。"""
+    var_val = {}
+    for r in rng:
+        d = array2dict(r)
+        var_val.update(d)
+    return var2val_m.var2val(t, var_val)
 
 
 @xlo.func(group=XL_CATEGORY,
@@ -52,7 +81,7 @@ def calcText(t, calc=True):
 
 @xlo.func(group=XL_CATEGORY)
 def xsVersion():
-    return "xl_set AddIn, Test ver.2022-1231"
+    return "xl_set AddIn, Test ver.{}".format(XS_VERSION_DATE)
 
 
 @xlo.func(group=XL_CATEGORY,

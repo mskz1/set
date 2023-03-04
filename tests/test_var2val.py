@@ -1,5 +1,5 @@
+import numpy as np
 import pytest
-
 from src.var2val import *
 
 
@@ -67,3 +67,16 @@ def test_var2val_zenkaku():
     assert var2val("a ＋ b ＋ c ー a ー b ー c＊a／b＾c", var_dict) == '2 ＋ 3 ＋ 4 ー 2 ー 3 ー 4＊2／3＾4'
     assert var2val("cos（radians（a））＊b ＋ tan（a／b） ー sqrt（x）ー（（a／b）＊c）", var_dict) \
            == 'cos（radians（2））＊3 ＋ tan（2／3） ー sqrt（1.1）ー（（2／3）＊4）'
+
+
+def test_array2dict():
+    # 以下だと、全て文字列となる。xloilでは数値は自動で変換してる？
+    arr = np.array([['x', 1],
+                    ['y', 2],
+                    ['z', 3]])
+    assert array2dict(arr) == {'x': '1', 'y': '2', 'z': '3'}
+    print(arr[0][1].dtype)
+    arr = np.array([['x', -1, 1],
+                    ['y', -1, 2],
+                    ['z', -1, 3]])
+    assert array2dict(arr) == {'x': '1', 'y': '2', 'z': '3'}

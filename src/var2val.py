@@ -45,3 +45,20 @@ def var2val(txt, var_val):
         else:
             result.append(wd)
     return "".join(result)
+
+
+def array2dict(array):
+    """
+    エクセルのセルレンジの最左列に変数名、最右列に値が入っているとして変数名：値の辞書オブジェクトを返す
+    xloil版：セル範囲がndarrayに変換される
+
+    2023-0304 仮実装
+    :param array:
+    :return:
+    """
+    r, c = array.shape
+    result = {}
+    for row_i in range(0, r):
+        if array[row_i][0]:
+            result[str(array[row_i][0])] = array[row_i][c - 1]
+    return result
