@@ -127,6 +127,7 @@ ExcelDNA-C#-ironPythonで動かせる(2020-0220)
 xloil使うか（2023）
 
 モジュール群：案 python VBA javascript ???
+【S造系】
 ・断面性能DB
 ・ボルト性能DB
 ・許容応力度
@@ -135,6 +136,9 @@ xloil使うか（2023）
 ・断面諸量計算
 ・材料定数
 ・断面、F値、応力（MNQ）、短期／長期　から断面算定する
+
+【RC造系】
+【木造系】
 
 
 =========Excel Structural Engineering Tools  -> xl_set  -> xs
@@ -180,4 +184,5 @@ xs_calc_***:計算関係？
     計算内容の説明　と　数式表示　など可能か？
 
 xs_beam_formula 梁公式。スパン、荷重データから、M、Qを返す。
+sympy.physics.continuum_mechanics.beam が使えるか。
 
