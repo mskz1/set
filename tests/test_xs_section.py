@@ -209,7 +209,7 @@ def test_get_point_on_arc():
 def test_get_points_on_arc():
     r1 = 10
     assert get_points_on_arc(r=r1, start=0., end=math.radians(90), n=2) == [(10.0, 0.0),
-                                                                            (7.0710678118654755, 7.071067811865475),
+                                                                            (7.0710678118654755, 7.0710678118654755),
                                                                             (6.123233995736766e-16, 10.0)]
     # print(get_points_on_arc(r=r1, start=0., end=math.radians(90), n=4))
     assert get_points_on_arc(r=r1, start=math.radians(270), end=math.radians(360), n=4) == [

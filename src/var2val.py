@@ -5,7 +5,7 @@ SPACE_CHAR = '#'
 # SPACE_CHAR_ZENKAKU = '＃'
 
 
-def replace_space_moji(txt):
+def replace_space_moji(txt: str) -> str:
     """
     意図的に入力されているスペースを別の文字に一旦置き換える。
     :param txt:
@@ -14,7 +14,7 @@ def replace_space_moji(txt):
     return txt.replace(' ', ' ' + SPACE_CHAR + ' ')
 
 
-def add_space_around_operator(txt):
+def add_space_around_operator(txt: str) -> str:
     """
     演算子の前後にスペースを追加する。
     :param txt:
@@ -47,7 +47,7 @@ def var2val(txt, var_val):
     return "".join(result)
 
 
-def array2dict(array):
+def array2dict(array) -> dict:
     """
     エクセルのセルレンジの最左列に変数名、最右列に値が入っているとして変数名：値の辞書オブジェクトを返す
     xloil版：セル範囲がndarrayに変換される

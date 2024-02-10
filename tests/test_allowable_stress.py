@@ -131,6 +131,7 @@ def test_steel_fb_aij2005():
     assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=2000, M3=1) == pytest.approx(114.0, abs=0.1)
     assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=4000, M3=1) == pytest.approx(71.8, abs=0.1)
     assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=6000, M3=1) == pytest.approx(45.4, abs=0.1)
+    # assert steel_fb_aij2005('H20', db, lb=6000, M3=1) == pytest.approx(45.4, abs=0.1)
 
     assert steel_fb_aij2005('H-500x200x10x16', db, lb=5000, M3=1) == pytest.approx(96.0, abs=0.1)
     assert steel_fb_aij2005('H-500x200x10x16', db, lb=7000, M3=1) == pytest.approx(72.5, abs=0.1)

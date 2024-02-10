@@ -3,12 +3,9 @@
 """Excel セルの入力文字列　計算向けのモジュール"""
 
 
-def strip_square_brackets(src):
+def strip_square_brackets(src: str) -> str:
     """
     src文字列から、角括弧で囲まれた部分を削除した文字列を返す
-
-    :param src:
-    :return:
     """
     idx_list = get_square_brackets_index(src)
 
@@ -23,13 +20,11 @@ def strip_square_brackets(src):
     return res
 
 
-def get_square_brackets_index(src):
+def get_square_brackets_index(src: str) -> list:
     """
     補助関数　角括弧の位置をタプルのリストで返す
-
-    :param src:
-    :return:
     """
+
     def zenkaku_to_hankaku():
         return src.replace('［', '[').replace('］', ']')
 

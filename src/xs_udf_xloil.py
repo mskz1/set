@@ -7,6 +7,7 @@ import bolt
 import xs_section
 import text_calc
 import var2val as var2val_m
+import simple_beam_analyzer as bef
 
 XL_CATEGORY = 'Structural Engineering Tools'
 XS_VERSION_DATE = '2023-0304'
@@ -150,3 +151,4 @@ def xsSectionName(abbrName):
 def xsSectionProperty(name, propertyName):
     """形鋼の断面性能値を返す関数"""
     return xs_section.xs_section_property(name, propertyName, db)
+
