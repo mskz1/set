@@ -47,16 +47,16 @@ def allowable_compressive_force(sec: str, F: float = 235., term: str = 'LONG', l
     if sec_full_name[0] in ['P']:  # 鋼管
         ix = xs_section_property(sec, 'ix')
         iy = ix
-        lambda_ = max(0.1*lkx / ix, 0.1*lky / iy)
+        lambda_ = max(0.1 * lkx / ix, 0.1 * lky / iy)
     elif sec_full_name[0] in ['L']:  # 山形鋼
         # u,v 方向 lkxはU軸、lkyはV軸まわりで計算
         ix = xs_section_property(sec, 'iu')
         iy = xs_section_property(sec, 'iv')
-        lambda_ = max(0.1*lkx / ix, 0.1*lky / iy)
+        lambda_ = max(0.1 * lkx / ix, 0.1 * lky / iy)
     else:  # H, KP, [, C　その他断面
         ix = xs_section_property(sec, 'ix')
         iy = xs_section_property(sec, 'iy')
-        lambda_ = max(0.1*lkx / ix, 0.1*lky / iy)
+        lambda_ = max(0.1 * lkx / ix, 0.1 * lky / iy)
 
     term_factor = 1.0
     if term == 'LONG':
@@ -184,19 +184,24 @@ def allowable_bending_moment(sec: str, M1: float = 0, M2: float = 0, M3: float =
 
 
 def section_check(sec: str, F: float, term: str, N: float, Mx: float, My: float = 0., Qx: float = 0., Qy: float = 0.,
-                  lkx: float = 0., lky: float = 0., lb=0.):
+                  lkx: float = 0., lky: float = 0., lb: float = 0.):
     """
     応力 N,M,Q(kN, kN*m, kN)をあたえ、部材の検定比を返す。 N<0で圧縮 N>0で引張
-    :param sec:
-    :param F:
-    :param term:
-    :param N:
-    :param Mx:
-    :param My:
-    :param sec_db:
+    :param sec: 断面名
+    :param F: F値 [N/mm2]
+    :param term: 荷重種別（短期・長期）str "LONG" / "SHORT"
+    :param N: 軸力[kN]
+    :param Mx: x軸まわりモーメント[kN*m]
+    :param My: y軸まわりモーメント[kN*m]
+    :param Qx:
+    :param Qy:
+    :param lkx: x軸方向座屈長さ[mm]
+    :param lky: y軸方向座屈長さ[mm]
+    :param lb: 横座屈長さ[mm]
     :return:
     """
-    # WIP: 応力NMQをあたえ、部材の検定比を返す。
+    # WIP : 応力NMQをあたえ、部材の検定比を返す。
+    # todo : せん断に対する検討は別にする？
     if N < 0:
         N_f = -N / allowable_compressive_force(sec, F, term, lkx, lky)
     else:

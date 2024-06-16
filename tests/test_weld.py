@@ -4,6 +4,17 @@ import pytest
 from src.weld import fillet_weld_size, fillet_weld_strength
 
 
+@pytest.mark.parametrize(
+    "t, w_type, w_size",
+    [
+        (2.3, 'T', 3.5),
+        (2.3, 'T', 3.5),
+        (3.2, 'T', 4.5),
+     ])
+def test_fillet_welding_size_paramet(t, w_type, w_size):
+    assert fillet_weld_size(t, w_type) == w_size
+
+
 def test_fillet_welding_size():
     # Ｔ継手 2019.1.28
     assert fillet_weld_size(2.3, weld_type='T') == 3.5
@@ -38,6 +49,3 @@ def test_fillet_welding_strength():
     assert fillet_weld_strength(L=100, S=6) == pytest.approx(33430.88999)
     assert fillet_weld_strength(L=100, S=6, n=2) == pytest.approx(66861.77997)
     assert fillet_weld_strength(L=100, S=9) == pytest.approx(46727.26669)
-
-
-

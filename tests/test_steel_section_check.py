@@ -45,6 +45,11 @@ def test_allowable_compressive_force():
     lk_y = 2000.
     assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(61.86, abs=0.1)
 
+    sec = "H-300x300x10x15"  # An = 118.5 cm2
+    lk_x = 8000.
+    lk_y = 8000.
+    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(1420.40746, abs=0.1)
+
     sec = "L65*6"
     lk = 4000.
     assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk, lky=lk) == pytest.approx(10.68, abs=0.1)
@@ -106,6 +111,12 @@ def test_allowable_bending_moment():
 
     lb = 6000.  # mm
     assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(199.85, abs=0.01)
+
+    sec = "H-300x300x10x15"
+    lb = 0.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='SHORT') == pytest.approx(317.25, abs=0.01)
+    lb = 4000.  # mm
+    assert allowable_bending_moment(sec, lb=lb, term='SHORT') == pytest.approx(278.349, abs=0.01)
 
     sec = "KP100*100*3.2"  # An = 12.13 [cm2], Zx=37.5 [cm3], Zy= 37.5[cm3]
     lb = 0.  # mm
@@ -185,11 +196,16 @@ def test_section_check():
 @pytest.mark.parametrize(
     "sec, F, term, N, Mx, My,                                 Qx, Qy, lkx, lky, lb, expected",
     [
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, 10., 20., 0., 0., 0., 0., 0., 0., 0.48615),
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, 0., 20., 0., 0., 0., 0., 0., 4000., 1.0253068),
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 0., 0., 0., 0.48615),
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 5000., 5000., 0., 0.60346),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, 10., 20., 0., 0., 0., 000., 000., 000., 0.48615),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, 0., 20., 0., 0., 0., 000., 000., 4000., 1.0253068),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 000., 000., 000., 0.48615),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 5000., 5000., 000., 0.60346),
         ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 8000., 2000., 4000., 1.053292),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -5., 5., 3., 0., 0., 8000., 4000., 4000., 0.77709),
+        ('H-300x300x10x15', F_235, SHORT_TERM, -200., 100., 0., 0., 0., 8000., 8000., 4000., 0.5000659),
+        ('H-300x300x10x15', F_235, SHORT_TERM, -200., 100., 0., 0., 0., 000., 000., 000., 0.38702855),
+        ('H-300x300x10x15', F_235, SHORT_TERM, -200., 100., 50., 0., 0., 8000., 8000., 4000., 0.97287916),
+        ('□P-150x150x4.5', F_235, SHORT_TERM, -80., 7., 3., 0., 0., 4000., 4000., 000., 0.528169),
     ])
 def test_section_check_paramet(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb, expected):
     assert section_check(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb) == pytest.approx(expected, abs=0.001)
