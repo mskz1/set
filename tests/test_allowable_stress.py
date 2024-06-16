@@ -83,6 +83,10 @@ def test_steel_fb():
 
     assert steel_fb_aij(F=235, lb=5000, i=52, C=1, h=500, Af=200 * 16) == pytest.approx(116.2895)
     assert steel_fb_aij(F=235, lb=7000, i=52, C=1, h=500, Af=200 * 16) == pytest.approx(81.3714)
+    # todo:Sチャートとあわない？ 2024-0225
+    # assert steel_fb_aij(F=235, lb=3500, i=32.7, C=1, h=248, Af=124 * 8) == pytest.approx(152/1.5)
+    # assert steel_fb_bsl(F=235, lb=3500, i=32.7, C=1, h=248, Af=124 * 8) == pytest.approx(152/1.5)
+
 
     from src.xs_section import make_all_section_db
     db = make_all_section_db()

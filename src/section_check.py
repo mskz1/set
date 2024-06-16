@@ -4,7 +4,7 @@ from xs_section import xs_section_property, xs_section_name, get_Zu_Zv_of_angle
 import allowable_stress as alws
 
 
-def allowable_tensile_force(sec, F=235., term='LONG'):
+def allowable_tensile_force(sec: str, F: float = 235., term: str = 'LONG') -> float:
     """
     部材の許容引張耐力を返す。全断面積に対して。
 
@@ -24,7 +24,8 @@ def allowable_tensile_force(sec, F=235., term='LONG'):
     return term_factor * area * ft / 10.
 
 
-def allowable_compressive_force(sec, F=235., term='LONG', lkx=0., lky=0.):
+def allowable_compressive_force(sec: str, F: float = 235., term: str = 'LONG', lkx: float = 0.,
+                                lky: float = 0.) -> float:
     """
     部材の許容圧縮耐力を返す。
 
@@ -67,7 +68,8 @@ def allowable_compressive_force(sec, F=235., term='LONG', lkx=0., lky=0.):
     return term_factor * area * fc / 10.
 
 
-def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., term='LONG'):
+def allowable_bending_moment(sec: str, M1: float = 0, M2: float = 0, M3: float = 1, direc: str = 'X', lb: float = 0.,
+                             F: float = 235., term: str = 'LONG', fb_edition: str = '2005') -> float:
     """
     部材の許容曲げ耐力を返す。
 
@@ -93,8 +95,11 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
         z, fb = 0, 0
         if direc == 'X':
             z = xs_section_property(sec, 'Zx', db)
-            fb = alws.steel_fb_aij2005(section_full_name, db, lb=lb, M1=M1, M2=M2, M3=M3, F=F)
-
+            if fb_edition == '2005':
+                fb = alws.steel_fb_aij2005(section_full_name, db, lb=lb, M1=M1, M2=M2, M3=M3, F=F)
+            else:
+                # fb = alws.steel_fb_aij(F=F,lb=lb,i=)
+                fb = alws.steel_fb_aij2002(section_full_name, db, lb=lb, M1=M1, M2=M2, M3=M3, F=F)
         if direc == 'Y':
             z = xs_section_property(sec, 'Zy', db)
             # 弱軸曲げ 横座屈なし fb=ft
@@ -171,7 +176,6 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
         if direc == 'V':
             _, z = get_Zu_Zv_of_angle(sec, db)
 
-
         # 横座屈なし fb=ft
         fb = alws.steel_ft()
         term_factor = 1.0 if term == 'LONG' else 1.5
@@ -179,3 +183,25 @@ def allowable_bending_moment(sec, M1=0, M2=0, M3=1, direc='X', lb=0., F=235., te
         return term_factor * z * (fb / 10.) / 100.
 
 
+def section_check(sec: str, F: float, term: str, N: float, Mx: float, My: float = 0., Qx: float = 0., Qy: float = 0.,
+                  lkx: float = 0., lky: float = 0., lb=0.):
+    """
+    応力 N,M,Q(kN, kN*m, kN)をあたえ、部材の検定比を返す。 N<0で圧縮 N>0で引張
+    :param sec:
+    :param F:
+    :param term:
+    :param N:
+    :param Mx:
+    :param My:
+    :param sec_db:
+    :return:
+    """
+    # WIP: 応力NMQをあたえ、部材の検定比を返す。
+    if N < 0:
+        N_f = -N / allowable_compressive_force(sec, F, term, lkx, lky)
+    else:
+        N_f = N / allowable_tensile_force(sec, F, term)
+
+    Mx_f = Mx / allowable_bending_moment(sec, M3=Mx, direc='X', lb=lb, F=F, term=term)
+    My_f = My / allowable_bending_moment(sec, M3=My, direc='Y', lb=lb, F=F, term=term)
+    return N_f + Mx_f + My_f

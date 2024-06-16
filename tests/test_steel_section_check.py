@@ -1,6 +1,7 @@
 from src.section_check import allowable_tensile_force
 from src.section_check import allowable_compressive_force
 from src.section_check import allowable_bending_moment
+from src.section_check import section_check
 import pytest
 
 F_235 = 235  # N/mm2
@@ -169,3 +170,26 @@ def test_allowable_bending_moment():
     #  断面による計算の違いを考慮　山形鋼の各ポイントで、圧縮側、引張側で不利な判定
 
 
+# @pytest.mark.skip('WIP')
+def test_section_check():
+    N = 10.  # kN
+    Mx = 20.0  # kN*m
+    sec = "H-200x100x5.5x8"  # An = 26.67 cm2
+    assert section_check(sec, F_235, SHORT_TERM, N, Mx) == pytest.approx(0.48615, abs=0.001)
+    N = -10.  # kN
+    Mx = 20.0  # kN*m
+    sec = "H-200x100x5.5x8"  # An = 26.67 cm2
+    assert section_check(sec, F_235, SHORT_TERM, N, Mx) == pytest.approx(0.48615, abs=0.001)
+
+
+@pytest.mark.parametrize(
+    "sec, F, term, N, Mx, My,                                 Qx, Qy, lkx, lky, lb, expected",
+    [
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, 10., 20., 0., 0., 0., 0., 0., 0., 0.48615),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, 0., 20., 0., 0., 0., 0., 0., 4000., 1.0253068),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 0., 0., 0., 0.48615),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 500., 500., 0., 0.60346),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 800., 200., 4000., 1.053292),
+    ])
+def test_section_check_paramet(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb, expected):
+    assert section_check(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb) == pytest.approx(expected, abs=0.001)

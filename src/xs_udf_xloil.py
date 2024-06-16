@@ -7,10 +7,10 @@ import bolt
 import xs_section
 import text_calc
 import var2val as var2val_m
-import simple_beam_analyzer as bef
+# import simple_beam_analyzer as bef
 
 XL_CATEGORY = 'Structural Engineering Tools'
-XS_VERSION_DATE = '2023-0304'
+XS_VERSION_DATE = '2024-0301'
 
 db = xs_section.make_all_section_db()
 

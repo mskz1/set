@@ -168,6 +168,15 @@ def test_make_short_name():
     pprint.pprint(make_short_name(db))
 
 
+def test_short_name_list():
+    # db = make_section_db(HS_SEC_DATA)
+    # db = make_section_db(HM_SEC_DATA)
+    db = make_section_db(HW_SEC_DATA)
+    result = [x for x in make_short_name(db).keys() if '*' not in x]
+    # pprint.pprint(result)
+    print(result)
+
+
 def test_section_type():
     db = make_all_section_db()
     # 断面の種類は、H形鋼、角形鋼管、鋼管、C形、溝形、山形　の６種類　2020-12時点
@@ -388,5 +397,3 @@ def test_get_angle_section_allowable_moment():
     ma_x, ma_y = get_allowable_moment_of_angle_section(sec_name, term='LONG', direc='X')
     assert ma_x == pytest.approx(213.0816, abs=0.001)
     assert ma_y == pytest.approx(0.000, abs=0.001)
-
-
