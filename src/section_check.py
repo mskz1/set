@@ -32,8 +32,8 @@ def allowable_compressive_force(sec: str, F: float = 235., term: str = 'LONG', l
     :param sec: 断面名
     :param F: F値 [N/mm2]
     :param term: 荷重種別（短期・長期）str "LONG" / "SHORT"
-    :param lkx: 座屈長さ X方向 [cm]
-    :param lky: 座屈長さ Y方向 [cm]
+    :param lkx: 座屈長さ X方向 [mm]  2024.6.16 cm -> mm
+    :param lky: 座屈長さ Y方向 [mm]
     :return: cNa 許容圧縮耐力[kN]
     """
     area = xs_section_property(sec, 'An')
@@ -47,16 +47,16 @@ def allowable_compressive_force(sec: str, F: float = 235., term: str = 'LONG', l
     if sec_full_name[0] in ['P']:  # 鋼管
         ix = xs_section_property(sec, 'ix')
         iy = ix
-        lambda_ = max(lkx / ix, lky / iy)
+        lambda_ = max(0.1*lkx / ix, 0.1*lky / iy)
     elif sec_full_name[0] in ['L']:  # 山形鋼
         # u,v 方向 lkxはU軸、lkyはV軸まわりで計算
         ix = xs_section_property(sec, 'iu')
         iy = xs_section_property(sec, 'iv')
-        lambda_ = max(lkx / ix, lky / iy)
+        lambda_ = max(0.1*lkx / ix, 0.1*lky / iy)
     else:  # H, KP, [, C　その他断面
         ix = xs_section_property(sec, 'ix')
         iy = xs_section_property(sec, 'iy')
-        lambda_ = max(lkx / ix, lky / iy)
+        lambda_ = max(0.1*lkx / ix, 0.1*lky / iy)
 
     term_factor = 1.0
     if term == 'LONG':
