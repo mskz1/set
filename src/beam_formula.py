@@ -2,6 +2,7 @@
 __author__ = 'mskz'
 
 from collections import namedtuple
+from typing import Tuple
 
 
 # Cantilever with End Load - T301
@@ -417,6 +418,74 @@ class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
         points = [segment * i for i in range(n)]
         points.append(self._span)
         return points
+
+
+class SimplySupportedBeamWithMultiplePointLoad(AbstractBeamFormula):
+    """
+    単純ばり公式　n点集中荷重（均等配置）が作用する場合。
+    span:スパン（m）
+    load:荷重値（kN）
+
+    """
+
+    def __init__(self, span, load, n: int = 2):
+        try:
+            super(AbstractBeamFormula, self).__init__(span, load)
+        except TypeError:
+            super().__init__(span, load)
+        self._n = n
+
+    def getMmax(self):
+        n = self._n
+        if n % 2 == 0:
+            return self._load * self._span * (1 / 8) * n * (n + 2) / (n + 1)
+        else:
+            return self._load * self._span * (1 / 8) * (n + 1)
+
+    def getMcenter(self):
+        return self.getMmax()
+
+    def getR1(self):
+        return self._load * self._n / 2.
+
+    def getR2(self):
+        return self.getR1()
+
+    def getDmax(self, I=1.0, E=20500.):
+        """
+        最大変形量を算出
+        :param I: 断面２次モーメント[cm4]
+        :param E: ヤング係数[kN/cm2]
+        :return:変形量[cm]
+        """
+        n = self._n
+        if n % 2 == 0:
+            return (self._load * (self._span * 100) ** 3 * n * (n + 2) * (5 * n ** 2 + 10 * n + 6) / (n + 1) ** 3) / (
+                    384. * E * I)
+        else:
+            return (self._load * (self._span * 100) ** 3 * (5 * n ** 2 + 10 * n + 1) / (n + 1)) / (384. * E * I)
+
+    # def getM_at(self, a):
+    #     pass
+
+    # def getD_at(self, a, I=1.0, E=20500.):
+    #     pass
+
+
+def get_max_moment_and_disp_with_multiple_point_load(span: float, load: float, n: int, I: float = 1.0,
+                                                     E: float = 20500.) -> Tuple[float, float, float]:
+    # 任意点集中荷重の公式の足し合わせにより、中央モーメント、中央たわみ、反力を求める。
+    Mmax = 0.
+    Dmax = 0.
+    R1 = 0.
+    load_points = [a * span / (n + 1) for a in range(n + 2)][1:-1]
+    # print(load_points)
+    for a in load_points:
+        bf = SimplySupportedBeamWithPointLoadAtAny(span, load, a)
+        Mmax += bf.getMcenter()
+        Dmax += bf.getD_at(span / 2, I=I, E=E)
+        R1 += bf.getR1()
+    return Mmax, Dmax, R1
 
 
 def add_list_contents(a, b):

@@ -10,6 +10,8 @@ from src.beam_formula import SimplySupportedBeamWithUniformDistributedLoad
 from src.beam_formula import SimplySupportedBeamWithPointLoadAtCenter
 from src.beam_formula import SimplySupportedBeamWithPointLoadAtAny
 from src.beam_formula import SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad
+from src.beam_formula import SimplySupportedBeamWithMultiplePointLoad
+from src.beam_formula import get_max_moment_and_disp_with_multiple_point_load
 
 
 # from beam_formula import DistributedLoad,PointLoad
@@ -192,3 +194,69 @@ def test_sample_SSBwPL_plot():
     y = bf.getD_npoints(50)
     ax.plot(x, y, marker=".")
     plt.show()
+
+
+@pytest.mark.parametrize("span, load , n, Mmax, Dmax, R", [
+    (6., 2., 2, 4.0, 0.399983, 2.),
+    (6., 2., 3, 6.0, 0.557584, 3.),
+    (6., 2., 4, 7.2, 0.709952, 4.),
+    (8., 3.5, 2, 9.33333, 1.659187, 3.5),
+    (8., 3.5, 3, 14.0, 2.3129429, 3.5 * 1.5),
+    (8., 3.5, 4, 16.8, 2.944985, 3.5 * 2),
+])
+def test_SimplySupportedBeamWithMultiplePointLoad(span, load, n, Mmax, Dmax, R):
+    bf = SimplySupportedBeamWithMultiplePointLoad(span=span, load=load, n=n)
+    assert bf.getMmax() == approx(Mmax)
+    assert bf.getDmax(I=1870.) == approx(Dmax)
+    assert bf.getR1() == approx(R)
+
+
+@pytest.mark.parametrize(
+    "span, load, n, Mmax, Dmax, R", [
+        (6., 2., 2, 4.0, 0.399983, 2.),
+        (6., 2., 3, 6.0, 0.557584, 3.),
+        (6., 2., 4, 7.2, 0.709952, 4.),
+        (6., 2., 5, 9., 0.86083213, 5.),
+        (6., 2., 6, 10.28571, 1.01027424, 6.),
+        (6., 2., 7, 12., 1.1591887, 7.),
+        (6., 2., 8, 13.33333, 1.30751159, 8.),
+        (6., 2., 9, 15., 1.45558888, 9.),
+        (6., 2., 10, 16.36364, 1.603366737, 10.),
+        
+        (8., 3.5, 2, 9.33333, 1.659187, 3.5),
+        (8., 3.5, 3, 14.0, 2.3129429, 3.5 * 1.5),
+        (8., 3.5, 4, 16.8, 2.944985, 3.5 * 2),
+
+    ])
+def test_validation_of_multiple_point_load(span, load, n, Mmax, Dmax, R):
+    # print(get_max_moment_and_disp_with_multiple_point_load(6, 2, 2, I=1870.))
+    assert get_max_moment_and_disp_with_multiple_point_load(span, load, n, I=1870., E=20500.) == approx((Mmax, Dmax, R))
+
+
+@pytest.mark.parametrize(
+    "span, load, n", [
+        (6., 2., 2),
+        (6., 2., 3),
+        (6., 2., 4),
+        (6., 2., 5),
+        (6., 2., 6),
+        (6., 2., 7),
+        (6., 2., 8),
+        
+        (7.5, 9.1, 2),
+        (7.5, 9.1, 3),
+        (7.5, 9.1, 4),
+        (7.5, 9.1, 5),
+        (7.5, 9.1, 6),
+        (7.5, 9.1, 7),
+        (7.5, 9.1, 8),
+        (10., 3., 15),
+    ])
+def test_compare_multiple_point_load_between_2_methods(span, load, n):
+    # 以下はｎの関数による公式（ネット上の情報による式）
+    bf = SimplySupportedBeamWithMultiplePointLoad(span=span, load=load, n=n)
+    # 以下は、任意点集中荷重の公式の足し合わせによるもの
+    Mmax, Dmax, R = get_max_moment_and_disp_with_multiple_point_load(span, load, n, I=1870., E=20500.)
+    assert bf.getMmax() == approx(Mmax)
+    assert bf.getDmax(I=1870.) == approx(Dmax)
+    assert bf.getR1() == approx(R)
