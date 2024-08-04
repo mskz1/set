@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 __author__ = 'mskz'
 
+import dataclasses
+
 DIR_AROUND_XX = "xx"
 DIR_AROUND_YY = "yy"
+
+
 
 
 class BeamModel:
@@ -54,8 +58,14 @@ class BeamModel:
         pass
 
 
-class SimpleBeam(BeamModel):
+@dataclasses.dataclass
+class SimpleBeamSteel:
     """
-    単純はりのモデル
+    鉄骨単純はりのモデル
     """
+    span: float = 6000.  # (mm)
+    section_name: str = ''  # 断面形状略号
+
+
+
     pass
