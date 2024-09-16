@@ -210,3 +210,4 @@ def section_check(sec: str, F: float, term: str, N: float, Mx: float, My: float 
     Mx_f = Mx / allowable_bending_moment(sec, M3=Mx, direc='X', lb=lb, F=F, term=term)
     My_f = My / allowable_bending_moment(sec, M3=My, direc='Y', lb=lb, F=F, term=term)
     return N_f + Mx_f + My_f
+

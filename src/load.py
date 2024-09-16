@@ -19,6 +19,11 @@ class LoadCase(Enum):
     P = 'P'
 
 
+class LoadTerm(Enum):
+    LONG = 'LONG'
+    SHORT = 'SHORT'
+
+
 @dataclass
 class UnitLoad:
     """
@@ -95,6 +100,7 @@ class LoadCombination:
     label: str = ''
     load_cases: list[LoadCase] = field(default_factory=list)
     factors: list[float] = field(default_factory=list)
+    term: LoadTerm = LoadTerm.LONG
 
     def get_factor(self, load_case: LoadCase):
         return self.factors[self.load_cases.index(load_case)]
@@ -140,17 +146,18 @@ class LoadRegistry:
         for key, value in kwd.items():
             setattr(self.unit_loads[load_id], key, value)
 
-    def add_load_combo(self, label: str, load_cases: list[LoadCase], factors: list[float]):
-        self.load_combo[label] = LoadCombination(label=label, load_cases=load_cases, factors=factors)
+    def add_load_combo(self, label: str, load_cases: list[LoadCase], factors: list[float],
+                       term: LoadTerm = LoadTerm.LONG):
+        self.load_combo[label] = LoadCombination(label=label, load_cases=load_cases, factors=factors, term=term)
 
     def remove_load_combo(self, combo_label: str):
         del self.load_combo[combo_label]
 
     def show_load_combo(self):
         result = [' registered load combinations '.center(80, '-')]
-        result += [f"{'label':>15}{'load_cases':>25}{'factors':>20}"]
-        result += [f"{k:>15}{str([lc.value for lc in v.load_cases]):>25}{str(v.factors):>20}" for k, v in
-                   self.load_combo.items()]
+        result += [f"{'label':>15}{'load_cases':>25}{'factors':>20}{'term':>20}"]
+        result += [f"{k:>15}{str([lc.value for lc in v.load_cases]):>25}{str(v.factors):>20}{str(v.term.value):>20}" for
+                   k, v in self.load_combo.items()]
         result += ['-' * 80]
         return '\n'.join(result)
 
@@ -184,4 +191,12 @@ class LoadRegistry:
         for ld in self.unit_loads.values():
             if ld.load_case in load_combo.load_cases:
                 result += ld.get_as_distributed_load(a) * load_combo.get_factor(ld.load_case)
+        return result
+
+    def get_load_combo_names(self, term: LoadTerm) -> list[str]:
+        """長期/短期の指定をして、該当する荷重組合せの名称をリストで返す"""
+        result = []
+        for label, lcombo in self.load_combo.items():
+            if lcombo.term == term:
+                result.append(label)
         return result

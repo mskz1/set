@@ -36,8 +36,8 @@ from typing import Tuple
 # ----------------------------------------------
 
 # load_type = dict(UDL='uniform distributed load',)
-# 不要？
 class LoadType:
+    # 不要？
     UDL = 'Uniform Distributed Load'
     UIL = 'Uniformly Increasing Load to One End'
     PDL = 'Partial Distributed Load'
@@ -49,22 +49,22 @@ class LoadType:
 # DistributedLoad = namedtuple('DistributedLoad','value')
 # PointLoad = namedtuple('PointLoad','value position')
 
-# 不要？
 def uniform_distributed_load(load=0.0):
+    # 不要？
     ld = Load(load_type=Load.DL)
     ld.value = load
     return ld
 
 
-# 不要？
 def point_load_at_center(load=0.0):
+    # 不要？
     ld = Load(load_type=LoadType.PLC)
     ld.value = load
     return ld
 
 
-# 不要？
 class Load:
+    # 不要？
     DL = 'DistributedLoad'
     PL = 'PointLoad'
 
@@ -173,8 +173,8 @@ class AbstractBeamFormula(object):
         pass
 
 
-# 不要？
 class SimplySupportedBeam:
+    # 不要？
     def __init__(self, span, load_type=LoadType.UDL, **param):
         self._span = span
         self._param = param

@@ -3,7 +3,7 @@ from src.xs_section import make_all_section_db, xs_section_property, xs_section_
 from beam_formula import SimplySupportedBeamWithUniformDistributedLoad
 from beam_model import SimpleBeamSteel
 from section_check import section_check
-
+from load import *
 
 def sample1():
     db = make_all_section_db()
@@ -29,8 +29,8 @@ def sample1():
 
     # 荷重ケースや荷重組合せをどう扱うか。モデル１つに、複数の荷重組合せ？　G　と　G+S　G+0.7S　とか。
     # ２軸曲げ
-
-    print(xs_section_name(sec_name), s_f, Dmax)
+    print('================')
+    print(f'断面：{xs_section_name(sec_name)}, σ/f={s_f:.2f}, たわみ={Dmax:.2f}[cm]')
 
 
 def simple_beam_sample():
