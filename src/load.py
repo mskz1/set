@@ -27,8 +27,9 @@ class LoadTerm(Enum):
 @dataclass
 class UnitLoad:
     """
-    面荷重データ（N/m2）"""
+    単位面荷重データ（N/m2）
 
+    """
     # id: int = 0
     type: Type = Type.DL
     load_case: LoadCase = LoadCase.G
@@ -38,7 +39,7 @@ class UnitLoad:
 
     def get_as_point_load(self, a: float, b: float) -> float:
         """
-        集中荷重値P(N)を返す
+        集中荷重値P(N)を返す。
         :param a: 負担幅１（m）
         :param b: 負担幅２（m）
         :return:
@@ -48,14 +49,14 @@ class UnitLoad:
     def get_as_distributed_load(self, a: float) -> float:
         """
         分布荷重値ｗ（N/m）を返す。
-        :param a:　負担幅（m）
+        :param a: 負担幅（m）
         :return:
         """
         return self.value * a
 
 
 @dataclass
-class xLoadCase:
+class xxLoadCase:
     """荷重ケース"""
     name: str = ""
     load: UnitLoad = UnitLoad()
@@ -67,10 +68,7 @@ class xxLoadCombination:
     # 荷重ケースとその組合せ係数、荷重ケースの追加・削除　をするには。。。
     # 荷重に固有のidを割り当て、それで設定する？
     label: str = ''
-    # loads: list[Load] = field(default_factory=list)
-    # load_factor: dict[Load, float] = field(default_factory=dict)
     current_load_id: ClassVar = 0
-    # loads: list = field(default_factory=list)
     id_load: dict[int, UnitLoad] = field(default_factory=dict)
 
     def add(self, label: str, ld_factor: dict[UnitLoad, float]):
@@ -79,10 +77,6 @@ class xxLoadCombination:
     def add_load(self, type: Type, value: float, description: str):
         # 消す？
         self.current_load_id += 1
-
-        # self.loads.append(Load(type=type, value=value, description=description))
-        # self.id_load[self.current_load_id] = UnitLoad(id=self.current_load_id, type=type, value=value,
-        #                                               description=description)
         return self.current_load_id
 
     def delete_load(self, load_id: int):
@@ -109,7 +103,7 @@ class LoadCombination:
 @dataclass
 class LoadRegistry:
     """
-    荷重データを登録・管理するオブジェクト
+    荷重データ（）を登録・管理するオブジェクト
 
     単位荷重は荷重id（1～）で管理。削除した場合、そのidは以後欠番となる。
     """
@@ -194,7 +188,7 @@ class LoadRegistry:
         return result
 
     def get_load_combo_names(self, term: LoadTerm) -> list[str]:
-        """長期/短期の指定をして、該当する荷重組合せの名称をリストで返す"""
+        """長期/短期の指定をして、該当する荷重組合せの名称すべてをリストで返す"""
         result = []
         for label, lcombo in self.load_combo.items():
             if lcombo.term == term:

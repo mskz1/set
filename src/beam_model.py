@@ -3,7 +3,7 @@ __author__ = 'mskz'
 
 # import dataclasses
 from dataclasses import dataclass, field
-from load import *   # インポートするパッケージの書き方で、Enumの等値性が変わる！！
+from load import *  # インポートするパッケージの書き方で、Enumの等値性が変わる！！
 from beam_formula import SimplySupportedBeamWithUniformDistributedLoad, SimplySupportedBeamWithMultiplePointLoad
 from xs_section import make_section_db, short_full_name, HS_SEC_DATA, HM_SEC_DATA, HW_SEC_DATA
 from xs_section import xs_section_property
@@ -66,7 +66,12 @@ class BeamModel:
 class SimpleBeamSteel:
     """
     鉄骨単純はりのモデル
+    応力は梁公式により、等分布荷重とｎ点集中荷重に対応
     """
+    # todo: 後から荷重値の変更への対応　2024-0922
+    # todo: 軸力対応
+    # todo: 2軸曲げ対応
+    # ---------------------------------
     span: float = 6000.  # (mm)
     section_name: str = ''  # 断面形状略号
     ld_reg: LoadRegistry = None
@@ -83,13 +88,22 @@ class SimpleBeamSteel:
     sec_db = make_section_db(HS_SEC_DATA)
 
     def set_load_registry(self, reg):
-        """荷重登録"""
+        """
+        荷重登録をセット
+        :param reg:
+        :return:
+        """
         self.ld_reg = reg
         for lcombo in self.ld_reg.load_combo.keys():
             self.lcombo_beamFormulas[lcombo] = []
 
     def add_udl(self, lcombo: str, a: float):
-        """UDL荷重登録"""
+        """
+        UDL　等分布荷重の追加
+        :param lcombo: 荷重組合せのラベル
+        :param a: 負担幅（mm）
+        :return:
+        """
         w = self.ld_reg.get_as_distributed_load(lcombo, a / 1000.)
         self.lcombo_beamFormulas[lcombo].append(
             SimplySupportedBeamWithUniformDistributedLoad(self.span / 1000., w / 1000.))
@@ -106,38 +120,58 @@ class SimpleBeamSteel:
         :return:
         """
         lcombo_names = self.ld_reg.get_load_combo_names(term)
-        m_max = []
-        for label in lcombo_names:
-            m = 0.
-            for bf in self.lcombo_beamFormulas[label]:
-                m += bf.getMmax()
-            m_max.append(abs(m))  # 絶対値
-        return max(m_max)
+        if lcombo_names:
+            m_max = []
+            for label in lcombo_names:
+                m = 0.
+                for bf in self.lcombo_beamFormulas[label]:
+                    m += bf.getMmax()
+                m_max.append(abs(m))  # 絶対値
+            return max(m_max)
+        else:
+            return 0.0  # 該当の荷重種別の荷重状態が無い
 
     def get_max_deflection(self, term=LoadTerm.LONG):
         """
-        長期/短期を指定し、該当する荷重組合せによる部材たわみの最大値を返す
+        長期/短期を指定し、該当する荷重組合せによる部材たわみ(cm)の最大値を返す
         :param term:
         :return:
         """
         lcombo_names = self.ld_reg.get_load_combo_names(term)
-        d_max = []
-        Ix = xs_section_property(short_full_name[self.section_name], 'Ix', self.sec_db)
-        for label in lcombo_names:
-            d = 0.
-            for bf in self.lcombo_beamFormulas[label]:
-                d += bf.getDmax(I=Ix)
-            d_max.append(abs(d))  # 絶対値
-        return max(d_max)
+        if lcombo_names:
+            d_max = []
+            Ix = xs_section_property(short_full_name[self.section_name], 'Ix', self.sec_db)
+            for label in lcombo_names:
+                d = 0.
+                for bf in self.lcombo_beamFormulas[label]:
+                    d += bf.getDmax(I=Ix)  # cm
+                d_max.append(abs(d))  # 絶対値
+            return max(d_max)
+        else:
+            return 0.0  # 該当の荷重種別の荷重状態が無い
 
-    def check_section(self):
-        # FIXME:
-        # print(LoadTerm.LONG == LoadTerm.LONG)
-        # print(self.ld_reg.get_load_combo_names(LoadTerm.LONG))
+    def check_section(self, do_print=False):
+        """
+        鉄骨断面の断面算定結果を返す（長期検定比、短期検定比）のタプル
+        :param do_print:
+        :return:
+        """
         M_l = self.get_max_internal_force(LoadTerm.LONG)
         Mal = allowable_bending_moment(short_full_name[self.section_name], lb=self.Lb, term='LONG')
-        s_f_long = M_l / allowable_bending_moment(short_full_name[self.section_name], lb=self.Lb, term='LONG')
-        print(f'Ml= {M_l:.5f}, Mal= {Mal:.5f}')
-        # WIP-2024-0916
+        s_f_long = M_l / Mal
 
-        pass
+        d_long = self.get_max_deflection(LoadTerm.LONG) * 10  # cm -> mm
+
+        M_s = self.get_max_internal_force(LoadTerm.SHORT)
+        Mas = allowable_bending_moment(short_full_name[self.section_name], lb=self.Lb, term='SHORT')
+        s_f_short = M_s / Mas
+
+        d_short = self.get_max_deflection(LoadTerm.SHORT) * 10  # cm -> mm
+
+        if do_print:
+            print(f'Ml= {M_l:.5f}, Mal= {Mal:.5f}, Ml/Mal={s_f_long:.3f}')
+            print(f'd_l= {d_long:.5f} (mm), d/L= 1/{int(self.span / d_long)}')
+            print(f'Ms= {M_s:.5f}, Mas= {Mas:.5f}, Ms/Mas={s_f_short:.3f}')
+            print(f'd_s= {d_short:.5f} (mm), d/L= 1/{int(self.span / d_short)}')
+
+        return s_f_long, s_f_short

@@ -3,7 +3,7 @@ from load import *
 import pytest
 
 
-def test_load():
+def test_UnitLoad():
     ld1 = UnitLoad()
     assert ld1.value == 0.
     assert ld1.description == ''
@@ -12,7 +12,6 @@ def test_load():
     assert ld2.type == Type.DL
     assert ld2.value == 600.
     assert ld2.description == '屋根'
-    # print(ld2)
 
 
 def test_vars(capsys):
@@ -22,16 +21,17 @@ def test_vars(capsys):
     assert output == "{'type': <Type.DL: 'DL'>, 'load_case': <LoadCase.G: 'G'>, 'value': 0.0, 'description': ''}"
 
 
-def test_load_get_method():
+def test_UnitLoad_get_method():
     ld = UnitLoad(type=Type.DL, value=600., description='屋根DL')
-    assert ld.get_as_point_load(1, 1) == 600.
-    assert ld.get_as_point_load(2, 3) == 3600.
-    assert ld.get_as_distributed_load(2) == 1200.
+    assert ld.get_as_point_load(1, 1) == 600.  # 1[m] * 1[m] * 600[N/m2] =
+    assert ld.get_as_point_load(2, 3) == 3600.  # 2[m] * 3[m] * 600[N/m2] =
+    assert ld.get_as_distributed_load(2) == 1200.  # 2[m] * 600[N/m2] =
     assert ld.get_as_distributed_load(3) == 1800.
 
 
 @pytest.mark.skip('実装変更のため')
 def test_load_combo_old():
+    # 不要
     ld_combo = LoadCombination()
     dl = UnitLoad(type=Type.DL, value=600., description='屋根固定荷重')
     sl = UnitLoad(type=Type.SL, value=800.0, description='積雪荷重')
@@ -41,6 +41,7 @@ def test_load_combo_old():
 
 @pytest.mark.skip('実装変更のため')
 def test_load_combo_2_old():
+    # 不要
     lcombo = LoadCombination()
     # assert lcombo.__class__.load_id == 0
     assert lcombo.current_load_id == 0
