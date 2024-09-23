@@ -28,14 +28,13 @@ class LoadTerm(Enum):
 class UnitLoad:
     """
     単位面荷重データ（N/m2）
-
     """
     # id: int = 0
-    type: Type = Type.DL
-    load_case: LoadCase = LoadCase.G
+    type: Type = Type.DL  # 荷重タイプ
+    load_case: LoadCase = LoadCase.G  # 所属する荷重ケース
 
-    value: float = 0.  # N/m2
-    description: str = ""
+    value: float = 0.  # 荷重値（N/m2）
+    description: str = ""  # 説明メモ
 
     def get_as_point_load(self, a: float, b: float) -> float:
         """
@@ -91,12 +90,16 @@ class xxLoadCombination:
 
 @dataclass
 class LoadCombination:
-    label: str = ''
-    load_cases: list[LoadCase] = field(default_factory=list)
-    factors: list[float] = field(default_factory=list)
-    term: LoadTerm = LoadTerm.LONG
+    """
+    荷重組合せ　名称、荷重ケースとその係数を保持
+    """
+    label: str = ''  # 名称
+    load_cases: list[LoadCase] = field(default_factory=list)  # 含まれる荷重ケースのリスト
+    factors: list[float] = field(default_factory=list)  # 上記各荷重ケースの係数
+    term: LoadTerm = LoadTerm.LONG  # 荷重種別（長期/短期）
 
     def get_factor(self, load_case: LoadCase):
+        # 含まない荷重ケースを指定した場合は ValueError
         return self.factors[self.load_cases.index(load_case)]
 
 

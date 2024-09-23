@@ -1,4 +1,3 @@
-# from load import Type, UnitLoad, LoadCombination
 from load import *
 import pytest
 
@@ -29,36 +28,12 @@ def test_UnitLoad_get_method():
     assert ld.get_as_distributed_load(3) == 1800.
 
 
-@pytest.mark.skip('実装変更のため')
-def test_load_combo_old():
-    # 不要
-    ld_combo = LoadCombination()
-    dl = UnitLoad(type=Type.DL, value=600., description='屋根固定荷重')
-    sl = UnitLoad(type=Type.SL, value=800.0, description='積雪荷重')
-    ld_combo.add('G+S', {dl: 1.0, sl: 1})  # クラスのインスタンスをキーにするには、ハッシュ可能にしなければならない？
-    print(ld_combo)
-
-
-@pytest.mark.skip('実装変更のため')
-def test_load_combo_2_old():
-    # 不要
-    lcombo = LoadCombination()
-    # assert lcombo.__class__.load_id == 0
-    assert lcombo.current_load_id == 0
-    id_dl = lcombo.add_load(type=Type.DL, value=600., description='屋根DL')
-    id_dl_w = lcombo.add_load(type=Type.DL, value=650., description='壁DL')
-    id_sl = lcombo.add_load(type=Type.SL, value=800., description='SL')
-    print()
-    print(lcombo)
-    # lcombo.add_combo('DL+SL', (id_dl, 1), (id_sl, 1))
-    # assert lcombo.current_load_id == 1
-    # lcombo.add_load()
-
-
-def test_load_combo():
-    lcombo = LoadCombination(label='G', load_cases=[LoadCase.G], factors=[1], term=LoadTerm.LONG)
-    assert lcombo.get_factor(LoadCase.G) == 1
-    assert lcombo.term == LoadTerm.LONG
+def test_load_combo_init():
+    lcombo1 = LoadCombination(label='G', load_cases=[LoadCase.G], factors=[1], term=LoadTerm.LONG)
+    assert lcombo1.get_factor(LoadCase.G) == 1
+    assert lcombo1.term == LoadTerm.LONG
+    with pytest.raises(ValueError):
+        assert lcombo1.get_factor(LoadCase.S) == 1
 
     lcombo2 = LoadCombination(label='G+S', load_cases=[LoadCase.G, LoadCase.S], factors=[1, 1], term=LoadTerm.SHORT)
     assert lcombo2.get_factor(LoadCase.G) == 1.0
@@ -143,6 +118,9 @@ def test_load_registry_sample_use_case(capsys):
     assert ld_reg.get_as_distributed_load('G+S', 1.5) == (550 * 1 + 780 * 1) * 1.5
     assert ld_reg.get_as_point_load('G+0.7S', 1, 2) == (550 * 1 + 780 * 0.7) * 1 * 2
     assert ld_reg.get_as_distributed_load('G+0.7S', 1.5) == (550 * 1 + 780 * 0.7) * 1.5
+    with pytest.raises(KeyError):  # 登録されていないラベルの時
+        assert ld_reg.get_as_point_load('G+K', 1, 1) == 1.
+        assert ld_reg.get_as_distributed_load('G+W', 1.5) == 1.
 
     assert ld_reg.get_load_combo_names(LoadTerm.LONG) == ['G', 'G+0.7S']
     assert ld_reg.get_load_combo_names(LoadTerm.SHORT) == ['G+S', 'G+P+0.35S+K']

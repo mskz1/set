@@ -37,9 +37,11 @@ def simple_beam_ptl(load_combo_yane):
     sb = SimpleBeamSteel(span=5000.0)
     sb.set_load_registry(ld)
     sb.section_name = 'H25'
-    # WIP 2024-0921 nと負担幅をパラメーターにするか？
-    sb.add_n_pt_l(lcombo='G', p=sb.ld_reg.get_as_point_load('G', 2.5, 3) / 1000.0, n=1)
-    sb.add_n_pt_l(lcombo='G+S', p=sb.ld_reg.get_as_point_load('G+S', 2.5, 3) / 1000.0, n=1)
+    # 2024-0923 nと負担幅をパラメーターに変更
+    # sb.add_n_pt_l(lcombo='G', p=sb.ld_reg.get_as_point_load('G', 2.5, 3) / 1000.0, n=1)
+    # sb.add_n_pt_l(lcombo='G+S', p=sb.ld_reg.get_as_point_load('G+S', 2.5, 3) / 1000.0, n=1)
+    sb.add_n_pt_l(lcombo='G', a=3000., n=1)
+    sb.add_n_pt_l(lcombo='G+S', a=3000., n=1)
     return sb
 
 

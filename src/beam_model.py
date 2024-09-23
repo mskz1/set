@@ -100,7 +100,7 @@ class SimpleBeamSteel:
     def add_udl(self, lcombo: str, a: float):
         """
         UDL　等分布荷重の追加
-        :param lcombo: 荷重組合せのラベル
+        :param lcombo: 荷重組合せ名
         :param a: 負担幅（mm）
         :return:
         """
@@ -108,10 +108,18 @@ class SimpleBeamSteel:
         self.lcombo_beamFormulas[lcombo].append(
             SimplySupportedBeamWithUniformDistributedLoad(self.span / 1000., w / 1000.))
 
-    def add_n_pt_l(self, lcombo: str, p: float, n: int):
-        # WIP:2024-0916
-        """n-点集中荷重登録 ＊WIP＊"""
-        self.lcombo_beamFormulas[lcombo].append(SimplySupportedBeamWithMultiplePointLoad(self.span / 1000., p, n))
+    def add_n_pt_l(self, lcombo: str, a: float, n: int):
+        """
+        n点集中荷重の追加
+        :param lcombo: 荷重組合せ名
+        :param a: 負担幅（mm）
+        :param n: 荷重の数
+        :return:
+        """
+        # self.lcombo_beamFormulas[lcombo].append(SimplySupportedBeamWithMultiplePointLoad(self.span / 1000., p, n))
+        p = self.ld_reg.get_as_point_load(lcombo, a / 1000., (self.span / 1000.) / (n + 1))
+        self.lcombo_beamFormulas[lcombo].append(
+            SimplySupportedBeamWithMultiplePointLoad(self.span / 1000., p / 1000., n))
 
     def get_max_internal_force(self, term=LoadTerm.LONG):
         """
