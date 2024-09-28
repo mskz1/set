@@ -178,8 +178,10 @@ class SimpleBeamSteel:
 
         if do_print:
             print(f'Ml= {M_l:.5f}, Mal= {Mal:.5f}, Ml/Mal={s_f_long:.3f}')
-            print(f'd_l= {d_long:.5f} (mm), d/L= 1/{int(self.span / d_long)}')
+            if d_long > 1e-6:
+                print(f'd_l= {d_long:.5f} (mm), d/L= 1/{int(self.span / d_long)}')
             print(f'Ms= {M_s:.5f}, Mas= {Mas:.5f}, Ms/Mas={s_f_short:.3f}')
-            print(f'd_s= {d_short:.5f} (mm), d/L= 1/{int(self.span / d_short)}')
+            if d_short > 1e-6:
+                print(f'd_s= {d_short:.5f} (mm), d/L= 1/{int(self.span / d_short)}')
 
         return s_f_long, s_f_short

@@ -432,6 +432,12 @@ def make_all_section_db():
     db.update(make_section_db(L_SEC_DATA))
     return db
 
+def make_section_db_multiple(*csv_data):
+    """複数のCSVデータを指定してデータベースを返す"""
+    db= {}
+    for csv in csv_data:
+        db.update(make_section_db(csv))
+    return db
 
 def make_short_name(db):
     """

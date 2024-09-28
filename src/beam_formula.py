@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-__author__ = 'mskz'
 
 from collections import namedtuple
 from typing import Tuple
@@ -109,6 +108,7 @@ class AbstractBeamFormula(object):
 
     @property
     def span(self):
+        """はり公式のスパン"""
         return self._span
 
     @span.setter
@@ -157,18 +157,22 @@ class AbstractBeamFormula(object):
         pass
 
     def getMmax(self):
+        """最大モーメント値を返す"""
         # 最大モーメント値を返す
         pass
 
     def getDmax(self, E, I):
+        """最大たわみ値を返す"""
         # 最大たわみ値を返す
         pass
 
     def getMcenter(self):
+        """スパン中央位置のモーメント値を返す"""
         # スパン中央位置のモーメント値を返す
         pass
 
     def getDcenter(self, E, I):
+        """スパン中央位置のたわみ値を返す"""
         # スパン中央位置のたわみ値を返す
         pass
 
@@ -187,11 +191,11 @@ class SimplySupportedBeam:
 class SimplySupportedBeamWithUniformDistributedLoad(AbstractBeamFormula):
     """
     単純ばり公式　等分布荷重が作用する場合。　
-    span:スパン（m）
-    load:荷重値（kN/m）
+    :param span: スパン（m）
+    :param load: 荷重値（kN/m）
     """
 
-    def __init__(self, span, load):
+    def __init__(self, span: float, load: float):
         try:  # python2
             super(AbstractBeamFormula, self).__init__(span, load)
         except TypeError:  # python3
@@ -229,9 +233,9 @@ class SimplySupportedBeamWithUniformDistributedLoad(AbstractBeamFormula):
 class SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(AbstractBeamFormula):
     """
     単純ばり公式　単純増加分布荷重が作用する場合。
-    span:スパン（m）
-    load:荷重値（kN/m2）
-    a:荷重負担幅（m）端部位置での
+    :param span: スパン（m）
+    :param load: 荷重値（kN/m2）
+    :param a: 荷重負担幅（m）端部位置での
     """
 
     def __init__(self, span, load, a):
@@ -278,9 +282,8 @@ class SimpliSupportedBeamWithUniformlyIncreasingDistributedLoad(AbstractBeamForm
 class SimplySupportedBeamWithPointLoadAtCenter(AbstractBeamFormula):
     """
     単純ばり公式　中央集中荷重が作用する場合。
-    span:スパン（m）
-    load:荷重値（kN）
-
+    :param span: スパン（m）
+    :param load: 荷重値（kN）
     """
 
     def __init__(self, span, load):
@@ -327,9 +330,9 @@ class SimplySupportedBeamWithPointLoadAtCenter(AbstractBeamFormula):
 class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
     """
     単純ばり公式　任意位置　集中荷重が作用する場合。
-    span:スパン（m）
-    load:荷重値（kN）
-    a:荷重作用位置(m)　左端から
+    :param span: スパン（m）
+    :param load: 荷重値（kN）
+    :param a: 荷重作用位置(m)　左端から
     """
 
     def __init__(self, span, load, a):
@@ -423,9 +426,8 @@ class SimplySupportedBeamWithPointLoadAtAny(AbstractBeamFormula):
 class SimplySupportedBeamWithMultiplePointLoad(AbstractBeamFormula):
     """
     単純ばり公式　n点集中荷重（均等配置）が作用する場合。
-    span:スパン（m）
-    load:荷重値（kN）
-
+    :param span: スパン（m）
+    :param load: 荷重値（kN）
     """
 
     def __init__(self, span, load, n: int = 2):
@@ -456,7 +458,7 @@ class SimplySupportedBeamWithMultiplePointLoad(AbstractBeamFormula):
         最大変形量を算出
         :param I: 断面２次モーメント[cm4]
         :param E: ヤング係数[kN/cm2]
-        :return:変形量[cm]
+        :return: 変形量[cm]
         """
         n = self._n
         if n % 2 == 0:

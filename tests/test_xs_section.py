@@ -104,6 +104,12 @@ def test_xs_all_section_db():
     assert db[xs_section_name('KP100*100*3.2')][0]['An'] == 12.13
 
 
+def test_xs_make_section_db_multiple_CSV():
+    db = make_section_db_multiple(HS_SEC_DATA, HM_SEC_DATA)
+    assert db['H-200x100x5.5x8'][0]['An'] == 26.67
+    assert db['H-700x300x13x24'][0]['An'] == 231.5
+
+
 @pytest.mark.skip('ディクショナリのコンバート時のみ実行用')
 def test_convert_dict_to_CSharp_dict():
     for k, v in short_full_name.items():

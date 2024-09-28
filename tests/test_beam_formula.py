@@ -253,6 +253,7 @@ def test_validation_of_multiple_point_load(span, load, n, Mmax, Dmax, R):
         (10., 3., 15),
     ])
 def test_compare_multiple_point_load_between_2_methods(span, load, n):
+    # ネット上の式の検証
     # 以下はｎの関数による公式（ネット上の情報による式）
     bf = SimplySupportedBeamWithMultiplePointLoad(span=span, load=load, n=n)
     # 以下は、任意点集中荷重の公式の足し合わせによるもの

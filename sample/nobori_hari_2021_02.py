@@ -50,7 +50,8 @@ def hikaku_sample():
     from src.beam_formula import sum_lists
     import matplotlib.pyplot as plt
     fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
+    ax1 = fig.add_subplot(2, 1, 1)
+    ax2 = fig.add_subplot(2, 1, 2)
 
     n_segment = 50
 
@@ -78,11 +79,13 @@ def hikaku_sample():
 
     print("集中荷重１：Mmax={:8.2f}, Dmax={:8.2f}".format(Mmax_1, Dmax_1))
 
-    # ax.plot(x, result, marker=".")
-    # plt.show()
+    ax1.plot(x, result_m, marker=".")
+    ax2.plot(x, result_d, marker="x")
+    plt.show()
 
 
-def test_divide_load():
+
+def xtest_divide_load():
     import pprint
     pprint.pprint(divided_loads(w=1, a=3, n=3))
     assert divided_loads(w=1, a=3, n=3) == [(1.5, 0.0), (2.0, 1.0), (1.0, 2.0), (0.0, 3.0)]

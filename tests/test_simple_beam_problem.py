@@ -67,6 +67,23 @@ def test_simple_beam_2_point_load(simple_beam_ptl):
     assert sb.check_section() == pytest.approx((0.113, 0.174), abs=0.001)
 
 
+def test_simple_beam_3():
+    ld_reg = LoadRegistry()
+    ld_reg.add_load(ld_type=Type.DL, value=600.0, load_case=LoadCase.G, description='DL')
+    # ld_reg.add_load(ld_type=Type.SL, value=780.0, load_case=LoadCase.S, description='SL')
+    ld_reg.add_load_combo('G', [LoadCase.G], [1], LoadTerm.LONG)
+    # ld_reg.add_load_combo('G+S', [LoadCase.G, LoadCase.S], [1, 1], LoadTerm.SHORT)
+
+    sb = SimpleBeamSteel(span=7000.0)
+    sb.set_load_registry(ld_reg)
+    sb.section_name = 'H44'
+    sb.Lb = 3500.
+    # sb.add_udl(lcombo='G', a=3000.)
+    sb.add_n_pt_l(lcombo='G', a=3000., n=3)
+    print()
+    sb.check_section(do_print=True)
+
+
 @pytest.mark.parametrize("L, Lb, term", [
     (4000, 0, LoadTerm.LONG),
 ])

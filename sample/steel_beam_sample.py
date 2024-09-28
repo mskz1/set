@@ -39,6 +39,8 @@ def simple_beam_sample():
     print(beam)
 
 
+
+
 if __name__ == '__main__':
     # sample1()
     simple_beam_sample()
