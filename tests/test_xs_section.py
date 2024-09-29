@@ -174,6 +174,7 @@ def test_make_short_name():
     pprint.pprint(make_short_name(db))
 
 
+@pytest.mark.skip('出力確認用')
 def test_short_name_list():
     # db = make_section_db(HS_SEC_DATA)
     # db = make_section_db(HM_SEC_DATA)

@@ -22,114 +22,56 @@ def test_allowable_tensile_force():
     assert allowable_tensile_force(sec, F_235, SHORT_TERM) == pytest.approx(176.8845)
 
 
-# @pytest.mark.skip("WIP")
-def test_allowable_compressive_force():
-    sec = "H-200x100x5.5x8"  # An = 26.67 cm2, iy=2.24[cm]
-    lk = 3000.  # mm
-    assert allowable_compressive_force(sec, F_235, LONG_TERM, lkx=lk, lky=lk) == pytest.approx(138.9, abs=0.1)
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk, lky=lk) == pytest.approx(208.4, abs=0.1)
+@pytest.mark.parametrize(
+    "               sec,      F,     lkx,    lky,     term,  expected", [
+        ("H-200x100x5.5x8", F_235, 3000.0, 3000.0, LONG_TERM, 138.9),  # An = 26.67 cm2, iy=2.24[cm]
+        ("H-200x100x5.5x8", F_235, 3000.0, 3000.0, SHORT_TERM, 208.4),
+        ("H-200x100x5.5x8", F_235, 6000.0, 1000.0, LONG_TERM, 305.6),
+        ("H-200x100x5.5x8", F_235, 6000.0, 3000.0, LONG_TERM, 138.9),
+        ("P89.1*2.8", F_235, 4000.0, 4000.0, SHORT_TERM, 61.86),
+        ("P89.1*2.8", F_235, 4000.0, 2000.0, SHORT_TERM, 61.86),
+        ("H-300x300x10x15", F_235, 8000.0, 8000.0, SHORT_TERM, 1420.40746),  # An = 118.5 cm2
+        ("L65*6", F_235, 4000.0, 4000.0, SHORT_TERM, 10.68),
+        ("L65*6", F_235, 12000.0, 4000.0, SHORT_TERM, 4.54),
+        ("KP100*3.2", F_235, 4000.0, 4000.0, SHORT_TERM, 153.5),
+        ("KP100*50*3.2", F_235, 4000.0, 4000.0, SHORT_TERM, 33.2),
+        ("KP150*100*4.5", F_235, 5000.0, 5000.0, SHORT_TERM, 197.6),
+        ("C100*50*2.3", F_235, 4000.0, 4000.0, SHORT_TERM, 16.7),
+        ("C100*50*2.3", F_235, 12000.0, 4000.0, SHORT_TERM, 7.85),
+        ("MZ100", F_235, 4000.0, 4000.0, SHORT_TERM, 22.8),
+        ("MZ100", F_235, 12000.0, 4000.0, SHORT_TERM, 18.29),
+    ])
+def test_allowable_compressive_force_parame(sec, F, lkx, lky, term, expected):
+    # 部材の圧縮耐力の算定
+    assert allowable_compressive_force(sec, F, term, lkx=lkx, lky=lky) == pytest.approx(expected, abs=0.1)
 
-    lk_x = 6000.  # mm
-    lk_y = 1000.  # mm
-    assert allowable_compressive_force(sec, F_235, LONG_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(305.6, abs=0.1)
 
-    lk_x = 6000.  # mm
-    lk_y = 3000.  # mm
-    assert allowable_compressive_force(sec, F_235, LONG_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(138.9, abs=0.1)
-
-    sec = "P89.1*2.8"
-    lk = 4000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk, lky=lk) == pytest.approx(61.86, abs=0.1)
-
-    lk_x = 4000.
-    lk_y = 2000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(61.86, abs=0.1)
-
-    sec = "H-300x300x10x15"  # An = 118.5 cm2
-    lk_x = 8000.
-    lk_y = 8000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(1420.40746, abs=0.1)
-
-    sec = "L65*6"
-    lk = 4000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk, lky=lk) == pytest.approx(10.68, abs=0.1)
-
-    lk_x = 12000.
-    lk_y = 4000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(4.54, abs=0.01)
-
-    sec = "KP100*3.2"
-    lk = 4000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk, lky=lk) == pytest.approx(153.5, abs=0.1)
-
-    sec = "KP100*50*3.2"
-    lk = 4000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk, lky=lk) == pytest.approx(33.2, abs=0.1)
-
-    sec = "KP150*100*4.5"
-    lk = 5000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk, lky=lk) == pytest.approx(197.6, abs=0.1)
-
-    sec = "C100*50*2.3"
-    lk_x = 4000.
-    lk_y = 4000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(16.7, abs=0.1)
-    lk_x = 12000.
-    lk_y = 4000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(7.85, abs=0.01)
-
-    sec = "MZ100"
-    lk_x = 4000.
-    lk_y = 4000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(22.8, abs=0.1)
-    lk_x = 12000.
-    lk_y = 4000.
-    assert allowable_compressive_force(sec, F_235, SHORT_TERM, lkx=lk_x, lky=lk_y) == pytest.approx(18.29, abs=0.1)
+@pytest.mark.parametrize(
+    "sec, direc, lb,term,exp", [
+        ("H-200x100x5.5x8", 'X', 0., LONG_TERM, 28.3566),  # An = 26.67 [cm2], Zx=181 [cm3], Zy=26.7 [cm3]
+        ("H-200x100x5.5x8", 'X', 0., SHORT_TERM, 42.535),
+        ("H-200x100x5.5x8", 'Y', 0., LONG_TERM, 4.183),
+        ("H-200x100x5.5x8", 'Y', 0., SHORT_TERM, 6.2745),
+        ("H-200x100x5.5x8", 'X', 3000., LONG_TERM, 16.258),
+        ("H-200x100x5.5x8", 'Y', 3000., SHORT_TERM, 6.2745),
+        ("H-600x200x11x17", 'X', 0., LONG_TERM, 394.799),  # An = 131.7 [cm2], Zx=2520 [cm3], Zy=227 [cm3]
+        ("H-600x200x11x17", 'X', 0., SHORT_TERM, 592.2),
+        ("H-600x200x11x17", 'X', 3000., LONG_TERM, 314.9),
+        ("H-600x200x11x17", 'X', 6000., LONG_TERM, 199.85),
+        ("H-300x300x10x15", 'X', 0., SHORT_TERM, 317.25),
+        ("H-300x300x10x15", 'X', 4000., SHORT_TERM, 278.349),
+        ("KP100*100*3.2", 'X', 0., LONG_TERM, 5.875),  # An = 12.13 [cm2], Zx=37.5 [cm3], Zy= 37.5[cm3]
+        ("KP100*100*3.2", 'X', 4000., LONG_TERM, 5.875),
+        ("KP150*100*4.5", 'X', 4000., LONG_TERM, 13.739),  # An = 21.17 [cm2], Zx=87.7 [cm3], Zy= 70.4[cm3]
+        ("KP150*100*4.5", 'Y', 4000., LONG_TERM, 11.029),
+    ])
+def test_allowable_bending_moment_H_KP_section(sec, direc, lb, term, exp):
+    # 部材の曲げ耐力の算定（H形鋼）
+    assert allowable_bending_moment(sec=sec, direc=direc, lb=lb, term=term) == pytest.approx(exp, abs=0.01)
 
 
 # @pytest.mark.skip("WIP")
 def test_allowable_bending_moment():
-    sec = "H-200x100x5.5x8"  # An = 26.67 [cm2], Zx=181 [cm3], Zy=26.7 [cm3]
-    lb = 0.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(28.3566, abs=0.01)
-    assert allowable_bending_moment(sec, lb=lb, term='SHORT') == pytest.approx(42.535, abs=0.01)
-
-    assert allowable_bending_moment(sec, direc='Y', lb=lb, term='LONG') == pytest.approx(4.183, abs=0.01)
-    assert allowable_bending_moment(sec, direc='Y', lb=lb, term='SHORT') == pytest.approx(6.2745, abs=0.01)
-
-    lb = 3000.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(16.258, abs=0.01)
-    assert allowable_bending_moment(sec, direc='Y', lb=lb, term='SHORT') == pytest.approx(6.2745, abs=0.01)
-
-    sec = "H-600x200x11x17"  # An = 131.7 [cm2], Zx=2520 [cm3], Zy=227 [cm3]
-    lb = 0.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(394.799, abs=0.01)
-    assert allowable_bending_moment(sec, lb=lb, term='SHORT') == pytest.approx(592.2, abs=0.01)
-
-    lb = 3000.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(314.9, abs=0.01)
-
-    lb = 6000.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(199.85, abs=0.01)
-
-    sec = "H-300x300x10x15"
-    lb = 0.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='SHORT') == pytest.approx(317.25, abs=0.01)
-    lb = 4000.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='SHORT') == pytest.approx(278.349, abs=0.01)
-
-    sec = "KP100*100*3.2"  # An = 12.13 [cm2], Zx=37.5 [cm3], Zy= 37.5[cm3]
-    lb = 0.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.875, abs=0.01)
-
-    lb = 4000.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.875, abs=0.01)
-
-    sec = "KP150*100*4.5"  # An = 21.17 [cm2], Zx=87.7 [cm3], Zy= 70.4[cm3]
-    lb = 4000.  # mm
-    assert allowable_bending_moment(sec, lb=lb, direc='X', term='LONG') == pytest.approx(13.739, abs=0.01)
-    assert allowable_bending_moment(sec, lb=lb, direc='Y', term='LONG') == pytest.approx(11.029, abs=0.01)
-
     sec = "P114.3*4.5"  # An = 15.5 [cm2], Zx= 41[cm3], Zy= [cm3]
     lb = 0.  # mm
     assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(6.42, abs=0.01)
@@ -181,21 +123,8 @@ def test_allowable_bending_moment():
     #  断面による計算の違いを考慮　山形鋼の各ポイントで、圧縮側、引張側で不利な判定
 
 
-# @pytest.mark.skip('WIP')
-def test_section_check():
-    N = 10.  # kN
-    Mx = 20.0  # kN*m
-    sec = "H-200x100x5.5x8"  # An = 26.67 cm2
-    assert section_check(sec, F_235, SHORT_TERM, N, Mx) == pytest.approx(0.48615, abs=0.001)
-    N = -10.  # kN
-    Mx = 20.0  # kN*m
-    sec = "H-200x100x5.5x8"  # An = 26.67 cm2
-    assert section_check(sec, F_235, SHORT_TERM, N, Mx) == pytest.approx(0.48615, abs=0.001)
-
-
 @pytest.mark.parametrize(
-    "sec, F, term, N, Mx, My,                                 Qx, Qy, lkx, lky, lb, expected",
-    [
+    "　　　　　　　　　　sec, 　　　F, 　　　　term, 　N, Mx, My, Qx, Qy, 　lkx, 　lky, 　lb, expected", [
         ('H-200x100x5.5x8', F_235, SHORT_TERM, 10., 20., 0., 0., 0., 000., 000., 000., 0.48615),
         ('H-200x100x5.5x8', F_235, SHORT_TERM, 0., 20., 0., 0., 0., 000., 000., 4000., 1.0253068),
         ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 000., 000., 000., 0.48615),

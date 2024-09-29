@@ -432,12 +432,14 @@ def make_all_section_db():
     db.update(make_section_db(L_SEC_DATA))
     return db
 
+
 def make_section_db_multiple(*csv_data):
     """複数のCSVデータを指定してデータベースを返す"""
-    db= {}
+    db = {}
     for csv in csv_data:
         db.update(make_section_db(csv))
     return db
+
 
 def make_short_name(db):
     """
@@ -757,19 +759,17 @@ def get_allowable_moment_of_angle_section(sec_name_short, term='LONG', direc='X'
     :param F:
     :return:
     """
-    mx, my =0,0
+    mx, my = 0, 0
     if direc == 'X':
         mx, my = 100, 0.
     elif direc == 'Y':
         mx, my = 0, 100
     ss = get_stress_of_angle_mx_my(sec_name_short, mx, my)
-    fb = 0.1*F / 1.5
+    fb = 0.1 * F / 1.5
     if term == 'SHORT':
-        fb *=1.5
+        fb *= 1.5
     factor = fb / max(abs(max(ss)), abs(min(ss)))
-    return mx*factor, my*factor
-
-
+    return mx * factor, my * factor
 
 
 # import された時点で、省略名の辞書データを生成する
