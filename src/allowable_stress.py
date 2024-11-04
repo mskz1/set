@@ -129,7 +129,15 @@ def steel_fb1_aij(F=235, lb=0, i=0, C=1):
 
 
 def steel_fb1_bsl(F=235, lb=0, i=0, C=1):
-    c_s_ratio = 1500. / (F / 1.5) ** 0.5
+    """
+    長期許容曲げ応力度fb1
+    :param F: 基準強度(N/mm2)
+    :param lb: 圧縮フランジの支点間距離(mm)
+    :param i: 圧縮フランジと曲げ材のせいの1/6とからなるT形断面のウェブ軸まわりの断面2次半径(mm)
+    :param C: 修正係数
+    :return:
+    """
+    c_s_ratio = 1500. / (F / 1.5) ** 0.5  # 限界細長比　Λ
     return F * ((2. / 3.) - (4. / 15.) * (lb / i) ** 2 / (C * c_s_ratio ** 2))
 
 

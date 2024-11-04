@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from load import *  # インポートするパッケージの書き方で、Enumの等値性が変わる！！
 from beam_formula import SimplySupportedBeamWithUniformDistributedLoad, SimplySupportedBeamWithMultiplePointLoad
 from xs_section import make_section_db, short_full_name, HS_SEC_DATA, HM_SEC_DATA, HW_SEC_DATA
-from xs_section import xs_section_property
+from xs_section import xs_section_property,xs_section_name
 from section_check import allowable_bending_moment
 
 DIR_AROUND_XX = "xx"
@@ -185,3 +185,26 @@ class SimpleBeamSteel:
                 print(f'd_s= {d_short:.5f} (mm), d/L= 1/{int(self.span / d_short)}')
 
         return s_f_long, s_f_short
+
+    def get_result(self):
+        result = []
+        result.append(f'スパン L={self.span}')
+        M_l = self.get_max_internal_force(LoadTerm.LONG)
+        # Q_l =  # todo: Q-force
+        result.append(f'長期　応力　M = {M_l:.2f} [kN*m], Q = {0.:.2f} [kN], N= - [kN]')
+
+        M_s = self.get_max_internal_force(LoadTerm.SHORT)
+        result.append(f'短期　応力　M = {M_s:.2f} [kN*m], Q = {0.:.2f} [kN], N= - [kN]')
+
+        sec_full_name = xs_section_name(self.section_name)
+
+        result.append(f'部材　{sec_full_name} (F={self.F:g} [N/mm2])')
+
+        A = xs_section_property(self.section_name, 'An')
+        I = xs_section_property(self.section_name, 'Ix')
+        Z = xs_section_property(self.section_name, 'Zx')
+        result.append(f'     A = {A:g} [cm2], I = {I:g} [cm4], Z = {Z:g} [cm3], Lb = {self.Lb:g} [mm]')
+
+        # WIP 2024-1006
+        return '\n'.join(result)
+        pass

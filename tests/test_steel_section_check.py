@@ -64,28 +64,18 @@ def test_allowable_compressive_force_parame(sec, F, lkx, lky, term, expected):
         ("KP100*100*3.2", 'X', 4000., LONG_TERM, 5.875),
         ("KP150*100*4.5", 'X', 4000., LONG_TERM, 13.739),  # An = 21.17 [cm2], Zx=87.7 [cm3], Zy= 70.4[cm3]
         ("KP150*100*4.5", 'Y', 4000., LONG_TERM, 11.029),
+        ("P114.3*4.5", 'X', 0., LONG_TERM, 6.42),  # An = 15.5 [cm2], Zx= 41[cm3], Zy= [cm3]
+        ("MZ100", 'X', 0., LONG_TERM, 5.89),  # An = 11.92 [cm2], Zx=37.6 [cm3], Zy= 7.52[cm3]
+        ("MZ100", 'X', 2000., LONG_TERM, 4.07),
+        ("MZ100", 'X', 4000., LONG_TERM, 2.89),
     ])
-def test_allowable_bending_moment_H_KP_section(sec, direc, lb, term, exp):
+def test_allowable_bending_moment_H_KP_P_MZ_section(sec, direc, lb, term, exp):
     # 部材の曲げ耐力の算定（H形鋼）
     assert allowable_bending_moment(sec=sec, direc=direc, lb=lb, term=term) == pytest.approx(exp, abs=0.01)
 
 
 # @pytest.mark.skip("WIP")
 def test_allowable_bending_moment():
-    sec = "P114.3*4.5"  # An = 15.5 [cm2], Zx= 41[cm3], Zy= [cm3]
-    lb = 0.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(6.42, abs=0.01)
-
-    sec = "MZ100"  # An = 11.92 [cm2], Zx=37.6 [cm3], Zy= 7.52[cm3]
-    lb = 0.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(5.89, abs=0.01)
-
-    lb = 2000.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(4.07, abs=0.01)
-
-    lb = 4000.  # mm
-    assert allowable_bending_moment(sec, lb=lb, term='LONG') == pytest.approx(2.89, abs=0.01)
-
     sec = "C100*50*2.3"  # An = 5.172 [cm2], Zx= 16.1[cm3], Zy= 6.06[cm3]
     lb = 0.  # mm
     # TODO:C形鋼の実装 fb=ft とする場合と、fb低減する場合
@@ -138,3 +128,4 @@ def test_allowable_bending_moment():
     ])
 def test_section_check_paramet(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb, expected):
     assert section_check(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb) == pytest.approx(expected, abs=0.001)
+
