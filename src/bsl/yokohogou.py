@@ -43,7 +43,7 @@ class Yokohogou:
             raise ValueError
         return math.ceil(n)
 
-    def get_lb(self) -> float:
+    def get_lb(self, step=0) -> float:
         """
         梁端部に近い部分に横補剛を設ける場合 Myを超える領域での最長補剛間隔 lb (mm)を返す
         """
@@ -58,7 +58,10 @@ class Yokohogou:
             lb = min(200 * Af / H, 50 * iy)
         else:
             raise ValueError
-        return lb
+        if step:
+            return self.x_ceiling(lb, step)
+        else:
+            return lb
 
     @property
     def alpha(self) -> float:
@@ -139,17 +142,19 @@ class Yokohogou:
         """指定位置の想定モーメントを返す。部材左端からの距離 x (mm)を指定"""
         return abs(self.M_Left - x * self.Q)
 
-    def set_member_end_restraints(self):
+    def set_member_end_restraints(self, step=0):
         self.restraint_spans.clear()
         self.set_Me()
-        req_lb = self.get_lb()
-        if self.M_at(0) > self.My:
-            self.restraint_spans.append(req_lb)  # 左側1
-            self.restraint_spans.append(req_lb)  # 右側1
-        if self.M_at(req_lb) > self.My:
-            self.restraint_spans.insert(1, req_lb)  # 左側2
-            self.restraint_spans.insert(-1, req_lb)  # 右側2
-        # todo: 見直し 2024-1104
+        req_lb = self.get_lb(step)
+        max_n = int(self.L / (2 * req_lb))
+        for i in range(max_n):
+            if self.M_at(i * req_lb) > self.My:
+                self.restraint_spans.insert(i, req_lb)
+                self.restraint_spans.insert(-i, req_lb)
+
+        center_span = self.L - sum(self.restraint_spans)
+        self.restraint_spans.insert(int(len(self.restraint_spans) / 2), center_span)
+        # todo : 左右非対称配置となる場合の処理　2024-1104
 
     def get_input_data(self) -> str:
         """計算条件の出力用文字列を返す"""
@@ -159,3 +164,8 @@ class Yokohogou:
         result.append(f'はり断面：{short_full_name[self.sec]}')
         result.append(f'鋼材強度：{"400N" if self.material.S400N else "490N"}')
         return '\n'.join(result)
+
+    @staticmethod
+    def x_ceiling(x, step):
+        """数値 x を 指定の数 step の倍数となるようにまるめる"""
+        return -(-x // step) * step
