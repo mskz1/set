@@ -16,8 +16,10 @@ def test_get_num_of_equivalent_restraint(sec, L, mat, expected):
     ('H24', 6800.0, Material.S400N, 0, 1000.0),  # 長さのまるめ　指定なし
     ('H25', 6800.0, Material.S400N, 0, 1125.0),
     ('H25', 6800.0, Material.S400N, 5, 1125.0),  # 長さのまるめ 5mm指定
-    ('H25', 6800.0, Material.S400N, 10, 1130.0),  # 長さのまるめ 10mm指定
-    ('H25', 6800.0, Material.S400N, 50, 1150.0),  # 長さのまるめ 50mm指定
+    # ('H25', 6800.0, Material.S400N, 10, 1130.0),  # 長さのまるめ 10mm指定
+    ('H25', 6800.0, Material.S400N, 10, 1120.0),  # 長さのまるめ 10mm指定
+    # ('H25', 6800.0, Material.S400N, 50, 1150.0),  # 長さのまるめ 50mm指定
+    ('H25', 6800.0, Material.S400N, 50, 1100.0),  # 長さのまるめ 50mm指定
     # todo : add more case
 ])
 def test_get_lb(sec, L, mat, step, expected):
@@ -106,8 +108,6 @@ def test_check_yokohogou():
     assert yh.restraint_spans == [1000.0, 1000.0, 8800.0, 1000.0, 1000.0]
 
 
-
-
 @pytest.mark.parametrize("x, step, expected", [
     (1, 1, 1),
     (1.1, 1, 2),
@@ -122,3 +122,19 @@ def test_x_ceiling(x, step, expected):
     yh = Yokohogou()
     # assert -(-x // step) * step == expected
     assert yh.x_ceiling(x, step) == expected
+
+
+@pytest.mark.parametrize("x, step, expected", [
+    (1, 1, 1),
+    (1.1, 1, 1),
+    (1, 5, 0),
+    (5, 5, 5),
+    (5.1, 5, 5),
+    (1000, 100, 1000),
+    (1000.1, 100, 1000),
+    (1001, 100, 1000),
+
+])
+def test_x_flooring(x, step, expected):
+    yh = Yokohogou()
+    assert yh.x_flooring(x, step) == expected

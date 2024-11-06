@@ -59,7 +59,8 @@ class Yokohogou:
         else:
             raise ValueError
         if step:
-            return self.x_ceiling(lb, step)
+            # return self.x_ceiling(lb, step)
+            return self.x_flooring(lb, step)
         else:
             return lb
 
@@ -167,5 +168,10 @@ class Yokohogou:
 
     @staticmethod
     def x_ceiling(x, step):
-        """数値 x を 指定の数 step の倍数となるようにまるめる"""
+        """数値 x を x以上の　指定の数 step の倍数となるようにまるめる"""
         return -(-x // step) * step
+
+    @staticmethod
+    def x_flooring(x, step):
+        """数値 x を x以下の　指定の数 step の倍数となるようにまるめる"""
+        return (x // step) * step
