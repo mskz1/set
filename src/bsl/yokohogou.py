@@ -46,6 +46,7 @@ class Yokohogou:
     def get_lb(self, step=0) -> float:
         """
         梁端部に近い部分に横補剛を設ける場合 Myを超える領域での最長補剛間隔 lb (mm)を返す
+        step (mm)を指定すると、stepの倍数で、lb以下となる数値を返す。
         """
         B = xs_section_property(self.sec, 'B', self.db)
         tf = xs_section_property(self.sec, 't2', self.db)
@@ -160,11 +161,60 @@ class Yokohogou:
     def get_input_data(self) -> str:
         """計算条件の出力用文字列を返す"""
         result = []
+        result.append("=" * 20)
         result.append("保有耐力横補剛検討")
         result.append(f'スパン：{self.L} [mm]')
         result.append(f'はり断面：{short_full_name[self.sec]}')
         result.append(f'鋼材強度：{"400N" if self.material.S400N else "490N"}')
         return '\n'.join(result)
+
+    def get_output_data(self) -> str:
+        """計算結果の出力用文字列を返す"""
+        result = []
+        result.append('-' * 20)
+        result.append('検討結果')
+        result.append('　方法①：均等配置')
+        eq_n = self.get_number_of_equivalent_placement_lateral_restraint()
+        result.append(f'補剛数 = {eq_n}, 補剛間隔 = {self.L / (eq_n + 1):.3f} [mm]')
+        # todo : つづき実装 2024-1106
+
+        return '\n'.join(result)
+
+    def check_hogou_rule_tanbu(self, print_on=False):
+        """現状の　補剛スパンで、端部に配置の条件を満たすかチェックを行う。"""
+        status = 'OK'
+        result = []
+        self.set_Me()
+        req_max_lb = self.get_lb()
+        if not self.restraint_spans:
+            raise ValueError
+        result.append(str(self.restraint_spans))
+
+        x1 = 0.0
+        for span in self.restraint_spans:
+            x2 = x1 + span
+            m1 = self.M_at(x1)
+            m2 = self.M_at(x2)
+            m_max = max(m1, m2)
+            m_min = min(m1, m2)
+            if m_max >= self.My:
+                if span <= req_max_lb:
+                    result.append(f'{x1} - {x2} Lb={span}: [M={m_max:.2f} > My] lb_ok')
+                else:
+                    result.append(f'{x1} - {x2} Lb={span}: [M={m_max:.2f} > My] lb_NG')
+                    status = 'NG'
+            else:
+                if m_max <= self.Mas(Lb=span, M1=m_max, M2=m_min):
+                    result.append(f'{x1} - {x2} Lb={span}:[M={m_max:.2f} < My] Mas_ok')
+                else:
+                    result.append(f'{x1} - {x2} Lb={span}:[M={m_max:.2f} < My] Mas_NG')
+                    status = 'NG'
+            x1 = x2
+
+        if print_on:
+            print()
+            print('\n'.join(result))
+        return status
 
     @staticmethod
     def x_ceiling(x, step):
