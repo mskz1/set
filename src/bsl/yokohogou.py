@@ -103,6 +103,7 @@ class Yokohogou:
         F = 235 if self.material == Material.S400N else 325
         fb = steel_fb_aij2005(shape_name=short_full_name[self.sec], db=self.db, lb=Lb, M1=M1, M2=M2, F=235)
 
+        # todo : 建築基準法のfbでの検討も入れる？
         # B = xs_section_property(self.sec, 'B', self.db)
         # tf = xs_section_property(self.sec, 't2', self.db)
         # Af = B * tf
@@ -144,19 +145,49 @@ class Yokohogou:
         """指定位置の想定モーメントを返す。部材左端からの距離 x (mm)を指定"""
         return abs(self.M_Left - x * self.Q)
 
+    def get_My_position(self) -> float:
+        """端部からMyとなる位置の距離を返す（両端ヒンジの場合）"""
+        self.set_Me()
+        x = (self.alpha * self.Mp - self.My) / self.Q
+        return x
+
     def set_member_end_restraints(self, step=0):
         self.restraint_spans.clear()
         self.set_Me()
         req_lb = self.get_lb(step)
-        max_n = int(self.L / (2 * req_lb))
-        for i in range(max_n):
-            if self.M_at(i * req_lb) > self.My:
-                self.restraint_spans.insert(i, req_lb)
-                self.restraint_spans.insert(-i, req_lb)
+
+        x_My = self.get_My_position()
+        num_of_tanbu = int(x_My / req_lb) + 1
+        tanbu_restraint_spans = []
+        for i in range(num_of_tanbu):
+            tanbu_restraint_spans.append(req_lb)
+        for l in tanbu_restraint_spans:
+            self.restraint_spans.append(l)
+        for l in tanbu_restraint_spans:
+            self.restraint_spans.append(l)
+        # ---
+        # max_n = int(self.L / (2 * req_lb))
+        # for i in range(max_n):
+        #     if self.M_at(i * req_lb) > self.My:
+        #         self.restraint_spans.insert(i, req_lb)
+        #         self.restraint_spans.insert(-i, req_lb)
+        # ---
 
         center_span = self.L - sum(self.restraint_spans)
-        self.restraint_spans.insert(int(len(self.restraint_spans) / 2), center_span)
+        tanbu_only_spans = self.restraint_spans[:]
+
+        center_index = int(len(self.restraint_spans) / 2)
+        self.restraint_spans.insert(center_index, center_span)
+
         # todo : 左右非対称配置となる場合の処理　2024-1104
+
+        div_num = 2
+        while self.check_hogou_rule_tanbu() == 'NG':
+            center_span_div = center_span / div_num
+            self.restraint_spans = tanbu_only_spans[:]
+            for n in range(div_num):
+                self.restraint_spans.insert(center_index, center_span_div)
+            div_num += 1
 
     def get_input_data(self) -> str:
         """計算条件の出力用文字列を返す"""
@@ -166,21 +197,34 @@ class Yokohogou:
         result.append(f'スパン：{self.L} [mm]')
         result.append(f'はり断面：{short_full_name[self.sec]}')
         result.append(f'鋼材強度：{"400N" if self.material.S400N else "490N"}')
+        result.append(f'Mp={self.Mp / 1e6:.2f}, My={self.My / 1e6:.2f},'
+                      f' α*Mp={self.alpha * self.Mp / 1e6:.2f} [kN*m] (α={self.alpha})')
         return '\n'.join(result)
 
-    def get_output_data(self) -> str:
+    def get_output_data(self, step=0) -> str:
         """計算結果の出力用文字列を返す"""
         result = []
         result.append('-' * 20)
         result.append('検討結果')
-        result.append('　方法①：均等配置')
+        result.append('方法①：均等配置')
         eq_n = self.get_number_of_equivalent_placement_lateral_restraint()
-        result.append(f'補剛数 = {eq_n}, 補剛間隔 = {self.L / (eq_n + 1):.3f} [mm]')
-        # todo : つづき実装 2024-1106
+        result.append(f'  補剛数 = {eq_n}, 補剛間隔 = {self.L / (eq_n + 1):.3f} [mm]')
+        iy = xs_section_property(self.sec, 'iy', self.db) * 10  # (mm)
+        if self.material == Material.S400N:
+            eq_str = f'170 + 20*n = {170 + 20 * eq_n}'
+        else:
+            eq_str = f'130 + 20*n = {130 + 20 * eq_n}'
+        result.append(f'  iy = {iy} [mm], λy = {self.L / iy:.1f} < {eq_str}')
 
+        result.append('-' * 10)
+        result.append('方法②：主として端部に配置')
+        self.set_member_end_restraints(step=step)
+        tanbu_n = len(self.restraint_spans) - 1
+        result.append(f'  補剛数 = {tanbu_n}, 補剛間隔 = {self.restraint_spans} [mm]')
+        result.append(self.check_hogou_rule_tanbu(get_txt=True))
         return '\n'.join(result)
 
-    def check_hogou_rule_tanbu(self, print_on=False):
+    def check_hogou_rule_tanbu(self, print_on=False, get_txt=False):
         """現状の　補剛スパンで、端部に配置の条件を満たすかチェックを行う。"""
         status = 'OK'
         result = []
@@ -188,7 +232,8 @@ class Yokohogou:
         req_max_lb = self.get_lb()
         if not self.restraint_spans:
             raise ValueError
-        result.append(str(self.restraint_spans))
+        if not get_txt:
+            result.append(str(self.restraint_spans))
 
         x1 = 0.0
         for span in self.restraint_spans:
@@ -199,21 +244,29 @@ class Yokohogou:
             m_min = min(m1, m2)
             if m_max >= self.My:
                 if span <= req_max_lb:
-                    result.append(f'{x1} - {x2} Lb={span}: [M={m_max:.2f} > My] lb_ok')
+                    result.append(
+                        f'{x1:10} - {x2:8} Lb={span}: [M={m_max / 1e6:6.2f} > My] max_Lb={req_max_lb:6.2f} -> Lb_ok')
                 else:
-                    result.append(f'{x1} - {x2} Lb={span}: [M={m_max:.2f} > My] lb_NG')
+                    result.append(
+                        f'{x1:10} - {x2:8} Lb={span}: [M={m_max / 1e6:6.2f} > My] max_Lb={req_max_lb:6.2f} -> Lb_NG')
                     status = 'NG'
             else:
-                if m_max <= self.Mas(Lb=span, M1=m_max, M2=m_min):
-                    result.append(f'{x1} - {x2} Lb={span}:[M={m_max:.2f} < My] Mas_ok')
+                Mas = self.Mas(Lb=span, M1=m_max, M2=m_min)
+                if m_max <= Mas:
+                    result.append(
+                        f'{x1:10} - {x2:8} Lb={span}: [M={m_max / 1e6:6.2f} < My]    Mas={Mas / 1e6:6.2f} -> Mas_ok')
                 else:
-                    result.append(f'{x1} - {x2} Lb={span}:[M={m_max:.2f} < My] Mas_NG')
+                    result.append(
+                        f'{x1:10} - {x2:8} Lb={span}: [M={m_max / 1e6:6.2f} < My]    Mas={Mas / 1e6:6.2f} -> Mas_NG')
                     status = 'NG'
             x1 = x2
 
         if print_on:
             print()
             print('\n'.join(result))
+
+        if get_txt:
+            return '\n'.join(result)
         return status
 
     @staticmethod

@@ -92,20 +92,30 @@ def test_M_at():
     assert yh.M_at(x=3000.) == 25.0
 
 
-def test_check_yokohogou():
+def test_set_member_end_restraints():
     yh = Yokohogou(sec='H24', L=6800.0)
     yh.set_Me()
     # print(yh.get_input_data())
     yh.set_member_end_restraints()
     # print(yh.restraint_spans)
-    assert yh.restraint_spans == [1000.0, 4800.0, 1000.0]
+    # assert yh.restraint_spans == [1000.0, 4800.0, 1000.0]
+    assert yh.restraint_spans == [1000.0, 1600.0, 1600.0, 1600.0, 1000.0]
+
+    yh = Yokohogou(sec='H25', L=6800.0)
+    yh.set_Me()
+    # print(yh.get_input_data())
+    yh.set_member_end_restraints(step=100)
+    # print(yh.restraint_spans)
+    # assert yh.restraint_spans == [1000.0, 4800.0, 1000.0]
+    assert yh.restraint_spans == [1100.0, 2300.0, 2300.0, 1100.0]
 
     yh = Yokohogou(sec='H24', L=12800.0)
     yh.set_Me()
     # print(yh.get_input_data())
     yh.set_member_end_restraints()
     # print(yh.restraint_spans)
-    assert yh.restraint_spans == [1000.0, 1000.0, 8800.0, 1000.0, 1000.0]
+    # todo: 確認必要 2024-1109
+    assert yh.restraint_spans == [1000.0, 1000.0, 2200.0, 2200.0, 2200.0, 2200.0, 1000.0, 1000.0]
 
 
 @pytest.mark.parametrize("x, step, expected", [
@@ -142,12 +152,18 @@ def test_x_flooring(x, step, expected):
     assert yh.x_flooring(x, step) == expected
 
 
-# @pytest.mark.skip('output sample')
+@pytest.mark.skip('出力サンプル sample')
 def test_output_sample1():
-    yh = Yokohogou(sec='H25', L=8000.0)
+    # yh = Yokohogou(sec='H25', L=8000.0)
+    yh = Yokohogou(sec='H25', L=6800.0)
     print()
     print(yh.get_input_data())
-    print(yh.get_output_data())
+    print(yh.get_output_data(step=100))
+
+    yh = Yokohogou(sec='H294', L=10320.0)
+    print()
+    print(yh.get_input_data())
+    print(yh.get_output_data(step=50))
 
 
 @pytest.mark.parametrize("sec, L, lb_spans, expected", [
@@ -156,8 +172,29 @@ def test_output_sample1():
 
 ])
 def test_check_hogou_rule_tanbu(sec, L, lb_spans, expected):
+    # 補剛間隔を与え、基準をみたすかチェックする
     yh = Yokohogou(sec=sec, L=L)
     yh.restraint_spans = lb_spans
     assert yh.check_hogou_rule_tanbu() == expected
     # 出力用
     # yh.check_hogou_rule_tanbu(print_on=True)
+
+
+def test_get_My_position():
+    yh = Yokohogou(sec='H24', L=8000.0)
+    # Q=21,996[N], x= (87,984,000-65330000) / 21996
+    assert yh.get_My_position() == 1029.91452991453
+    yh = Yokohogou(sec='H24', L=6800.0)
+    assert yh.get_My_position() == 875.4273504273505
+
+
+@pytest.mark.skip("list sample　挙動確認")
+def test_list_swap():
+    a_o = [1, 2, 2, 1]
+    a_b = a_o[:]
+    center_span = 10
+    print(len(a_o))
+    center_index = int(len(a_o) / 2)
+    a_b.insert(center_index, center_span)
+    # print(a_o)
+    print(a_b)
