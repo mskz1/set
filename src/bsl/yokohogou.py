@@ -101,6 +101,7 @@ class Yokohogou:
         """短期許容曲げモーメント Mas (N*mm) を返す"""
         Zx = xs_section_property(self.sec, 'Zx', self.db) * 1e3  # (mm3)
         F = 235 if self.material == Material.S400N else 325
+        # todo :M1, M2の符号の調整が必要か　2024-1116
         fb = steel_fb_aij2005(shape_name=short_full_name[self.sec], db=self.db, lb=Lb, M1=M1, M2=M2, F=235)
 
         # todo : 建築基準法のfbでの検討も入れる？

@@ -87,7 +87,6 @@ def test_steel_fb():
     # assert steel_fb_aij(F=235, lb=3500, i=32.7, C=1, h=248, Af=124 * 8) == pytest.approx(152/1.5)
     # assert steel_fb_bsl(F=235, lb=3500, i=32.7, C=1, h=248, Af=124 * 8) == pytest.approx(152/1.5)
 
-
     from src.xs_section import make_all_section_db
     db = make_all_section_db()
 
@@ -119,33 +118,48 @@ def test_calc_Iw():
     assert calc_Iw('C-100x50x20x2.3', Iy=19, Cy=1.86, An=5.17, Ix=80.7) == pytest.approx(254.75, abs=0.1)
 
 
-def test_calc_C():
-    assert calc_C(M1=0, M2=0) == 1
-    assert calc_C(M1=1, M2=1) == 2.3
-    assert calc_C(M1=1, M2=-1) == 1.0
-    assert calc_C(M1=2, M2=1) == 2.3
+@pytest.mark.parametrize(
+    "M1, M2, M3, expected", [
+        (0, 0, 0, 1),
+        (1, 1, 0, 2.3),
+        (1, -1, 0, 1.0),
+        (1, 0, 0, 1.75),
+        (2, 1, 0, 2.3),  # 複曲率 M2/M1:正
+        (2, -1, 0, 1.3),  # 単曲率 M2/M1:負
+        (3, -1, 0, 1.4333333333333333),  # 単曲率 M2/M1:負
+        (5, -4, 0, 1.1019999999999999),  # 単曲率 M2/M1:負
+    ])
+def test_calc_C(M1, M2, M3, expected):
+    assert calc_C(M1=M1, M2=M2, M3=M3) == expected
 
 
-# @pytest.mark.skip('Not implemented yet')
-def test_steel_fb_aij2005():
+@pytest.mark.parametrize(
+    "              sec,     lb, M1, M2, M3, expected, abs_tol", [
+        ('H-200x100x5.5x8', 0.00, 0, 0, 0, 235 / 1.5, 0.001),
+        ('H-200x100x5.5x8', 1000, 0, 0, 1, 144.9, 0.1),  # 中間モーメントがmax -> C=1
+        ('H-200x100x5.5x8', 2000, 0, 0, 1, 114.0, 0.1),
+        ('H-200x100x5.5x8', 4000, 0, 0, 1, 71.8, 0.1),
+        ('H-200x100x5.5x8', 6000, 0, 0, 1, 45.4, 0.1),
+        ('H-500x200x10x16', 5000, 0, 0, 1, 96.0, 0.1),
+        ('H-500x200x10x16', 7000, 0, 0, 1, 72.5, 0.1),
+        ('[-100x50x5x7.5', 0.000, 0, 0, 1, 235 / 1.5, 0.001),
+        ('[-100x50x5x7.5', 3000., 0, 0, 1, 90.53, 0.1),
+        ('C-100x50x20x2.3', 0.00, 0, 0, 1, 235 / 1.5, 0.001),
+        ('C-100x50x20x2.3', 3000, 0, 0, 1, 67.09, 0.1),
+
+        # 中間モーメントが最大ではない場合
+        ('H-200x100x5.5x8', 4000, 2, -1, 0, 86.04, 0.1),  # 単曲率（M2/M1:負）
+        ('H-200x100x5.5x8', 4000, 2, 1, 0, 129.87, 0.1),  # 複曲率（M2/M1:正）
+        ('H-200x100x5.5x8', 4000, 2, 0, 0, 105.37, 0.1),  #
+        ('H-200x100x5.5x8', 4000, 10, -9, 0, 74.23, 0.1),  #
+        ('H-200x100x5.5x8', 4000, 10, 9, 0, 134.15, 0.1),  #
+        ('H-200x100x5.5x8', 8000, 2, -1, 0, 42.69, 0.1),  # 単曲率（M2/M1:負）
+
+    ])
+def test_steel_fb_aij2005(sec, lb, M1, M2, M3, expected, abs_tol):
     from src.xs_section import make_all_section_db
     db = make_all_section_db()
-    assert steel_fb_aij2005('H-200x100x5.5x8', db) == 235 / 1.5
-    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=1000, M3=1) == pytest.approx(144.9, abs=0.1)
-    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=2000, M3=1) == pytest.approx(114.0, abs=0.1)
-    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=4000, M3=1) == pytest.approx(71.8, abs=0.1)
-    assert steel_fb_aij2005('H-200x100x5.5x8', db, lb=6000, M3=1) == pytest.approx(45.4, abs=0.1)
-    # assert steel_fb_aij2005('H20', db, lb=6000, M3=1) == pytest.approx(45.4, abs=0.1)
-
-    assert steel_fb_aij2005('H-500x200x10x16', db, lb=5000, M3=1) == pytest.approx(96.0, abs=0.1)
-    assert steel_fb_aij2005('H-500x200x10x16', db, lb=7000, M3=1) == pytest.approx(72.5, abs=0.1)
-
-    # TODO:チャート出力と比較 2021-1230
-    assert steel_fb_aij2005('[-100x50x5x7.5', db, lb=0, M3=1) == pytest.approx(235 / 1.5, abs=0.1)
-    assert steel_fb_aij2005('[-100x50x5x7.5', db, lb=3000, M3=1) == pytest.approx(90.53, abs=0.1)
-    # TODO:チャート出力と比較
-    assert steel_fb_aij2005('C-100x50x20x2.3', db, lb=0, M3=1) == pytest.approx(235 / 1.5, abs=0.1)
-    assert steel_fb_aij2005('C-100x50x20x2.3', db, lb=3000, M3=1) == pytest.approx(67.09, abs=0.1)
+    assert steel_fb_aij2005(shape_name=sec, db=db, lb=lb, M1=M1, M2=M2, M3=M3) == pytest.approx(expected, abs=abs_tol)
 
 
 # @pytest.mark.skip('時間がかかるため')
@@ -170,12 +184,12 @@ def sample_test_steel_f_doc():
 
 
 @pytest.mark.skip('プロットサンプル')
-def sample_test_data_plot():
+def test_sample_data_plot():
     import matplotlib.pyplot as plt
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    x = []  
+    x = []
     y = []
     for lb in range(1, 251, 1):
         x.append(lb)
