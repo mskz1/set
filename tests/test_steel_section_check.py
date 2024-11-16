@@ -47,31 +47,38 @@ def test_allowable_compressive_force_parame(sec, F, lkx, lky, term, expected):
 
 
 @pytest.mark.parametrize(
-    "sec, direc, lb,term,exp", [
-        ("H-200x100x5.5x8", 'X', 0., LONG_TERM, 28.3566),  # An = 26.67 [cm2], Zx=181 [cm3], Zy=26.7 [cm3]
-        ("H-200x100x5.5x8", 'X', 0., SHORT_TERM, 42.535),
-        ("H-200x100x5.5x8", 'Y', 0., LONG_TERM, 4.183),
-        ("H-200x100x5.5x8", 'Y', 0., SHORT_TERM, 6.2745),
-        ("H-200x100x5.5x8", 'X', 3000., LONG_TERM, 16.258),
-        ("H-200x100x5.5x8", 'Y', 3000., SHORT_TERM, 6.2745),
-        ("H-600x200x11x17", 'X', 0., LONG_TERM, 394.799),  # An = 131.7 [cm2], Zx=2520 [cm3], Zy=227 [cm3]
-        ("H-600x200x11x17", 'X', 0., SHORT_TERM, 592.2),
-        ("H-600x200x11x17", 'X', 3000., LONG_TERM, 314.9),
-        ("H-600x200x11x17", 'X', 6000., LONG_TERM, 199.85),
-        ("H-300x300x10x15", 'X', 0., SHORT_TERM, 317.25),
-        ("H-300x300x10x15", 'X', 4000., SHORT_TERM, 278.349),
-        ("KP100*100*3.2", 'X', 0., LONG_TERM, 5.875),  # An = 12.13 [cm2], Zx=37.5 [cm3], Zy= 37.5[cm3]
-        ("KP100*100*3.2", 'X', 4000., LONG_TERM, 5.875),
-        ("KP150*100*4.5", 'X', 4000., LONG_TERM, 13.739),  # An = 21.17 [cm2], Zx=87.7 [cm3], Zy= 70.4[cm3]
-        ("KP150*100*4.5", 'Y', 4000., LONG_TERM, 11.029),
-        ("P114.3*4.5", 'X', 0., LONG_TERM, 6.42),  # An = 15.5 [cm2], Zx= 41[cm3], Zy= [cm3]
-        ("MZ100", 'X', 0., LONG_TERM, 5.89),  # An = 11.92 [cm2], Zx=37.6 [cm3], Zy= 7.52[cm3]
-        ("MZ100", 'X', 2000., LONG_TERM, 4.07),
-        ("MZ100", 'X', 4000., LONG_TERM, 2.89),
+    "         sec,      direc, lb,   term,    M1,M2,M3,exp", [
+        ("H-200x100x5.5x8", 'X', 0., LONG_TERM, 0, 0, 1, 28.3566),  # An = 26.67 [cm2], Zx=181 [cm3], Zy=26.7 [cm3]
+        ("H-200x100x5.5x8", 'X', 0., SHORT_TERM, 0, 0, 1, 42.535),
+        ("H-200x100x5.5x8", 'Y', 0., LONG_TERM, 0, 0, 1, 4.183),
+        ("H-200x100x5.5x8", 'Y', 0., SHORT_TERM, 0, 0, 1, 6.2745),
+        ("H-200x100x5.5x8", 'X', 3000., LONG_TERM, 0, 0, 1, 16.258),
+        ("H-200x100x5.5x8", 'Y', 3000., SHORT_TERM, 0, 0, 1, 6.2745),
+        ("H-600x200x11x17", 'X', 0., LONG_TERM, 0, 0, 1, 394.799),  # An = 131.7 [cm2], Zx=2520 [cm3], Zy=227 [cm3]
+        ("H-600x200x11x17", 'X', 0., SHORT_TERM, 0, 0, 1, 592.2),
+        ("H-600x200x11x17", 'X', 3000., LONG_TERM, 0, 0, 1, 314.9),
+        ("H-600x200x11x17", 'X', 6000., LONG_TERM, 0, 0, 1, 199.85),
+        ("H-300x300x10x15", 'X', 0., SHORT_TERM, 0, 0, 1, 317.25),
+        ("H-300x300x10x15", 'X', 4000., SHORT_TERM, 0, 0, 1, 278.349),
+        ("KP100*100*3.2", 'X', 0., LONG_TERM, 0, 0, 1, 5.875),  # An = 12.13 [cm2], Zx=37.5 [cm3], Zy= 37.5[cm3]
+        ("KP100*100*3.2", 'X', 4000., LONG_TERM, 0, 0, 1, 5.875),
+        ("KP150*100*4.5", 'X', 4000., LONG_TERM, 0, 0, 1, 13.739),  # An = 21.17 [cm2], Zx=87.7 [cm3], Zy= 70.4[cm3]
+        ("KP150*100*4.5", 'Y', 4000., LONG_TERM, 0, 0, 1, 11.029),
+        ("P114.3*4.5", 'X', 0., LONG_TERM, 0, 0, 1, 6.42),  # An = 15.5 [cm2], Zx= 41[cm3], Zy= [cm3]
+        ("MZ100", 'X', 0., LONG_TERM, 0, 0, 1, 5.89),  # An = 11.92 [cm2], Zx=37.6 [cm3], Zy= 7.52[cm3]
+        ("MZ100", 'X', 2000., LONG_TERM, 0, 0, 1, 4.07),
+        ("MZ100", 'X', 4000., LONG_TERM, 0, 0, 1, 2.89),
+
+        ("H-294x200x8x12", 'X', 6320., SHORT_TERM, 1, 1, 0, 159.02),  # 2024-1116 追加　M複曲率分布 M2/M1:正
+        ("H-248x124x5x8", 'X', 1466.6666666666667, SHORT_TERM, 60.49, -40.33, 0, 61.60),  #
+        ("H-248x124x5x8", 'X', 1466.6666666666667, SHORT_TERM, 40.33, -20.16, 0, 62.58),  #
+        ("H-248x124x5x8", 'X', 1466.6666666666667, SHORT_TERM, 20.16, 0.0, 0, 63.26),  #
+
     ])
-def test_allowable_bending_moment_H_KP_P_MZ_section(sec, direc, lb, term, exp):
+def test_allowable_bending_moment_H_KP_P_MZ_section(sec, direc, lb, term, M1, M2, M3, exp):
     # 部材の曲げ耐力の算定（H形鋼）
-    assert allowable_bending_moment(sec=sec, direc=direc, lb=lb, term=term) == pytest.approx(exp, abs=0.01)
+    assert allowable_bending_moment(sec=sec, direc=direc, lb=lb, term=term, M1=M1, M2=M2, M3=M3
+                                    ) == pytest.approx(exp, abs=0.01)
 
 
 # @pytest.mark.skip("WIP")
@@ -128,4 +135,3 @@ def test_allowable_bending_moment():
     ])
 def test_section_check_paramet(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb, expected):
     assert section_check(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb) == pytest.approx(expected, abs=0.001)
-

@@ -152,6 +152,17 @@ class Yokohogou:
         x = (self.alpha * self.Mp - self.My) / self.Q
         return x
 
+    def get_M0_position(self) -> float:
+        """スパン内でモーメントが0となるｘ座標を返す"""
+
+        if self.M_Left == 0. and self.M_Right == 0.:
+            raise ValueError
+        if self.M_Left == 0.:
+            return 0.0
+        if self.M_Right == 0.:
+            return self.L
+        return self.L * self.M_Left / (self.M_Left + self.M_Right)
+
     def set_member_end_restraints(self, step=0):
         self.restraint_spans.clear()
         self.set_Me()
@@ -229,6 +240,9 @@ class Yokohogou:
         """現状の　補剛スパンで、端部に配置の条件を満たすかチェックを行う。"""
         status = 'OK'
         result = []
+
+        fmt1 = '6.2f'
+        fmt2 = '8.2f'
         self.set_Me()
         req_max_lb = self.get_lb()
         if not self.restraint_spans:
@@ -243,22 +257,34 @@ class Yokohogou:
             m2 = self.M_at(x2)
             m_max = max(m1, m2)
             m_min = min(m1, m2)
+            x0 = self.get_M0_position()  # モーメント0となる点
+
             if m_max >= self.My:
                 if span <= req_max_lb:
                     result.append(
-                        f'{x1:10} - {x2:8} Lb={span}: [M={m_max / 1e6:6.2f} > My] max_Lb={req_max_lb:6.2f} -> Lb_ok')
+                        f'{x1:{fmt2}} - {x2:{fmt2}} Lb={span:{fmt2}}: [M={m_max / 1e6:{fmt1}} > My]'
+                        f' max_Lb={req_max_lb:{fmt1}} :Lb_ok')
                 else:
                     result.append(
-                        f'{x1:10} - {x2:8} Lb={span}: [M={m_max / 1e6:6.2f} > My] max_Lb={req_max_lb:6.2f} -> Lb_NG')
+                        f'{x1:{fmt2}} - {x2:{fmt2}} Lb={span:{fmt2}}: [M={m_max / 1e6:{fmt1}} > My]'
+                        f' max_Lb={req_max_lb:{fmt1}} :Lb_NG')
                     status = 'NG'
             else:
-                Mas = self.Mas(Lb=span, M1=m_max, M2=m_min)
+                # todo: モーメント分布　単曲率の場合 M2/M1は負、複曲率の場合 M2/M1は正　となるよう、M2の符号調整必要
+                if x1 < x0 < x2:  # モーメント0が区間内にある。よって複曲率
+                    Mas = self.Mas(Lb=span, M1=m_max, M2=m_min)
+                else:  # モーメント0が区間内にない。よって単曲率 M2を負に設定
+                    Mas = self.Mas(Lb=span, M1=m_max, M2=-m_min)
+
                 if m_max <= Mas:
                     result.append(
-                        f'{x1:10} - {x2:8} Lb={span}: [M={m_max / 1e6:6.2f} < My]    Mas={Mas / 1e6:6.2f} -> Mas_ok')
+                        f'{x1:{fmt2}} - {x2:{fmt2}} Lb={span:{fmt2}}: [M={m_max / 1e6:{fmt1}} < My]'
+                        f'    Mas={Mas / 1e6:{fmt1}} :Mas_ok')
+                    # result.append(f'     ML={m1/1e6:6.2f} - MR={m2/1e6:6.2f}')
                 else:
                     result.append(
-                        f'{x1:10} - {x2:8} Lb={span}: [M={m_max / 1e6:6.2f} < My]    Mas={Mas / 1e6:6.2f} -> Mas_NG')
+                        f'{x1:{fmt2}} - {x2:{fmt2}} Lb={span:{fmt2}}: [M={m_max / 1e6:{fmt1}} < My]'
+                        f'    Mas={Mas / 1e6:{fmt1}} :Mas_NG')
                     status = 'NG'
             x1 = x2
 

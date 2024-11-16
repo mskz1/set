@@ -115,7 +115,10 @@ def test_set_member_end_restraints():
     yh.set_member_end_restraints()
     # print(yh.restraint_spans)
     # todo: 確認必要 2024-1109
-    assert yh.restraint_spans == [1000.0, 1000.0, 2200.0, 2200.0, 2200.0, 2200.0, 1000.0, 1000.0]
+    # assert yh.restraint_spans == [1000.0, 1000.0, 2200.0, 2200.0, 2200.0, 2200.0, 1000.0, 1000.0]
+    assert yh.restraint_spans == [1000.0, 1000.0, 1466.6666666666667, 1466.6666666666667, 1466.6666666666667,
+                                  1466.6666666666667, 1466.6666666666667, 1466.6666666666667, 1000.0, 1000.0]
+    # print(yh.get_output_data())
 
 
 @pytest.mark.parametrize("x, step, expected", [
@@ -186,6 +189,23 @@ def test_get_My_position():
     assert yh.get_My_position() == 1029.91452991453
     yh = Yokohogou(sec='H24', L=6800.0)
     assert yh.get_My_position() == 875.4273504273505
+
+
+@pytest.mark.parametrize(
+    "      L,    M1,   M2, expected", [
+        (8000.0, 100, 100, 4000.0),
+        (8000.0, 0, 100, 0.0),
+        (8000.0, 100, 0, 8000.0),
+        (8000.0, 10, 70, 1000.0),
+        (8000.0, 70, 10, 7000.0),
+        (8000.0, 100, 10, 8000.0 * 10 / 11),
+        (8000.0, 10, 100, 8000.0 * 1 / 11),
+    ])
+def test_get_M0_position(L, M1, M2, expected):
+    yh = Yokohogou(sec='H24', L=L)
+    yh.M_Left = M1
+    yh.M_Right = M2
+    assert yh.get_M0_position() == expected
 
 
 @pytest.mark.skip("list sample　挙動確認")
