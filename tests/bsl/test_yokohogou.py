@@ -168,10 +168,17 @@ def test_output_sample1():
     print(yh.get_input_data())
     print(yh.get_output_data(step=50))
 
+    yh = Yokohogou(sec='H24', L=12800.0)
+    print()
+    print(yh.get_input_data())
+    print(yh.get_output_data())
+
 
 @pytest.mark.parametrize("sec, L, lb_spans, expected", [
     ('H25', 6800.0, [1100, 2300, 2300, 1100], 'OK'),
     ('H24', 6800.0, [1000, 2400, 2400, 1000], 'NG'),
+    ('H24', 12800.0, [1000, 1000, 1760, 1760, 1760, 1760, 1760, 1000, 1000], 'NG'),  # todo:check-2024-1123
+    ('H24', 12800.0, [1000, 1000, 2200, 2200, 2200, 2200, 1000, 1000], 'NG'),  # todo:check-2024-1123
 
 ])
 def test_check_hogou_rule_tanbu(sec, L, lb_spans, expected):
@@ -179,7 +186,8 @@ def test_check_hogou_rule_tanbu(sec, L, lb_spans, expected):
     yh = Yokohogou(sec=sec, L=L)
     yh.restraint_spans = lb_spans
     assert yh.check_hogou_rule_tanbu() == expected
-    # 出力用
+    # 出力する時は以下のコメントを解除
+    # print(yh.get_input_data())
     # yh.check_hogou_rule_tanbu(print_on=True)
 
 

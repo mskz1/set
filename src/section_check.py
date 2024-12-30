@@ -190,14 +190,14 @@ def section_check(sec: str, F: float, term: str, N: float, Mx: float, My: float 
     :param sec: 断面名
     :param F: F値 [N/mm2]
     :param term: 荷重種別（短期・長期）str "LONG" / "SHORT"
-    :param N: 軸力[kN]
-    :param Mx: x軸まわりモーメント[kN*m]
-    :param My: y軸まわりモーメント[kN*m]
-    :param Qx:
-    :param Qy:
-    :param lkx: x軸方向座屈長さ[mm]
-    :param lky: y軸方向座屈長さ[mm]
-    :param lb: 横座屈長さ[mm]
+    :param N: 軸力 [kN] 圧縮は負値
+    :param Mx: x軸まわりモーメント [kN*m]
+    :param My: y軸まわりモーメント [kN*m]
+    :param Qx: せん断力（現状未対応）[kN]
+    :param Qy: せん断力（現状未対応）[kN]
+    :param lkx: x軸方向座屈長さ [mm]
+    :param lky: y軸方向座屈長さ [mm]
+    :param lb: 横座屈長さ [mm]
     :return:
     """
     # WIP : 応力NMQをあたえ、部材の検定比を返す。

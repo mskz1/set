@@ -73,11 +73,22 @@ def test_allowable_compressive_force_parame(sec, F, lkx, lky, term, expected):
         ("H-248x124x5x8", 'X', 1466.6666666666667, SHORT_TERM, 60.49, -40.33, 0, 61.60),  #
         ("H-248x124x5x8", 'X', 1466.6666666666667, SHORT_TERM, 40.33, -20.16, 0, 62.58),  #
         ("H-248x124x5x8", 'X', 1466.6666666666667, SHORT_TERM, 20.16, 0.0, 0, 63.26),  #
+        ('H-248x124x5x8', 'X', 1760, SHORT_TERM, 60.49, -36.29, 0, 59.18),  #
+        ('H-248x124x5x8', 'X', 2200, SHORT_TERM, 60.49, -30.24, 0, 55.78),  #
 
     ])
 def test_allowable_bending_moment_H_KP_P_MZ_section(sec, direc, lb, term, M1, M2, M3, exp):
     # 部材の曲げ耐力の算定（H形鋼）
     assert allowable_bending_moment(sec=sec, direc=direc, lb=lb, term=term, M1=M1, M2=M2, M3=M3
+                                    ) == pytest.approx(exp, abs=0.01)
+
+@pytest.mark.skip('試行')
+@pytest.mark.parametrize(
+    "         sec,      direc, lb,   term,    M1,M2,M3,exp", [
+        ('H-248x124x5x8', 'X', 1760, SHORT_TERM, 60.49, -36.29, 0, 59.18),  #
+    ])
+def test_allowable_bending_moment_H_section_2002(sec, direc, lb, term, M1, M2, M3, exp):
+    assert allowable_bending_moment(sec=sec, direc=direc, lb=lb, term=term, M1=M1, M2=M2, M3=M3, fb_edition='2002'
                                     ) == pytest.approx(exp, abs=0.01)
 
 
@@ -121,17 +132,24 @@ def test_allowable_bending_moment():
 
 
 @pytest.mark.parametrize(
-    "　　　　　　　　　　sec, 　　　F, 　　　　term, 　N, Mx, My, Qx, Qy, 　lkx, 　lky, 　lb, expected", [
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, 10., 20., 0., 0., 0., 000., 000., 000., 0.48615),
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, 0., 20., 0., 0., 0., 000., 000., 4000., 1.0253068),
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 000., 000., 000., 0.48615),
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 5000., 5000., 000., 0.60346),
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10., 20., 0., 0., 0., 8000., 2000., 4000., 1.053292),
-        ('H-200x100x5.5x8', F_235, SHORT_TERM, -5., 5., 3., 0., 0., 8000., 4000., 4000., 0.77709),
-        ('H-300x300x10x15', F_235, SHORT_TERM, -200., 100., 0., 0., 0., 8000., 8000., 4000., 0.5000659),
-        ('H-300x300x10x15', F_235, SHORT_TERM, -200., 100., 0., 0., 0., 000., 000., 000., 0.38702855),
-        ('H-300x300x10x15', F_235, SHORT_TERM, -200., 100., 50., 0., 0., 8000., 8000., 4000., 0.97287916),
-        ('□P-150x150x4.5', F_235, SHORT_TERM, -80., 7., 3., 0., 0., 4000., 4000., 000., 0.528169),
+    "　　　　　　　　　　sec, 　　　F, 　　　　term,    　N,   Mx,  My,  Qx,  Qy, 　lkx, 　lky, 　  lb, expected", [
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, 10.00, 20.0, 0.0, 0.0, 0.0, 000.0, 000.0, 000.0, 0.48615),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, 0.000, 20.0, 0.0, 0.0, 0.0, 000.0, 000.0, 4000., 1.0253068),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10.0, 20.0, 0.0, 0.0, 0.0, 000.0, 000.0, 000.0, 0.48615),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10.0, 20.0, 0.0, 0.0, 0.0, 5000., 5000., 000.0, 0.60346),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -10.0, 20.0, 0.0, 0.0, 0.0, 8000., 2000., 4000., 1.053292),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, -5.00, 5.00, 3.0, 0.0, 0.0, 8000., 4000., 4000., 0.77709),
+        ('H-300x300x10x15', F_235, SHORT_TERM, -200., 100., 0.0, 0.0, 0.0, 8000., 8000., 4000., 0.5000659),
+        ('H-300x300x10x15', F_235, SHORT_TERM, -200., 100., 0.0, 0.0, 0.0, 000.0, 000.0, 000.0, 0.38702855),
+        ('H-300x300x10x15', F_235, SHORT_TERM, -200., 100., 50., 0.0, 0.0, 8000., 8000., 4000., 0.97287916),
+        ('□P-150x150x4.5', F_235, SHORT_TERM, -80.00, 7.00, 3.0, 0.0, 0.0, 4000., 4000., 000.0, 0.528169),
+        ('□P-100x100x3.2', F_235, SHORT_TERM, 0.0000, 3.00, 3.0, 0.0, 0.0, 000.0, 000.0, 000.0, 0.680851),
+        ('[-100x50x5x7.5', F_235, SHORT_TERM, 0.0000, 2.00, 1.0, 0.0, 0.0, 000.0, 000.0, 3000., 0.95756488),
+        ('[-125x65x6x8', F_235, SHORT_TERM, 0.000000, 2.00, 1.0, 0.0, 0.0, 000.0, 000.0, 3000., 0.52054337),
+        ('□P-150x100x3.2', F_235, SHORT_TERM, 0.0000, 2.00, 1.0, 0.0, 0.0, 000.0, 000.0, 3000., 0.21178546),
+        ('C-100x50x20x2.3', F_235, SHORT_TERM, 0.000, 2.00, 1.0, 0.0, 0.0, 000.0, 000.0, 000.0, 1.23080895),
     ])
 def test_section_check_paramet(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb, expected):
     assert section_check(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb) == pytest.approx(expected, abs=0.001)
+
+
