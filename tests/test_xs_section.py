@@ -74,6 +74,12 @@ def test_xs_section_property():
     assert xs_section_property('L100*75*7', 'Iv', db) == 30.8
     assert xs_section_property('L100*75*7', 'tan_alpha', db) == 0.548
 
+    assert xs_section_property('C100*50*2.3', 'An', db) == 5.172
+
+    assert xs_section_property('2C-100x50x20x2.3', 'An', db) == 10.344
+    assert short_full_name['2C100*50*2.3'] == '2C-100x50x20x2.3'
+    assert xs_section_property('2C100*50*2.3', 'An', db) == 10.344
+
 
 def test_csv_parse():
     hs = make_section_db(HS_SEC_DATA)
@@ -171,6 +177,7 @@ def test_show_all_data_name():
 @pytest.mark.skip('出力確認用')
 def test_make_short_name():
     db = make_all_section_db()
+    # db = make_section_db_multiple(C_SEC_DATA, C_DOUBLE_SEC_DATA)
     pprint.pprint(make_short_name(db))
 
 
@@ -195,7 +202,7 @@ def test_section_type():
     assert xs_section_type("[-100x50x5x7.5") == '['
     assert xs_section_type("L65*6") == 'L'
     assert xs_section_type("L65*65*6") == 'L'
-
+    # todo 2C などダブルの場合の処理 2025-0102
 
 def test_rotate_coordinate_system():
     assert rotated_coord((1, 1), math.radians(45)) == pytest.approx((1.4142135623731, 0))

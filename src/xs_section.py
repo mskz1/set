@@ -180,6 +180,20 @@ C-,120,60,20,3.2,8.287,6.51,0,2.12,186,40.9,4.74,2.22,31,10.5,4.9,0
 C-,125,50,20,3.2,7.807,6.13,0,1.68,181,26.6,4.82,1.85,29,8.02,4,0
 """
 
+C_DOUBLE_SEC_DATA = """SERIES,2C-,リップ付き軽量溝形鋼ダブル,2C-HxBxCxt
+FORMAT,2C-,H,B,C,t
+PROPERTY,H,B,C,t,An,W,Cx,Cy,Ix,Iy,ix,iy,Zx,Zy
+UNIT,mm,mm,mm,mm,cm**2,kgf/m,cm,cm,cm**4,cm**4,cm,cm,cm**3,cm**3
+2C-,60,30,10,1.6,4.144,3.26,0,0,23.2,9.78,2.37,1.54,7.76,3.26
+2C-,60,30,10,2.3,5.744,4.5,0,0,31.2,13.1,2.33,1.51,10.4,4.36
+2C-,75,45,15,1.6,5.904,4.64,0,0,54.2,34.9,3.03,2.43,14.5,7.76
+2C-,75,45,15,2.3,8.274,6.5,0,0,74.2,48.1,3,2.41,19.8,10.7
+2C-,100,50,20,1.6,7.344,5.76,0,0,117,53.7,3.99,2.7,23.4,10.7
+2C-,100,50,20,2.3,10.344,8.12,0,0,161,73.8,3.95,2.68,32.2,14.8
+2C-,100,50,20,3.2,14.014,11,0,0,214,97.7,3.9,2.64,42.6,19.5
+"""
+
+
 MZ_SEC_DATA = """SERIES,[-,溝形鋼,[-HxBxt1xt2
 FORMAT,[-,H,B,t1,t2
 PROPERTY,H,B,t1,t2,r1,r2,An,W,Ix,Iy,ix,iy,Zx,Zy,Cy
@@ -430,6 +444,8 @@ def make_all_section_db():
     db.update(make_section_db(C_SEC_DATA))
     db.update(make_section_db(MZ_SEC_DATA))
     db.update(make_section_db(L_SEC_DATA))
+    # 2C 断面
+    db.update(make_section_db(C_DOUBLE_SEC_DATA))
     return db
 
 
@@ -485,6 +501,13 @@ def make_short_name(db):
             h, w, l, t = name[2:].split('x')
             sh_name = 'C' + h + '*' + w + '*' + t
             res[sh_name] = name
+
+        # C形鋼ダブルの場合 2C100*50*2.3 など
+        if name[:2] == "2C":
+            h, w, l, t = name[3:].split('x')
+            sh_name = '2C' + h + '*' + w + '*' + t
+            res[sh_name] = name
+
 
         # 溝形鋼の場合 MZ100*50, mz150*75 など
         if name[0] == '[':
