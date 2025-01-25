@@ -174,6 +174,8 @@ def steel_fb_aij2005(shape_name, db, lb=0, M1=0, M2=0, M3=0, F=235):
     :return: fb (N/mm2)
     """
     # TODO:その他の断面の処理
+    if shape_name[0] in ['□', 'P', 'L']:
+        return F / 1.5
 
     Zx = db[shape_name][0]['Zx']
 

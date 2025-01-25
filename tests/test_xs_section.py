@@ -172,6 +172,7 @@ def test_show_all_data_name():
     # pprint.pprint(short_full_name)
     db = make_all_section_db()
     print(xs_show_all_data(db))
+    pprint.pprint(xs_show_all_data(db))
 
 
 @pytest.mark.skip('出力確認用')
