@@ -207,7 +207,10 @@ def section_check(sec: str, F: float, term: str, N: float, Mx: float, My: float 
     else:
         N_f = N / allowable_tensile_force(sec, F, term)
 
-    Mx_f = Mx / allowable_bending_moment(sec, M3=Mx, direc='X', lb=lb, F=F, term=term)
+    # 2025-0126 Mx=0 の時、ゼロ割発生回避
+    if Mx != 0:
+        Mx_f = Mx / allowable_bending_moment(sec, M3=Mx, direc='X', lb=lb, F=F, term=term)
+    else:
+        Mx_f = 0.0
     My_f = My / allowable_bending_moment(sec, M3=My, direc='Y', lb=lb, F=F, term=term)
     return N_f + Mx_f + My_f
-

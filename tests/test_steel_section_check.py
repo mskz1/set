@@ -148,6 +148,8 @@ def test_allowable_bending_moment():
         ('[-125x65x6x8', F_235, SHORT_TERM, 0.000000, 2.00, 1.0, 0.0, 0.0, 000.0, 000.0, 3000., 0.52054337),
         ('□P-150x100x3.2', F_235, SHORT_TERM, 0.0000, 2.00, 1.0, 0.0, 0.0, 000.0, 000.0, 3000., 0.21178546),
         ('C-100x50x20x2.3', F_235, SHORT_TERM, 0.000, 2.00, 1.0, 0.0, 0.0, 000.0, 000.0, 000.0, 1.23080895),
+        ('H-200x100x5.5x8', F_235, SHORT_TERM, 0.000, 0.00, 10., 0.0, 0.0, 000.0, 000.0, 2000.0, 1.59375),
+
     ])
 def test_section_check_paramet(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb, expected):
     assert section_check(sec, F, term, N, Mx, My, Qx, Qy, lkx, lky, lb) == pytest.approx(expected, abs=0.001)
