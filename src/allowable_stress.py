@@ -288,7 +288,8 @@ def calc_C(M1=0, M2=0, M3=0) -> float:
     if abs(M3) > abs(M1):
         return 1.0
     if M1 == 0:
-        return 1.0
+        # return 1.0
+        return 1.75  # 2025-0202 change
     else:
         # 2005年版の式による。
         # M2/M1　複曲率で正、単曲率で負とする
@@ -307,4 +308,6 @@ def calc_p_lam_b(M1, M2, M3):
     if abs(M3) > abs(M1):
         return 0.3
     # M2/M1　複曲率で正、単曲率で負とする
+    if M1 == 0:  # M1が0なら、M2も0となるはず
+        return 0.6
     return 0.6 + 0.3 * (M2 / M1)
