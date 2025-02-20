@@ -213,12 +213,14 @@ class Yokohogou:
                       f' α*Mp={self.alpha * self.Mp / 1e6:.2f} [kN*m] (α={self.alpha})')
         return '\n'.join(result)
 
-    def get_output_data(self, step=0) -> str:
+    def get_output_data(self, step=0, restraint_span=None) -> str:
         """計算結果の出力用文字列を返す"""
+        if restraint_span is None:
+            restraint_span = []
         result = []
         result.append('-' * 20)
         result.append('検討結果')
-        result.append('方法①：均等配置')
+        result.append('方法①：均等配置　【算定計算】')
         eq_n = self.get_number_of_equivalent_placement_lateral_restraint()
         result.append(f'  補剛数 = {eq_n}, 補剛間隔 = {self.L / (eq_n + 1):.3f} [mm]')
         iy = xs_section_property(self.sec, 'iy', self.db) * 10  # (mm)
@@ -229,8 +231,12 @@ class Yokohogou:
         result.append(f'  iy = {iy} [mm], λy = {self.L / iy:.1f} < {eq_str}')
 
         result.append('-' * 10)
-        result.append('方法②：主として端部に配置')
-        self.set_member_end_restraints(step=step)
+        if restraint_span:
+            result.append('方法②：主として端部に配置　【検定計算】')
+            self.restraint_spans = restraint_span[:]
+        else:
+            result.append('方法②：主として端部に配置　【算定計算】')
+            self.set_member_end_restraints(step=step)
         tanbu_n = len(self.restraint_spans) - 1
         result.append(f'  補剛数 = {tanbu_n}, 補剛間隔 = {self.restraint_spans} [mm]')
         result.append(self.check_hogou_rule_tanbu(get_txt=True))

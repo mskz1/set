@@ -16,9 +16,7 @@ def test_get_num_of_equivalent_restraint(sec, L, mat, expected):
     ('H24', 6800.0, Material.S400N, 0, 1000.0),  # 長さのまるめ　指定なし
     ('H25', 6800.0, Material.S400N, 0, 1125.0),
     ('H25', 6800.0, Material.S400N, 5, 1125.0),  # 長さのまるめ 5mm指定
-    # ('H25', 6800.0, Material.S400N, 10, 1130.0),  # 長さのまるめ 10mm指定
     ('H25', 6800.0, Material.S400N, 10, 1120.0),  # 長さのまるめ 10mm指定
-    # ('H25', 6800.0, Material.S400N, 50, 1150.0),  # 長さのまるめ 50mm指定
     ('H25', 6800.0, Material.S400N, 50, 1100.0),  # 長さのまるめ 50mm指定
     # todo : add more case
 ])
@@ -158,6 +156,11 @@ def test_x_flooring(x, step, expected):
 @pytest.mark.skip('出力サンプル sample')
 def test_output_sample1():
     # yh = Yokohogou(sec='H25', L=8000.0)
+    yh = Yokohogou(sec='H24', L=6800.0)
+    print()
+    print(yh.get_input_data())
+    print(yh.get_output_data(step=100))
+
     yh = Yokohogou(sec='H25', L=6800.0)
     print()
     print(yh.get_input_data())
@@ -172,6 +175,26 @@ def test_output_sample1():
     print()
     print(yh.get_input_data())
     print(yh.get_output_data())
+
+
+@pytest.mark.skip('出力サンプル sample')
+def test_output_sample2():
+    # 算定計算
+    # yh = Yokohogou(sec='H24', L=6800.0)
+    yh = Yokohogou(sec='H24', L=11000.0)
+    print()
+    print(yh.get_input_data())
+    print(yh.get_output_data(step=100))
+
+    # 検定計算
+    # yh = Yokohogou(sec='H24', L=6800.0)
+    yh = Yokohogou(sec='H24', L=11000.0)
+    # yh.restraint_spans = [1000, 2300, 2300,1000]
+    span = [1000, 1000, 3500, 3500, 1000, 1000]  # H24
+    # span = [1100, 2300, 2300, 1100]  # H25
+    print()
+    print(yh.get_input_data())
+    print(yh.get_output_data(step=100, restraint_span=span))
 
 
 @pytest.mark.parametrize("sec, L, lb_spans, expected", [
