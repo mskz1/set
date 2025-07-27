@@ -13,8 +13,8 @@ class Material(Enum):
 
 
 class Condition(Enum):
-    Mp_Mp = 'Mp_Mp'
-    Mp_M1 = 'Mp_M1'
+    Mp_Mp = 'Mp_Mp'  # 両端 Mp
+    Mp_M1 = 'Mp_M1'  # 端部 Mp 他端 M1
 
 
 @dataclass
@@ -220,6 +220,7 @@ class Yokohogou:
         result = []
         result.append('-' * 20)
         result.append('検討結果')
+
         result.append('方法①：均等配置　【算定計算】')
         eq_n = self.get_number_of_equivalent_placement_lateral_restraint()
         result.append(f'  補剛数 = {eq_n}, 補剛間隔 = {self.L / (eq_n + 1):.3f} [mm]')
@@ -237,6 +238,7 @@ class Yokohogou:
         else:
             result.append('方法②：主として端部に配置　【算定計算】')
             self.set_member_end_restraints(step=step)
+
         tanbu_n = len(self.restraint_spans) - 1
         result.append(f'  補剛数 = {tanbu_n}, 補剛間隔 = {self.restraint_spans} [mm]')
         result.append(self.check_hogou_rule_tanbu(get_txt=True))

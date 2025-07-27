@@ -33,6 +33,12 @@ C形 C、2C形 2C
 鋼管 P
 山形 L
 
+■断面性能モジュール　　todo: section_property.py
+section_property.py
+単純な形状の断面諸量を返す。An, Zx,Zy,Ix,Iy
+[ ] 矩形
+[ ]
+
 ＝＝＝＝＝＝＝＝＝＝=======
 ■ボルトモジュール   todo: bolt.py
 HTB、中ボルトの耐力、孔径などの情報を扱う
