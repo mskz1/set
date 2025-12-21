@@ -163,6 +163,7 @@ yokohogou.py
 pythonと、xlwingsでExcelのUDFとしても公開する。VBAでさらっと作れるならそれでもよいが...
 ExcelDNA-C#-ironPythonで動かせる(2020-0220)
 xloil使うか（2023）
+xlwings-liteはどうか（2025）
 
 モジュール群：案 python VBA javascript ???
 【S造系】

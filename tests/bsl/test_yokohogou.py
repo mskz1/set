@@ -47,7 +47,10 @@ def test_My(sec, L, mat, expected):
 
 @pytest.mark.parametrize("sec, L, Lb, mat, M1, M2, expected", [
     ('H24', 6800, 2400.0, Material.S400N, 62.12, 0, 60.457264464444675 * 1e6),
+    ('H24', 6800, 2400.0, Material.S400N, 62.12, 40.0, 61.55515609201724 * 1e6),
+    ('H24', 6800, 1000.0, Material.S400N, 60.0, 20.0, 64.50193848758025 * 1e6),
     ('H25', 6800, 2300.0, Material.S400N, 68.29, 0, 69.5324474041749 * 1e6),
+    ('H50', 7000, 6000.0, Material.S400N, 200.0, 50.0, 365392549.5744368),
     # todo : add more case
 ])
 def test_Mas(sec, L, Lb, mat, M1, M2, expected):
@@ -177,24 +180,46 @@ def test_output_sample1():
     print(yh.get_output_data())
 
 
-@pytest.mark.skip('出力サンプル sample')
+# @pytest.mark.skip('出力サンプル sample')
 def test_output_sample2():
     # 算定計算
     # yh = Yokohogou(sec='H24', L=6800.0)
-    yh = Yokohogou(sec='H24', L=11000.0)
+    # yh = Yokohogou(sec='H24', L=11000.0)
+    yh = Yokohogou(sec='H24', L=7000.0)
     print()
     print(yh.get_input_data())
     print(yh.get_output_data(step=100))
 
     # 検定計算
     # yh = Yokohogou(sec='H24', L=6800.0)
-    yh = Yokohogou(sec='H24', L=11000.0)
-    # yh.restraint_spans = [1000, 2300, 2300,1000]
-    span = [1000, 1000, 3500, 3500, 1000, 1000]  # H24
+    # yh = Yokohogou(sec='H24', L=11000.0)
+    yh = Yokohogou(sec='H24', L=7000.0)
+    # yh.restraint_spans = [1000, 2400, 2400,1000]
+    # span = [1000, 1000, 3500, 3500, 1000, 1000]  # H24 L=11000
+    # span = [1000, 2400, 2400, 1000]  # H24
+    # span = [1000, 1000, 2800, 1000, 1000]  # H24
+    # span = [1000, 5000/3, 5000/3, 5000/3, 1000]  # H24
+    span = [1000, 1250, 2500, 1250, 1000]  # H24
+
+    # span = [1000, 1000, 3000, 1000, 1000]  # H24 L=7000
     # span = [1100, 2300, 2300, 1100]  # H25
     print()
     print(yh.get_input_data())
     print(yh.get_output_data(step=100, restraint_span=span))
+
+
+def test_output_sample3():
+    # 算定計算
+    # yh = Yokohogou(sec='H24', L=6800.0)
+    # yh = Yokohogou(sec='H24', L=11000.0)
+    yh = Yokohogou(sec='H24', L=7400.0)
+    print()
+    print(yh.get_input_data())
+    yh.set_member_end_restraints(step=100, eq_flg=False)
+    print(yh.get_output_data(eq_flg=False))
+    print(yh.get_output_data(eq_flg=True))
+
+    # print(yh.get_output_data(step=100))
 
 
 @pytest.mark.parametrize("sec, L, lb_spans, expected", [
@@ -249,3 +274,7 @@ def test_list_swap():
     a_b.insert(center_index, center_span)
     # print(a_o)
     print(a_b)
+
+
+def test_set_center_span_hogou():
+    yh = Yokohogou(sec='H24', L=7000.0)

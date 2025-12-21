@@ -102,7 +102,7 @@ class Yokohogou:
         Zx = xs_section_property(self.sec, 'Zx', self.db) * 1e3  # (mm3)
         F = 235 if self.material == Material.S400N else 325
         # todo :M1, M2の符号の調整が必要か　2024-1116
-        fb = steel_fb_aij2005(shape_name=short_full_name[self.sec], db=self.db, lb=Lb, M1=M1, M2=M2, F=235)
+        fb = steel_fb_aij2005(shape_name=short_full_name[self.sec], db=self.db, lb=Lb, M1=M1, M2=M2, F=F)
 
         # todo : 建築基準法のfbでの検討も入れる？
         # B = xs_section_property(self.sec, 'B', self.db)
@@ -163,12 +163,113 @@ class Yokohogou:
             return self.L
         return self.L * self.M_Left / (self.M_Left + self.M_Right)
 
-    def set_member_end_restraints(self, step=0):
+    def set_member_end_restraints(self, step=0, eq_flg=True):
+        """主として端部に補剛材を配置　で補剛材位置を設定する
+            端部のモーメントがMyを超える部分はLb以下、My以下の中央部分は均等割り"""
+        # todo : アルゴリズム要確認　2025-0816
+        # 端部のモーメントがMyを超える部分は必要Lb以下とし、My以下となる中央部は均等割りで算定
+
+        self.set_tanbu_restraint(step)
+        center_span = self.L - sum(self.restraint_spans)
+        tanbu_only_spans = self.restraint_spans[:]
+        center_index = int(len(self.restraint_spans) / 2)
+        self.restraint_spans.insert(center_index, center_span)
+
+        # todo : 左右非対称配置となる場合の処理　2024-1104
+
+        # 中央のMy以下部分について、均等割りでの設定
+        num_eq = self.get_div_num_of_center_span(center_index, center_span, tanbu_only_spans)
+
+        if eq_flg:
+            return  # 仮
+
+        # 中央のMy以下部分について、非均等割りで検討
+        self.set_tanbu_restraint(step)
+        center_span = self.L - sum(self.restraint_spans)
+        tanbu_only_spans = self.restraint_spans[:]
+        center_index = int(len(self.restraint_spans) / 2)
+        self.restraint_spans.insert(center_index, center_span)
+
+        num_vari = self.get_div_num_of_center_span2(center_index, center_span, tanbu_only_spans, step)
+
+        # WIP : 2025-1214
+
+    def get_div_num_of_center_span(self, center_index, center_span, tanbu_only_spans):
+        """中央のMy以下部分のスパンの分割数（均等割り）を返す。（補剛数は 分割数-1）"""
+        if self.check_hogou_rule_tanbu() == 'OK':
+            return 1
+        div_num = 2
+        while self.check_hogou_rule_tanbu() == 'NG':
+            center_span_div = center_span / div_num
+            self.restraint_spans = tanbu_only_spans[:]
+            for n in range(div_num):
+                self.restraint_spans.insert(center_index, center_span_div)
+            div_num += 1
+        return div_num
+
+    def get_div_num_of_center_span2(self, center_index, center_span, tanbu_only_spans, step):
+        """中央のMy以下部分のスパンの分割数（非均等割り）を返す。（補剛数は 分割数-1）"""
+        if self.check_hogou_rule_tanbu() == 'OK':
+            return 1
+
+        req_lb = self.get_lb(step)
+        # 寸法丸め値が指定されていない場合は１㎜と設定
+        if step == 0:
+            step = 1
+
+        # 分割数３（補剛数２）で検討
+        div_num = 3
+        # while self.check_hogou_rule_tanbu() == 'NG':
+        l1 = req_lb
+        for i in range(int(0.5 * (center_span - 2 * req_lb) / step)):
+            self.restraint_spans = tanbu_only_spans[:]
+            self.restraint_spans[center_index:center_index] = [l1, center_span - 2 * l1, l1]
+
+            if self.check_hogou_rule_tanbu() == 'OK':
+                return div_num
+            l1 += step
+            # self.restraint_spans.clear()
+
+        # 分割数４（補剛数３）で検討
+        self.restraint_spans.clear()
+        div_num = 4
+        # while self.check_hogou_rule_tanbu() == 'NG':
+        l1 = req_lb
+        for i in range(int(0.5 * (center_span - 2 * req_lb) / step)):
+            self.restraint_spans = tanbu_only_spans[:]
+            self.restraint_spans[center_index:center_index] = [l1, (center_span - 2 * l1) / 2,
+                                                               (center_span - 2 * l1) / 2, l1]
+
+            if self.check_hogou_rule_tanbu() == 'OK':
+                return div_num
+            l1 += step
+
+        # 分割数５（補剛数４）で検討
+
+        # WIP: L1, L2 の数値の設定方法を検討必要 2025-1221
+        self.restraint_spans.clear()
+        div_num = 5
+        # while self.check_hogou_rule_tanbu() == 'NG':
+        l1 = req_lb
+        for i in range(int(0.5 * (center_span - 2 * req_lb) / step)):
+            self.restraint_spans = tanbu_only_spans[:]
+            self.restraint_spans[center_index:center_index] = [l1, (center_span - 2 * l1) / 2,
+                                                               (center_span - 2 * l1) / 2, l1]
+
+            if self.check_hogou_rule_tanbu() == 'OK':
+                return div_num
+            l1 += step
+
+
+
+
+    def set_tanbu_restraint(self, step):
+        """端部のMyを超える区間の補剛位置をセットする"""
         self.restraint_spans.clear()
         self.set_Me()
         req_lb = self.get_lb(step)
-
         x_My = self.get_My_position()
+
         num_of_tanbu = int(x_My / req_lb) + 1
         tanbu_restraint_spans = []
         for i in range(num_of_tanbu):
@@ -177,29 +278,6 @@ class Yokohogou:
             self.restraint_spans.append(l)
         for l in tanbu_restraint_spans:
             self.restraint_spans.append(l)
-        # ---
-        # max_n = int(self.L / (2 * req_lb))
-        # for i in range(max_n):
-        #     if self.M_at(i * req_lb) > self.My:
-        #         self.restraint_spans.insert(i, req_lb)
-        #         self.restraint_spans.insert(-i, req_lb)
-        # ---
-
-        center_span = self.L - sum(self.restraint_spans)
-        tanbu_only_spans = self.restraint_spans[:]
-
-        center_index = int(len(self.restraint_spans) / 2)
-        self.restraint_spans.insert(center_index, center_span)
-
-        # todo : 左右非対称配置となる場合の処理　2024-1104
-
-        div_num = 2
-        while self.check_hogou_rule_tanbu() == 'NG':
-            center_span_div = center_span / div_num
-            self.restraint_spans = tanbu_only_spans[:]
-            for n in range(div_num):
-                self.restraint_spans.insert(center_index, center_span_div)
-            div_num += 1
 
     def get_input_data(self) -> str:
         """計算条件の出力用文字列を返す"""
@@ -213,7 +291,7 @@ class Yokohogou:
                       f' α*Mp={self.alpha * self.Mp / 1e6:.2f} [kN*m] (α={self.alpha})')
         return '\n'.join(result)
 
-    def get_output_data(self, step=0, restraint_span=None) -> str:
+    def get_output_data(self, step=0, restraint_span=None, eq_flg=True) -> str:
         """計算結果の出力用文字列を返す"""
         if restraint_span is None:
             restraint_span = []
@@ -237,7 +315,7 @@ class Yokohogou:
             self.restraint_spans = restraint_span[:]
         else:
             result.append('方法②：主として端部に配置　【算定計算】')
-            self.set_member_end_restraints(step=step)
+            self.set_member_end_restraints(step=step, eq_flg=eq_flg)
 
         tanbu_n = len(self.restraint_spans) - 1
         result.append(f'  補剛数 = {tanbu_n}, 補剛間隔 = {self.restraint_spans} [mm]')
