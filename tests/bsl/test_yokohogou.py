@@ -180,7 +180,7 @@ def test_output_sample1():
     print(yh.get_output_data())
 
 
-# @pytest.mark.skip('出力サンプル sample')
+@pytest.mark.skip('出力サンプル sample')
 def test_output_sample2():
     # 算定計算
     # yh = Yokohogou(sec='H24', L=6800.0)
@@ -200,6 +200,7 @@ def test_output_sample2():
     # span = [1000, 1000, 2800, 1000, 1000]  # H24
     # span = [1000, 5000/3, 5000/3, 5000/3, 1000]  # H24
     span = [1000, 1250, 2500, 1250, 1000]  # H24
+    # span = [1000, 2500,2500, 1000]  # H24
 
     # span = [1000, 1000, 3000, 1000, 1000]  # H24 L=7000
     # span = [1100, 2300, 2300, 1100]  # H25
@@ -212,13 +213,14 @@ def test_output_sample3():
     # 算定計算
     # yh = Yokohogou(sec='H24', L=6800.0)
     # yh = Yokohogou(sec='H24', L=11000.0)
-    yh = Yokohogou(sec='H24', L=7400.0)
+    yh = Yokohogou(sec='H24', L=7000.0)
     print()
     print(yh.get_input_data())
-    yh.set_member_end_restraints(step=100, eq_flg=False)
-    print(yh.get_output_data(eq_flg=False))
-    print(yh.get_output_data(eq_flg=True))
 
+    # yh.set_member_end_restraints(step=100, eq_flg=False)
+    print(yh.get_output_data(step=50, eq_flg=True))
+
+    # print(yh.get_output_data(step=100, eq_flg=False))
     # print(yh.get_output_data(step=100))
 
 
@@ -283,6 +285,14 @@ def test_set_center_span_hogou():
 def test_sample_iterator():
     # ジェネレーターでの試行
     def get_hogou_pitch(L, n, rlb, pitch=1):
+        """
+        補剛間隔をまるめピッチごとに変えたリストを返す。
+        :param L: 長さ
+        :param n: 補剛個所数　補剛間隔数は n+1 となる　n=2~5 のみ対応
+        :param rlb: 必要補剛間隔
+        :param pitch: 長さのまるめピッチ指定
+        :return:
+        """
         # ジェネレーター
         if n == 2 or n == 3:
             L1 = rlb
@@ -293,23 +303,15 @@ def test_sample_iterator():
                     yield [L1, (L - 2 * L1) / 2, (L - 2 * L1) / 2, L1]
                 L1 += pitch
 
-        # elif n == 3:
-        #     L1 = rlb
-        #     while L1 < L / 2:
-        #         yield [L1, (L - 2 * L1) / 2, (L - 2 * L1) / 2, L1]
-        #         L1 += pitch
         elif n == 4 or n == 5:
             L1 = rlb
             L2 = rlb
             while L1 + L2 < L / 2:
                 while L1 + L2 < L / 2:
                     if n == 4:
-                        # L_i = get_hogou_pitch(L - 2 * L1, n - 2, rlb, pitch=pitch)
-                        # yield [L1] + next(L_i) + [L1]
                         yield [L1, L2, L - 2 * (L1 + L2), L2, L1]
                     elif n == 5:
                         yield [L1, L2, (L - 2 * (L1 + L2)) / 2, (L - 2 * (L1 + L2)) / 2, L2, L1]
-
                     L2 += pitch
                 L2 = rlb
                 L1 += pitch
@@ -328,9 +330,11 @@ def test_sample_iterator():
 
     assert list(get_hogou_pitch(1000, 2, 100, pitch=100)) == [[100, 800, 100], [200, 600, 200], [300, 400, 300],
                                                               [400, 200, 400]]
+
     assert list(get_hogou_pitch(1000, 2, 100, pitch=50)) == [[100, 800, 100], [150, 700, 150], [200, 600, 200],
                                                              [250, 500, 250], [300, 400, 300], [350, 300, 350],
                                                              [400, 200, 400], [450, 100, 450]]
+
     assert list(get_hogou_pitch(1000, 3, 100, pitch=100)) == [[100, 400.0, 400.0, 100], [200, 300.0, 300.0, 200],
                                                               [300, 200.0, 200.0, 300], [400, 100.0, 100.0, 400]]
 

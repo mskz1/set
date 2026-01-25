@@ -181,7 +181,7 @@ class Yokohogou:
         num_eq = self.get_div_num_of_center_span(center_index, center_span, tanbu_only_spans)
 
         if eq_flg:
-            return  # 仮
+            return  # 仮 （中央部の非均等割りの完成まで）
 
         # 中央のMy以下部分について、非均等割りで検討
         self.set_tanbu_restraint(step)
@@ -190,7 +190,8 @@ class Yokohogou:
         center_index = int(len(self.restraint_spans) / 2)
         self.restraint_spans.insert(center_index, center_span)
 
-        num_vari = self.get_div_num_of_center_span2(center_index, center_span, tanbu_only_spans, step)
+        # num_vari = self.get_div_num_of_center_span2(center_index, center_span, tanbu_only_spans, step)
+        num_vari = self.get_div_num_of_center_span3(center_index, center_span, tanbu_only_spans, step)
 
         # WIP : 2025-1214
 
@@ -208,7 +209,7 @@ class Yokohogou:
         return div_num
 
     def get_div_num_of_center_span2(self, center_index, center_span, tanbu_only_spans, step):
-        """中央のMy以下部分のスパンの分割数（非均等割り）を返す。（補剛数は 分割数-1）"""
+        """中央のMy以下部分のスパンの分割数（非均等割り）を返す。（補剛数は 分割数-1）　案２"""
         if self.check_hogou_rule_tanbu() == 'OK':
             return 1
 
@@ -260,7 +261,55 @@ class Yokohogou:
                 return div_num
             l1 += step
 
+    def get_div_num_of_center_span3(self, center_index, center_span, tanbu_only_spans, step):
+        """中央のMy以下部分のスパンの分割数（非均等割り）を返す。（補剛数は 分割数-1）　案３　2026-0125"""
 
+        def get_hogou_pitch(L, n, rlb, pitch=1):
+            """
+            補剛間隔をまるめピッチごとに変えたリストを返す。
+            :param L: 長さ
+            :param n: 補剛個所数　補剛間隔数は n+1 となる　n=2~5 のみ対応
+            :param rlb: 必要補剛間隔
+            :param pitch: 長さのまるめピッチ指定
+            :return:
+            """
+            # ジェネレーター
+            if n == 2 or n == 3:
+                L1 = rlb
+                while L1 < L / 2:
+                    if n == 2:
+                        yield [L1, L - 2 * L1, L1]
+                    elif n == 3:
+                        yield [L1, (L - 2 * L1) / 2, (L - 2 * L1) / 2, L1]
+                    L1 += pitch
+
+            elif n == 4 or n == 5:
+                L1 = rlb
+                L2 = rlb
+                while L1 + L2 < L / 2:
+                    while L1 + L2 < L / 2:
+                        if n == 4:
+                            yield [L1, L2, L - 2 * (L1 + L2), L2, L1]
+                        elif n == 5:
+                            yield [L1, L2, (L - 2 * (L1 + L2)) / 2, (L - 2 * (L1 + L2)) / 2, L2, L1]
+                        L2 += pitch
+                    L2 = rlb
+                    L1 += pitch
+
+        if self.check_hogou_rule_tanbu() == 'OK':
+            return 1  # 1 でよいのか？　現状は戻り値を使ってない？
+
+        req_lb = self.get_lb(step)
+        # 寸法丸め値が指定されていない場合は１㎜と設定
+        if step == 0:
+            step = 1
+
+        for div_num in range(3, 6):
+            for hogou_pitch in get_hogou_pitch(center_span, div_num, req_lb, step):
+                self.restraint_spans = tanbu_only_spans[:]
+                self.restraint_spans[center_index:center_index] = hogou_pitch[:]
+                if self.check_hogou_rule_tanbu() == 'OK':
+                    return div_num
 
 
     def set_tanbu_restraint(self, step):
