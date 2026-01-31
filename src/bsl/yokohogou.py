@@ -115,6 +115,19 @@ class Yokohogou:
         # fb = steel_fb_bsl(F=F, lb=Lb, i=ib, C=c, h=H, Af=Af)
         return 1.5 * fb * Zx
 
+    def get_require_Lb(self, M) ->float:
+        """許容モーメントを満たす横補剛間隔 Lb(mm)を返す"""
+        Zx = xs_section_property(self.sec, 'Zx', self.db) * 1e3  # (mm3)
+
+        F = 235 if self.material == Material.S400N else 325
+
+
+        pass
+
+
+
+
+
     def set_Me(self):
         """検討用　端部モーメントの設定を行う"""
         if self.end_force_condition == Condition.Mp_Mp:

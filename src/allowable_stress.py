@@ -311,3 +311,21 @@ def calc_p_lam_b(M1, M2, M3):
     if M1 == 0:  # M1が0なら、M2も0となるはず
         return 0.6
     return 0.6 + 0.3 * (M2 / M1)
+
+
+def get_lb(shape_name, db, fb, lmax=10000, M1=0, M2=0, M3=0, F=235):
+    """
+    指定した許容曲げ応力度fb(N/mm2)を満たすLb(mm)の最長長さを返す
+    :param shape_name:
+    :param db:
+    :param fb:
+    :param lmax:
+    :param M1:
+    :param M2:
+    :param M3:
+    :param F:
+    :return:
+    """
+    for l in range(0, lmax + 1):
+        if fb > steel_fb_aij2005(shape_name, db, l, M1, M2, M3, F):
+            return l - 1

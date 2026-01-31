@@ -5,7 +5,8 @@ import pytest
 # print(os.environ['PYTHONPATH'])
 
 from src.allowable_stress import steel_ft, steel_fc_aij, steel_fc_bsl, steel_fb2_aij, steel_fb_aij, steel_fb1_aij, \
-    steel_fb_bsl, steel_fs, calc_J, calc_Iw, calc_C, steel_fb_aij2005, steel_fb_aij2002
+    steel_fb_bsl, steel_fs, calc_J, calc_Iw, calc_C, steel_fb_aij2005, steel_fb_aij2002, \
+    get_lb
 
 
 def test_steel_ft():
@@ -138,6 +139,7 @@ def test_calc_C(M1, M2, M3, expected):
     "              sec,       lb, M1, M2, M3, expected, abs_tol", [
         ('H-200x100x5.5x8', 0.00, 0., 0., 0., 235 / 1.5, 0.001),
         ('H-200x100x5.5x8', 1000, 0., 0., 1, 144.9, 0.1),  # 中間モーメントがmax -> C=1
+        ('H-200x100x5.5x8', 1000, 0., 0., 1, 144.992,0.001),  # 中間モーメントがmax -> C=1
         ('H-200x100x5.5x8', 1000, 0., 0., 0, 153.09, 0.1),  # 中間モーメントがmax -> C=1
         ('H-200x100x5.5x8', 2000, 0., 0., 1, 114.0, 0.1),
         ('H-200x100x5.5x8', 4000, 0., 0., 1, 71.8, 0.1),
@@ -148,8 +150,8 @@ def test_calc_C(M1, M2, M3, expected):
         ('[-100x50x5x7.5', 3000., 0., 0., 1, 90.53, 0.1),
         ('C-100x50x20x2.3', 0.00, 0., 0., 1, 235 / 1.5, 0.001),
         ('C-100x50x20x2.3', 3000, 0., 0., 1, 67.09, 0.1),
-        ('□P-150x150x6', 3000.00, 0., 0., 1, 235/1.5, 0.1),
-        ('P-89.1x4.5', 3000.0000, 0., 0., 1, 235/1.5, 0.1),
+        ('□P-150x150x6', 3000.00, 0., 0., 1, 235 / 1.5, 0.1),
+        ('P-89.1x4.5', 3000.0000, 0., 0., 1, 235 / 1.5, 0.1),
 
         # 中間モーメントが最大ではない場合
         ('H-200x100x5.5x8', 4000, 2., -1, 0, 86.04, 0.1),  # 単曲率（M2/M1:負）
@@ -165,6 +167,20 @@ def test_steel_fb_aij2005(sec, lb, M1, M2, M3, expected, abs_tol):
     from src.xs_section import make_all_section_db
     db = make_all_section_db()
     assert steel_fb_aij2005(shape_name=sec, db=db, lb=lb, M1=M1, M2=M2, M3=M3) == pytest.approx(expected, abs=abs_tol)
+
+
+@pytest.mark.parametrize(
+    "              sec,       fb,     M1, M2, M3, expected, abs_tol", [
+        ('H-200x100x5.5x8', 235 / 1.5, 0., 0., 0., 0.0, 0.001),
+        ('H-200x100x5.5x8', 144.99200, 0., 0., 1., 1000, 0.001),
+        ('H-200x100x5.5x8', 86.040000, 2., -1, 0, 4000, 0.1),  # 単曲率（M2/M1:負）
+        ('H-200x100x5.5x8', 129.87000, 2., 1., 0, 4000, 0.1),  # 複曲率（M2/M1:正）
+
+    ])
+def test_steel_fb2lb_aij2005(sec, fb, M1, M2, M3, expected, abs_tol):
+    from src.xs_section import make_all_section_db
+    db = make_all_section_db()
+    assert get_lb(shape_name=sec, db=db, fb=fb, M1=M1, M2=M2, M3=M3) == pytest.approx(expected, abs=abs_tol)
 
 
 # @pytest.mark.skip('時間がかかるため')

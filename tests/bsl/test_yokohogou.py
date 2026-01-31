@@ -58,6 +58,14 @@ def test_Mas(sec, L, Lb, mat, M1, M2, expected):
     assert yh.Mas(Lb, M1, M2) == expected
 
 
+@pytest.mark.parametrize("sec, L, Lb, mat, M1, M2, expected", [
+    ('H24', 6800, 2400.0, Material.S400N, 62.12, 0, 60.457264464444675 * 1e6),
+
+])
+def test_get_Lb():
+    yh = Yokohogou(sec=sec, L=L, material=mat)
+    yh.get_require_Lb(60)
+
 @pytest.mark.parametrize(
     "sec,      L,       mat,        end_condition, expected_M1, expected_M2", [
         ('H24', 6800.0, Material.S400N, Condition.Mp_Mp, 87.984 * 1e6, 87.984 * 1e6),
