@@ -58,14 +58,6 @@ def test_Mas(sec, L, Lb, mat, M1, M2, expected):
     assert yh.Mas(Lb, M1, M2) == expected
 
 
-@pytest.mark.parametrize("sec, L, Lb, mat, M1, M2, expected", [
-    ('H24', 6800, 2400.0, Material.S400N, 62.12, 0, 60.457264464444675 * 1e6),
-
-])
-def test_get_Lb():
-    yh = Yokohogou(sec=sec, L=L, material=mat)
-    yh.get_require_Lb(60)
-
 @pytest.mark.parametrize(
     "sec,      L,       mat,        end_condition, expected_M1, expected_M2", [
         ('H24', 6800.0, Material.S400N, Condition.Mp_Mp, 87.984 * 1e6, 87.984 * 1e6),
@@ -84,6 +76,26 @@ def test_restraint_spans():
     yh.restraint_spans = [2500, 3000, 2500]
     assert yh.lb_spans == [2500, 3000, 2500]
     assert yh.lb_positions == [0, 2500, 5500, 8000]
+
+
+@pytest.mark.parametrize(
+    "     positions,        expected", [
+        ([0, 4000, 8000], [4000, 4000]),
+        ([0, 2000, 4000, 6000, 8000], [2000, 2000, 2000, 2000]),
+    ])
+def test_set_restraint_spans_from_restraint_position(positions, expected):
+    yh = Yokohogou('H40', L=8000.0)
+    yh.set_restraint_spans_from_restraint_position(positions)
+    assert yh.lb_spans == expected
+
+
+def test_addition_of_restraint_position():
+    yh = Yokohogou('H40', L=8000.0)
+    yh.restraint_spans = [2500, 3000, 2500]
+    yh.add_restraint(4000.0)
+    assert yh.restraint_spans == [2500, 1500, 1500, 2500]
+    yh.add_restraint(7800)
+    assert yh.restraint_spans == [2500, 1500, 1500, 2300, 200]
 
 
 def test_M_at():
@@ -157,7 +169,6 @@ def test_x_ceiling(x, step, expected):
     (1001, 100, 1000),
     (1099, 100, 1000),
     (1175, 50, 1150),
-
 ])
 def test_x_flooring(x, step, expected):
     yh = Yokohogou()
@@ -230,6 +241,19 @@ def test_output_sample3():
 
     # print(yh.get_output_data(step=100, eq_flg=False))
     # print(yh.get_output_data(step=100))
+
+    print(yh.get_output_tanbuhaiti_trial(step=50))
+
+    print()
+    print()
+    print('*'*50)
+    print('*'*50)
+    span = [1000, 1500, 2000, 1500, 1000]  # H24
+    span = [1000, 1250, 2500, 1250, 1000]  # H24
+    span = [1000, 1300, 2400, 1300, 1000]  # H24
+    span = [1000, 1350, 2300, 1350, 1000]  # H24
+    print(yh.get_output_data(step=50, restraint_span=span))
+
 
 
 @pytest.mark.parametrize("sec, L, lb_spans, expected", [

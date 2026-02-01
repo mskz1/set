@@ -326,6 +326,7 @@ def get_lb(shape_name, db, fb, lmax=10000, M1=0, M2=0, M3=0, F=235):
     :param F:
     :return:
     """
-    for l in range(0, lmax + 1):
+    for l in range(0, int(lmax) + 1):
         if fb > steel_fb_aij2005(shape_name, db, l, M1, M2, M3, F):
             return l - 1
+

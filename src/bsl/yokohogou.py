@@ -115,21 +115,16 @@ class Yokohogou:
         # fb = steel_fb_bsl(F=F, lb=Lb, i=ib, C=c, h=H, Af=Af)
         return 1.5 * fb * Zx
 
-    def get_require_Lb(self, M) ->float:
-        """許容モーメントを満たす横補剛間隔 Lb(mm)を返す"""
+    def get_require_Lb(self, M) -> float:
+        """検討中＿ボツ？＿許容モーメントを満たす横補剛間隔 Lb(mm)を返す"""
         Zx = xs_section_property(self.sec, 'Zx', self.db) * 1e3  # (mm3)
 
         F = 235 if self.material == Material.S400N else 325
 
-
         pass
 
-
-
-
-
     def set_Me(self):
-        """検討用　端部モーメントの設定を行う"""
+        """検討用　端部モーメント(N*mm)の設定を行う"""
         if self.end_force_condition == Condition.Mp_Mp:
             self.M_Left = self.alpha * self.Mp
             self.M_Right = self.alpha * self.Mp
@@ -150,13 +145,22 @@ class Yokohogou:
             result.append(x_prev + sp)
         return result
 
+    def set_restraint_spans_from_restraint_position(self, pos: list):
+        """横補剛位置から横補剛間隔を設定する"""
+        result = []
+        for i, x in enumerate(pos):
+            if i == len(pos) - 1:
+                break
+            result.append(pos[i + 1] - pos[i])
+        self.restraint_spans = result[:]
+
     @property
     def Q(self):
         """想定モーメント分布に対応する せん断力 Q を返す Q = (M1+M2) / L"""
         return (self.M_Left + self.M_Right) / self.L
 
     def M_at(self, x):
-        """指定位置の想定モーメントを返す。部材左端からの距離 x (mm)を指定"""
+        """指定位置の想定モーメント(N*mm)を返す。部材左端からの距離 x (mm)を指定"""
         return abs(self.M_Left - x * self.Q)
 
     def get_My_position(self) -> float:
@@ -324,6 +328,11 @@ class Yokohogou:
                 if self.check_hogou_rule_tanbu() == 'OK':
                     return div_num
 
+    def get_div_num_of_center_span4(self, center_index, center_span, tanbu_only_spans, step):
+        """試作："""
+        # 中央部補剛数n=0
+
+        pass
 
     def set_tanbu_restraint(self, step):
         """端部のMyを超える区間の補剛位置をセットする"""
@@ -382,6 +391,73 @@ class Yokohogou:
         tanbu_n = len(self.restraint_spans) - 1
         result.append(f'  補剛数 = {tanbu_n}, 補剛間隔 = {self.restraint_spans} [mm]')
         result.append(self.check_hogou_rule_tanbu(get_txt=True))
+        return '\n'.join(result)
+
+    def get_output_tanbuhaiti_trial(self, step=0):
+        """中央My以下のスパン部の分割の試作"""
+        from src.allowable_stress import get_lb
+        def init_tanbu():
+            self.set_tanbu_restraint(step)
+            center_span = self.L - sum(self.restraint_spans)
+            tanbu_only_spans = self.restraint_spans[:]
+            center_index = int(len(self.restraint_spans) / 2)
+            self.restraint_spans.insert(center_index, center_span)
+
+        def do_output():
+            tanbu_n = len(self.restraint_spans) - 1
+            result.append(f'  補剛数 = {tanbu_n}, 補剛間隔 = {self.restraint_spans} [mm]')
+            result.append(self.check_hogou_rule_tanbu(get_txt=True))
+
+        result = []
+        result.append('=' * 40 + '【試行】')
+        result.append('方法②：主として端部に配置　【算定計算　試行】')
+
+        # 中央部補剛数 n=0
+        init_tanbu()
+        result.append('-' * 30)
+        result.append('中央部　補剛数 n=0')
+        do_output()
+
+        # 中央部補剛数 n=1
+        init_tanbu()
+        result.append('-' * 30)
+        result.append('中央部　補剛数 n=1')
+        self.add_restraint(self.L / 2)
+        do_output()
+
+        # 中央部補剛数 n=2
+        # init_tanbu()
+        self.set_tanbu_restraint(step)
+        center_span = self.L - sum(self.restraint_spans)
+        tanbu_only_spans = self.restraint_spans[:]
+        center_index = int(len(self.restraint_spans) / 2)
+        self.restraint_spans.insert(center_index, center_span)
+
+        result.append('-' * 30)
+        result.append('中央部　補剛数 n=2')
+
+        L_left = (self.L - center_span) / 2
+        M1 = self.M_at(L_left)
+        Zx = xs_section_property(self.sec, 'Zx', self.db) * 1e3  # (mm3)
+        fb = M1 / (1.5 * Zx)
+        # M1,M2を正確に入れないと、Lbが正確に得られない。。。
+        # 仮に M2は、M1から1000mm内側のモーメントと設定　単曲率の場合(M2/M1)は負とする。
+        lb = get_lb(short_full_name[self.sec], self.db, fb, center_span, M1=M1, M2=-(M1 - 1000*self.Q))
+        if lb:
+            L1 = self.x_flooring(lb, step)
+        else:
+            L1 = self.get_lb(step)
+
+        self.add_restraint(L_left + L1)
+        self.add_restraint(self.L - L_left - L1)
+        do_output()
+
+        # 中央部補剛数 n=3
+
+
+
+
+
         return '\n'.join(result)
 
     def check_hogou_rule_tanbu(self, print_on=False, get_txt=False):
@@ -453,3 +529,12 @@ class Yokohogou:
     def x_flooring(x, step):
         """数値 x を x以下の　指定の数 step の倍数となるようにまるめる"""
         return (x // step) * step
+
+    def add_restraint(self, pos):
+        """左端からの距離指定で、補剛を追加"""
+        if pos <= 0 or pos >= self.L:
+            raise ValueError
+        positions = self.lb_positions[:]
+        positions.append(pos)
+        positions.sort()
+        self.set_restraint_spans_from_restraint_position(positions)
