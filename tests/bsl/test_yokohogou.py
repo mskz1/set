@@ -231,8 +231,8 @@ def test_output_sample2():
 def test_output_sample3():
     # 算定計算
     # yh = Yokohogou(sec='H24', L=6800.0)
-    # yh = Yokohogou(sec='H24', L=11000.0)
-    yh = Yokohogou(sec='H24', L=7000.0)
+    yh = Yokohogou(sec='H294', L=16000.0)
+    # yh = Yokohogou(sec='H24', L=7000.0)
     print()
     print(yh.get_input_data())
 
