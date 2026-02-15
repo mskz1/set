@@ -182,21 +182,25 @@ def test_output_sample1():
     print()
     print(yh.get_input_data())
     print(yh.get_output_data(step=100))
+    print(yh.get_output_data_sankou(step=100))
 
     yh = Yokohogou(sec='H25', L=6800.0)
     print()
     print(yh.get_input_data())
     print(yh.get_output_data(step=100))
+    print(yh.get_output_data_sankou(step=100))
 
     yh = Yokohogou(sec='H294', L=10320.0)
     print()
     print(yh.get_input_data())
     print(yh.get_output_data(step=50))
+    print(yh.get_output_data_sankou(step=50))
 
     yh = Yokohogou(sec='H24', L=12800.0)
     print()
     print(yh.get_input_data())
     print(yh.get_output_data())
+    print(yh.get_output_data_sankou())
 
 
 @pytest.mark.skip('出力サンプル sample')
@@ -227,12 +231,13 @@ def test_output_sample2():
     print(yh.get_input_data())
     print(yh.get_output_data(step=100, restraint_span=span))
 
-
+@pytest.mark.skip('出力サンプル sample 中央部配置　試作')
 def test_output_sample3():
     # 算定計算
     # yh = Yokohogou(sec='H24', L=6800.0)
-    yh = Yokohogou(sec='H294', L=16000.0)
-    # yh = Yokohogou(sec='H24', L=7000.0)
+    # yh = Yokohogou(sec='H294', L=16000.0)
+    yh = Yokohogou(sec='H24', L=7000.0)
+    # yh = Yokohogou(sec='H24', L=12800.0)
     print()
     print(yh.get_input_data())
 
@@ -244,6 +249,8 @@ def test_output_sample3():
 
     print(yh.get_output_tanbuhaiti_trial(step=50))
 
+    print('参考')
+    print(yh.get_output_data_sankou(step=50))
     print()
     print()
     print('*'*50)

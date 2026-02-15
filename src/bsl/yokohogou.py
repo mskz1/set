@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 from xs_section import xs_section_property, short_full_name, make_all_section_db
 from section_check import allowable_bending_moment
-from allowable_stress import steel_fb_aij2005, steel_fb_bsl, calc_C
+from allowable_stress import steel_fb_aij2005, steel_fb_bsl, calc_C, get_lb
 
 
 class Material(Enum):
@@ -197,20 +197,6 @@ class Yokohogou:
         # 中央のMy以下部分について、均等割りでの設定
         num_eq = self.get_div_num_of_center_span(center_index, center_span, tanbu_only_spans)
 
-        if eq_flg:
-            return  # 仮 （中央部の非均等割りの完成まで）
-
-        # 中央のMy以下部分について、非均等割りで検討
-        self.set_tanbu_restraint(step)
-        center_span = self.L - sum(self.restraint_spans)
-        tanbu_only_spans = self.restraint_spans[:]
-        center_index = int(len(self.restraint_spans) / 2)
-        self.restraint_spans.insert(center_index, center_span)
-
-        # num_vari = self.get_div_num_of_center_span2(center_index, center_span, tanbu_only_spans, step)
-        num_vari = self.get_div_num_of_center_span3(center_index, center_span, tanbu_only_spans, step)
-
-        # WIP : 2025-1214
 
     def get_div_num_of_center_span(self, center_index, center_span, tanbu_only_spans):
         """中央のMy以下部分のスパンの分割数（均等割り）を返す。（補剛数は 分割数-1）"""
@@ -226,7 +212,7 @@ class Yokohogou:
         return div_num
 
     def get_div_num_of_center_span2(self, center_index, center_span, tanbu_only_spans, step):
-        """中央のMy以下部分のスパンの分割数（非均等割り）を返す。（補剛数は 分割数-1）　案２"""
+        """不要？？：中央のMy以下部分のスパンの分割数（非均等割り）を返す。（補剛数は 分割数-1）　案２"""
         if self.check_hogou_rule_tanbu() == 'OK':
             return 1
 
@@ -279,7 +265,7 @@ class Yokohogou:
             l1 += step
 
     def get_div_num_of_center_span3(self, center_index, center_span, tanbu_only_spans, step):
-        """中央のMy以下部分のスパンの分割数（非均等割り）を返す。（補剛数は 分割数-1）　案３　2026-0125"""
+        """不要？？：中央のMy以下部分のスパンの分割数（非均等割り）を返す。（補剛数は 分割数-1）　案３　2026-0125"""
 
         def get_hogou_pitch(L, n, rlb, pitch=1):
             """
@@ -328,11 +314,6 @@ class Yokohogou:
                 if self.check_hogou_rule_tanbu() == 'OK':
                     return div_num
 
-    def get_div_num_of_center_span4(self, center_index, center_span, tanbu_only_spans, step):
-        """試作："""
-        # 中央部補剛数n=0
-
-        pass
 
     def set_tanbu_restraint(self, step):
         """端部のMyを超える区間の補剛位置をセットする"""
@@ -392,6 +373,121 @@ class Yokohogou:
         result.append(f'  補剛数 = {tanbu_n}, 補剛間隔 = {self.restraint_spans} [mm]')
         result.append(self.check_hogou_rule_tanbu(get_txt=True))
         return '\n'.join(result)
+
+    def get_output_data_sankou(self, step=0):
+        """中央スパン部　非均等割りの参考出力"""
+        result = []
+        n = self.get_div_num_of_center_span5(step)
+        result.append('+' * 10)
+        result.append('方法②：主として端部に配置　【算定計算】　中央部非均等配置　※※※　参考出力　※※※')
+        if n==-1:
+            result.append('ERROR：プログラム未対応のため、算定不可')
+            result.append('+' * 10)
+            return '\n'.join(result)
+
+        tanbu_n = len(self.restraint_spans) - 1
+        result.append(f'  補剛数 = {tanbu_n}, 補剛間隔 = {self.restraint_spans} [mm]')
+        result.append(self.check_hogou_rule_tanbu(get_txt=True))
+        result.append('+' * 10)
+
+        return '\n'.join(result)
+
+    def get_div_num_of_center_span5(self, step=0):
+        """中央部の補剛数nで横補剛満足するかチェック　戻り値（補剛数n）は 0～5　満足しない場合は -1が返る"""
+        # 寸法丸め値が指定されていない場合は１㎜と設定
+        if step == 0:
+            step = 1
+
+        # n=0
+        center_span = self.get_centerspan_init_tanbu_2_3(step)
+        if self.check_hogou_rule_tanbu() == 'OK':
+            return 0  # n=0
+        # n=1
+        center_span = self.get_centerspan_init_tanbu_2_3(step)
+        self.add_restraint(self.L / 2)
+        if self.check_hogou_rule_tanbu() == 'OK':
+            return 1  # n=1
+        # n=2
+        center_span = self.get_centerspan_init_tanbu_2_3(step)
+        L_left, M1, fb = self.get_required_fb(center_span)
+        # M1,M2を正確に入れないと、Lbが正確に得られない。。。
+        # 仮に M2は、M1から1000mm内側のモーメントと設定　単曲率の場合(M2/M1)は負とする。
+        lb = get_lb(short_full_name[self.sec], self.db, fb, center_span, M1=M1, M2=-(M1 - 1000 * self.Q))
+        if lb:
+            L1 = self.x_flooring(lb, step)
+        else:
+            L1 = self.get_lb(step)
+
+        self.add_restraint(L_left + L1)
+        self.add_restraint(self.L - L_left - L1)
+        if self.check_hogou_rule_tanbu() == 'OK':
+            return 2  # n=2
+
+        # n=3
+        center_span = self.get_centerspan_init_tanbu_2_3(step)
+        L_left, M1, fb = self.get_required_fb(center_span)
+        lb = get_lb(short_full_name[self.sec], self.db, fb, center_span, M1=M1, M2=-(M1 - 1000 * self.Q))
+        if lb:
+            L1 = self.x_flooring(lb, step)
+        else:
+            L1 = self.get_lb(step)
+
+        self.add_restraint(L_left + L1)
+        self.add_restraint(self.L - L_left - L1)
+        self.add_restraint(self.L / 2)
+        if self.check_hogou_rule_tanbu() == 'OK':
+            return 3  # n=3
+
+        # 中央部補剛数 n=4
+        center_span = self.get_centerspan_init_tanbu_2_3(step)
+        L_left, M1, fb = self.get_required_fb(center_span)
+        lb = get_lb(short_full_name[self.sec], self.db, fb, center_span, M1=M1, M2=-(M1 - 1000 * self.Q))
+        if lb:
+            L1 = self.x_flooring(lb, step)
+        else:
+            L1 = self.get_lb(step)
+
+        center_span_2 = center_span - 2 * L1
+        L_left2, M2, fb2 = self.get_required_fb(center_span_2)
+        lb2 = get_lb(short_full_name[self.sec], self.db, fb2, center_span_2, M1=M2, M2=-(M2 - 1000 * self.Q))
+        if lb2:
+            L2 = self.x_flooring(lb2, step)
+        else:
+            L2 = self.get_lb(step)
+
+        self.add_restraint(L_left + L1)
+        self.add_restraint(self.L - L_left - L1)
+        self.add_restraint(L_left + L1 + L2)
+        self.add_restraint(self.L - L_left - L1 - L2)
+        if self.check_hogou_rule_tanbu() == 'OK':
+            return 4  # n=4
+
+        # 中央部補剛数 n=5
+        center_span = self.get_centerspan_init_tanbu_2_3(step)
+        L_left, M1, fb = self.get_required_fb(center_span)
+        lb = get_lb(short_full_name[self.sec], self.db, fb, center_span, M1=M1, M2=-(M1 - 1000 * self.Q))
+        if lb:
+            L1 = self.x_flooring(lb, step)
+        else:
+            L1 = self.get_lb(step)
+
+        center_span_2 = center_span - 2 * L1
+        L_left2, M2, fb2 = self.get_required_fb(center_span_2)
+        lb2 = get_lb(short_full_name[self.sec], self.db, fb2, center_span_2, M1=M2, M2=-(M2 - 1000 * self.Q))
+        if lb2:
+            L2 = self.x_flooring(lb2, step)
+        else:
+            L2 = self.get_lb(step)
+
+        self.add_restraint(L_left + L1)
+        self.add_restraint(self.L - L_left - L1)
+        self.add_restraint(L_left + L1 + L2)
+        self.add_restraint(self.L - L_left - L1 - L2)
+        self.add_restraint(self.L / 2)
+        if self.check_hogou_rule_tanbu() == 'OK':
+            return 5  # n=5
+
+        return -1  # 条件をクリアしない場合
 
     def get_output_tanbuhaiti_trial(self, step=0):
         """中央My以下のスパン部の分割の試作"""
@@ -478,8 +574,8 @@ class Yokohogou:
 
         self.add_restraint(L_left + L1)
         self.add_restraint(self.L - L_left - L1)
-        self.add_restraint(L_left+L1+L2)
-        self.add_restraint(self.L - L_left - L1-L2)
+        self.add_restraint(L_left + L1 + L2)
+        self.add_restraint(self.L - L_left - L1 - L2)
         do_output()
 
         # 中央部補剛数 n=5
@@ -503,8 +599,8 @@ class Yokohogou:
 
         self.add_restraint(L_left + L1)
         self.add_restraint(self.L - L_left - L1)
-        self.add_restraint(L_left+L1+L2)
-        self.add_restraint(self.L - L_left - L1-L2)
+        self.add_restraint(L_left + L1 + L2)
+        self.add_restraint(self.L - L_left - L1 - L2)
         self.add_restraint(self.L / 2)
         do_output()
 
