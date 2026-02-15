@@ -7,6 +7,8 @@ import bolt
 import xs_section
 import text_calc
 import var2val as var2val_m
+from bsl.yokohogou import Yokohogou
+
 # import simple_beam_analyzer as bef
 
 XL_CATEGORY = 'Structural Engineering Tools'
@@ -151,4 +153,12 @@ def xsSectionName(abbrName):
 def xsSectionProperty(name, propertyName):
     """形鋼の断面性能値を返す関数"""
     return xs_section.xs_section_property(name, propertyName, db)
+
+@xlo.func(group=XL_CATEGORY,
+          args={'name': '断面略称（H20など）あるいはフル名称',
+                'span': 'はりスパン'})
+def xsYokohogou(name,span,step):
+    """鉄骨はり保有耐力横補剛検討"""
+    yh = Yokohogou(sec=name,L=span)
+    return yh.output_for_xlset(step)
 

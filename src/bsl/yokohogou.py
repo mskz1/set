@@ -700,3 +700,11 @@ class Yokohogou:
         positions.append(pos)
         positions.sort()
         self.set_restraint_spans_from_restraint_position(positions)
+
+    def output_for_xlset(self,step=0):
+        """xl_set UDF用"""
+        result = []
+        result.append(self.get_input_data())
+        result.append(self.get_output_data(step))
+        result.append(self.get_output_data_sankou(step))
+        return '\n'.join(result)
