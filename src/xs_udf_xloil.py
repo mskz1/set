@@ -109,7 +109,8 @@ def xsSteel_fc_bsl(F, lamb):
 
 
 @xlo.func(group=XL_CATEGORY,
-          args={'F': 'F値(N/mm2)', 'Lb': '圧縮フランジの支点間距離(mm)', 'ib': '断面二次半径(mm)', 'C': '補正係数', 'h': 'はりのせい(mm)',
+          args={'F': 'F値(N/mm2)', 'Lb': '圧縮フランジの支点間距離(mm)', 'ib': '断面二次半径(mm)', 'C': '補正係数',
+                'h': 'はりのせい(mm)',
                 'Af': '圧縮フランジの断面積(mm2)'})
 def xsSteel_fb_bsl(F, Lb, ib, C, h, Af):
     """長期許容曲げ応力度(N/mm2)を返す関数。建築基準法(Building Standard Law)版"""
@@ -117,7 +118,8 @@ def xsSteel_fb_bsl(F, Lb, ib, C, h, Af):
 
 
 @xlo.func(group=XL_CATEGORY,
-          args={'F': 'F値(N/mm2)', 'secName': '断面名称', 'Lb': '圧縮フランジの支点間距離(mm)', 'M1': '座屈補剛区間端部の大きい方のM',
+          args={'F': 'F値(N/mm2)', 'secName': '断面名称', 'Lb': '圧縮フランジの支点間距離(mm)',
+                'M1': '座屈補剛区間端部の大きい方のM',
                 'M2': '座屈補剛区間端部の小さい方のM', 'M3': '座屈補剛区間内の最大のM'})
 def xsSteel_fb_aij2005(F, secName, Lb, M1, M2, M3):
     """長期許容曲げ応力度(N/mm2)を返す関数。建築基準法(Building Standard Law)版"""
@@ -154,11 +156,18 @@ def xsSectionProperty(name, propertyName):
     """形鋼の断面性能値を返す関数"""
     return xs_section.xs_section_property(name, propertyName, db)
 
-@xlo.func(group=XL_CATEGORY,
-          args={'name': '断面略称（H20など）あるいはフル名称',
-                'span': 'はりスパン'})
-def xsYokohogou(name,span,step):
-    """鉄骨はり保有耐力横補剛検討"""
-    yh = Yokohogou(sec=name,L=span)
-    return yh.output_for_xlset(step)
 
+@xlo.func(group=XL_CATEGORY,
+          args={'name': '断面略称（H20,H24など）あるいはフル名称',
+                'span': 'はりスパン（mm）'
+              , 'restraint_spans': '横補剛間隔（セル範囲）'})
+def xsYokohogou(name, span, step, restraint_spans=None):
+    """鉄骨はり保有耐力横補剛検討"""
+
+    yh = Yokohogou(sec=name, L=span)
+    # if restraint_spans:
+    #     yh.restraint_spans = restraint_spans[:]
+    if restraint_spans:
+        return yh.output_for_xlset(step, restraint_spans[0])
+    else:
+        return yh.output_for_xlset(step)

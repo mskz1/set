@@ -197,7 +197,6 @@ class Yokohogou:
         # 中央のMy以下部分について、均等割りでの設定
         num_eq = self.get_div_num_of_center_span(center_index, center_span, tanbu_only_spans)
 
-
     def get_div_num_of_center_span(self, center_index, center_span, tanbu_only_spans):
         """中央のMy以下部分のスパンの分割数（均等割り）を返す。（補剛数は 分割数-1）"""
         if self.check_hogou_rule_tanbu() == 'OK':
@@ -314,7 +313,6 @@ class Yokohogou:
                 if self.check_hogou_rule_tanbu() == 'OK':
                     return div_num
 
-
     def set_tanbu_restraint(self, step):
         """端部のMyを超える区間の補剛位置をセットする"""
         self.restraint_spans.clear()
@@ -380,7 +378,7 @@ class Yokohogou:
         n = self.get_div_num_of_center_span5(step)
         result.append('+' * 10)
         result.append('方法②：主として端部に配置　【算定計算】　中央部非均等配置　※※※　参考出力　※※※')
-        if n==-1:
+        if n == -1:
             result.append('ERROR：プログラム未対応のため、算定不可')
             result.append('+' * 10)
             return '\n'.join(result)
@@ -701,10 +699,13 @@ class Yokohogou:
         positions.sort()
         self.set_restraint_spans_from_restraint_position(positions)
 
-    def output_for_xlset(self,step=0):
+    def output_for_xlset(self, step=0, restraint_spans=None):
         """xl_set UDF用"""
         result = []
         result.append(self.get_input_data())
-        result.append(self.get_output_data(step))
-        result.append(self.get_output_data_sankou(step))
+        if restraint_spans:
+            result.append(self.get_output_data(step, restraint_spans))
+        else:
+            result.append(self.get_output_data(step))
+            result.append(self.get_output_data_sankou(step))
         return '\n'.join(result)
